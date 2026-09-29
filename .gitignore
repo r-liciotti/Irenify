@@ -49,3 +49,7 @@ WORKLOG.md
 
 # Modelli Whisper scaricati in locale durante le prove
 *.bin
+
+# Chiavi/segreti: mai nel repo (vedi CLAUDE.md)
+.env
+.env.*

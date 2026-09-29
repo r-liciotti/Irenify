@@ -1,0 +1,194 @@
+# F1 — Piano di sviluppo: dal link condiviso alla ricetta salvata (Android)
+
+**Obiettivo della F1:** condivido un reel di Instagram o TikTok a Irenefy sul Pixel 9 Pro e, senza altri
+passaggi, trovo nel telefono una ricetta salvata (titolo, porzioni, ingredienti, procedimento, fonte).
+L'interfaccia è provvisoria: quella definitiva arriva in F2.
+
+**Fuori dalla F1:** iPhone (rimandato alla F5), valori nutrizionali (F4), porzioni scalabili a schermo (F3),
+provider Mistral (per ora solo l'interfaccia), pulsante "Aggiungi il video" su un'importazione già avviata (F2),
+scelta del modello Whisper per telefoni diversi dal Pixel 9 Pro (F5).
+
+Stima complessiva: **circa 5 giornate**. Riferimento generale: il piano approvato in
+`~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md` (sezioni 2 e 3).
+
+---
+
+## Come lavoriamo in ogni fase
+
+1. **Rianalisi:** prima di scrivere codice rileggo il codice esistente, lo stato delle dipendenze e la
+   documentazione aggiornata dei pacchetti coinvolti. Cerco imprevisti e dettagli che questo piano non ha visto.
+2. **Resoconto della fase:** ti scrivo cosa ho trovato, usando lo schema qui sotto.
+3. **Attendo la tua conferma esplicita.** Senza un "procedi" chiaro non scrivo codice.
+4. **Sviluppo e verifiche:** `flutter analyze` senza problemi, `flutter test` tutto verde, `dart format` e,
+   quando serve, una prova sul telefono.
+5. **Chiusura:** voce nel `WORKLOG.md` e breve esito della fase. Faccio commit solo se me lo chiedi.
+
+**Schema del resoconto pre-fase**
+- **Causa da risolvere:** il problema concreto che la fase deve risolvere, e perché ora.
+- **Cosa ho trovato nella rianalisi:** imprevisti, dettagli nuovi, differenze rispetto al piano.
+- **Cosa farò:** i punti della fase, aggiornati con quanto emerso.
+- **Decisioni che servono da te:** solo se ci sono.
+- **Rischi e verifiche previste:** come capiremo che la fase è riuscita.
+
+---
+
+## Differenze già note rispetto al piano approvato
+
+Sono emerse in F0 e le recepisco da subito:
+
+- **Audio:** il piano prevedeva codice nativo (MediaCodec) per estrarre l'audio. In F0 la conversione
+  mp4 → WAV con l'FFmpeg già incluso in `whisper_ggml` ha funzionato, quindi usiamo quella. Sono circa 150
+  righe native in meno. La licenza LGPL va bene per l'uso personale; va rivalutata prima degli store.
+- **Modello Whisper di default:** `small-q8_0` a 8 thread, senza prompt, e non più base-q5.
+- **Tappa "nutrizione" dell'importazione:** in F1 esiste ma non fa nulla e passa oltre. Si riempie in F4.
+- **Una sola trascrizione alla volta:** è un vincolo misurato in F0, e la coda delle importazioni lo deve garantire.
+- **File intermedi** in `getApplicationSupportDirectory()`, mai nella cache.
+
+---
+
+## Fase 1 — Fondamenta dell'app (≈ 0,5 gg) — ✅ completata il 2026-09-28
+
+**Perché:** oggi `main.dart` apre la schermata di prova. Serve una struttura su cui appoggiare tutto il resto.
+
+1. Cartelle `lib/app/` (avvio, navigazione, tema provvisorio) e `lib/core/` (errori, log).
+2. Riverpod (`ProviderScope`) per condividere servizi e stato tra le schermate.
+3. go_router con tre schermate segnaposto: Ricette, Importazioni, Impostazioni.
+4. Tipo comune per gli errori (`Failure`) con messaggio in italiano e azione suggerita (riprova, continua…).
+5. La schermata di prova della F0 resta raggiungibile da una voce nascosta nelle Impostazioni fino alla fine
+   della F1, poi viene eliminata.
+
+**Uscita:** l'app si avvia sulle nuove schermate vuote; analisi e test verdi.
+
+## Fase 2 — Modello dati e database locale (≈ 0,75 gg) — ✅ completata il 2026-09-28
+
+**Perché:** ricette e importazioni devono sopravvivere alla chiusura dell'app.
+
+1. Tabelle drift come nel piano (sezione 3): `Recipe`, `RecipeSource`, `IngredientGroup`, `Ingredient`,
+   `Step`, `Tag`/`RecipeTag`, `ImportJob`. Includo già le colonne per porzioni scalabili e nutrizione
+   (`scalingRule`, `gramsEstimate`, `canonicalNameEn`…), così F3 e F4 non richiedono di modificare il database.
+2. Entità di dominio immutabili (freezed), separate dalle righe del database.
+3. `RecipeRepository`: salvataggio dell'intera ricetta in un'unica transazione, lettura, elenco ed eliminazione.
+4. `ImportJobRepository`: creazione, aggiornamento di stato e dati intermedi, elenco dei job non finiti.
+5. Versione dello schema = 1, con la struttura per le migrazioni future già pronta.
+
+**Uscita:** test su database in memoria (salvo e rileggo una ricetta completa; un job cambia stato).
+
+## Fase 3 — Motore delle importazioni (≈ 0,75 gg) — ✅ completata il 2026-09-29
+
+**Perché:** un'importazione dura fino a un paio di minuti e Android può chiudere l'app nel frattempo.
+Ogni tappa deve essere salvata e ripresa.
+
+1. Stati: `received → normalized → metadata → media → audio → transcribed → extracted → nutrition →
+   completed`, più `failed`, con tappa fallita e numero di tentativi.
+2. Interfaccia comune delle tappe: ognuna legge il job, fa il suo lavoro, scrive il risultato. Rieseguirla
+   produce lo stesso risultato.
+3. Orchestratore con **coda seriale**: un job alla volta, quindi una sola trascrizione alla volta.
+4. Ripresa all'avvio dell'app: i job rimasti a metà ripartono dall'ultima tappa completata.
+5. Tappe "facoltative" (video, audio, trascrizione): se falliscono il job prosegue con la sola didascalia.
+   Tappe "necessarie" (link, estrazione): se falliscono il job va in `failed` con un messaggio chiaro.
+6. Pulizia dei file del job (video, WAV) a importazione conclusa.
+
+**Uscita:** test con tappe finte, tra cui un "crash" simulato a ogni tappa con verifica della ripresa corretta.
+
+**Come è stata fatta:** `ImportEngine` (`lib/features/import_pipeline/data/`) con la coda nel database; regole in
+`domain/import_flow.dart`; interfaccia `ImportStep` + `JobFiles.writeAtomically` in `domain/import_step.dart`.
+Decisioni D-21…D-25. Per le fasi 4–7: ogni tappa reale implementa `ImportStep` e va aggiunta a
+`importStepsProvider`; la tappa del salvataggio (`completed`) gira già dentro una transazione e deve spostare la
+miniatura fuori da `jobs/<id>/` prima che la cartella venga eliminata.
+
+## Fase 4 — Ricezione della condivisione e normalizzazione del link (≈ 0,5 gg)
+
+**Perché:** è il punto d'ingresso. Oggi lo gestisce la schermata di prova.
+
+1. Servizio `share_intake` su `receive_sharing_intent`: condivisione a app aperta e ad app chiusa.
+2. Testo con link → nuovo `ImportJob`. File video → copia immediata nella cartella del job, perché quello
+   ricevuto sta in cache e Android può svuotarla. Il job salta le tappe "metadati" e "video".
+3. Tappa **normalizzazione**: riuso `url_normalizer` (già testato) e aggiungo la risoluzione dei link brevi
+   (`vm.tiktok.com`) seguendo i redirect.
+4. Doppioni: se lo stesso link è già una ricetta salvata, apro quella invece di reimportarla.
+5. Testo senza link riconoscibile: messaggio "Link non supportato".
+
+**Uscita:** condivido dal telefono e compare il job nella schermata Importazioni.
+
+## Fase 5 — Didascalia e video (≈ 0,75 gg)
+
+**Perché:** la didascalia è la fonte principale della ricetta; il video serve per ottenere l'audio.
+
+1. `MetadataClient` Instagram: pagina `embed/captioned`, `contextJSON` decodificato due volte (come in F0),
+   ripiego sull'HTML della didascalia.
+2. `MetadataClient` TikTok: oEmbed per la didascalia, pagina del video per durata e indirizzo del video
+   (ricerca di `itemStruct`, cookie della pagina).
+3. `MediaResolver` isolato e sostituibile: scarica mp4 e miniatura nella cartella del job. Se fallisce il
+   job non si blocca.
+4. Limite di durata (es. 3 minuti di video) per non trascrivere contenuti troppo lunghi.
+5. Test con **pagine reali salvate come esempio** (HTML/JSON di 2–3 post IG e TT), così un cambio di
+   layout di Instagram o TikTok salta subito all'occhio nei test.
+
+**Uscita:** sul telefono un link IG e uno TT arrivano fino a "video scaricato".
+
+## Fase 6 — Audio e trascrizione (≈ 0,75 gg)
+
+**Perché:** molte ricette sono spiegate a voce; la trascrizione completa la didascalia.
+
+1. `ModelManager`: scarica `small-q8_0` (264 MB) a blocchi su disco, non tutto in memoria, con file
+   temporaneo `.part`, avanzamento e controllo della dimensione. Download solo su richiesta, dalle Impostazioni.
+2. Conversione mp4 → WAV 16 kHz mono con l'FFmpeg incluso.
+3. Interfaccia `Transcriber` + `WhisperTranscriber`: italiano, 8 thread, senza prompt, senza timestamp.
+   Elimino il WAV duplicato che il pacchetto crea da solo (visto in F0).
+4. Qualità della trascrizione (`ok` / `low` / `empty`): se ci sono poche parole o solo "[Musica]", la
+   trascrizione non va passata all'LLM.
+5. Schermo acceso durante la trascrizione (`wakelock_plus`), poi video e WAV eliminati.
+6. Modello non scaricato → la tappa viene saltata con un avviso, e la ricetta si fa con la sola didascalia.
+
+**Uscita:** su un reel parlato la trascrizione compare nel job, con tempi simili a quelli di F0 (~0,7 s per secondo di audio).
+
+## Fase 7 — Estrazione della ricetta con Gemini (≈ 1 gg) — *serve la tua chiave Gemini*
+
+**Perché:** è il passaggio che trasforma testo libero in una ricetta strutturata.
+
+1. Interfaccia `LlmProvider` + `GeminiProvider` via REST (dio), con output JSON vincolato da schema e
+   temperatura bassa. Modello configurabile (default: un Flash-Lite, per le quote gratuite più alte).
+2. Prompt in italiano: "estrai solo ciò che è scritto o detto; se una quantità è dedotta marcala come
+   stimata". Per ogni ingrediente chiede anche nome inglese, grammi stimati e categoria per le porzioni.
+3. Validazione della risposta lato app; se non è valida, un secondo tentativo con l'errore nel prompt.
+4. Caso "non è una ricetta" → job fallito con messaggio chiaro, niente ricetta vuota salvata.
+5. Errori di quota (429) → nuovi tentativi a intervalli crescenti, poi messaggio "quota esaurita, riprova più tardi".
+6. Chiave salvata in `flutter_secure_storage`, inserita dalle Impostazioni con un pulsante "Prova la chiave".
+   Mai nel codice, nel repo o nei log.
+7. Salvataggio: dalla risposta alle entità, poi `RecipeRepository` in un'unica transazione; `needsReview` se
+   ci sono quantità stimate.
+8. Test con un `LlmProvider` finto e con risposte Gemini reali salvate come esempio (valide, non valide,
+   "non è una ricetta").
+
+**Uscita:** da didascalia + trascrizione a ricetta salvata nel database.
+
+## Fase 8 — Interfaccia provvisoria e prova completa (≈ 0,5 gg)
+
+**Perché:** verificare sul telefono l'intero percorso e chiudere la F1.
+
+1. Schermata Importazioni: elenco dei job con la tappa in corso, gli errori e i pulsanti "Riprova" e
+   "Continua con la sola didascalia".
+2. Schermata Ricette: elenco semplice; dettaglio con porzioni, ingredienti per gruppo, passi, fonte
+   (link, autore, didascalia e trascrizione espandibili) e avviso "Controlla la ricetta".
+3. Impostazioni: chiave Gemini, download ed eliminazione del modello Whisper.
+4. Eliminazione di `lib/spike/` e della voce nascosta.
+5. **Prova sul Pixel 9 Pro** con 6–8 link reali (IG e TT; con voce e con sola musica; un link breve
+   `vm.tiktok.com`; un video condiviso come file). Annoto: ricette salvate, tempi, errori sulle quantità.
+6. `/code-review` sulla F1, aggiornamento di `CLAUDE.md` (stato e comandi) e del worklog.
+
+**Uscita della F1:** almeno l'80% dei link di prova diventa una ricetta salvata e corretta.
+
+---
+
+## Riepilogo
+
+| Fase | Contenuto | Serve da te | Stima |
+|---|---|---|---|
+| 1 | Fondamenta dell'app ✅ | — | 0,5 gg |
+| 2 | Modello dati e database ✅ | — | 0,75 gg |
+| 3 | Motore delle importazioni ✅ | — | 0,75 gg |
+| 4 | Ricezione condivisione e link | prova sul telefono | 0,5 gg |
+| 5 | Didascalia e video | prova sul telefono | 0,75 gg |
+| 6 | Audio e trascrizione | prova sul telefono | 0,75 gg |
+| 7 | Estrazione con Gemini | **chiave Gemini** | 1 gg |
+| 8 | Interfaccia provvisoria e prova completa | 6–8 link reali | 0,5 gg |

@@ -1,0 +1,5 @@
+# Testi dell'interfaccia (decisione D-15): solo italiano per ora.
+arb-dir: lib/l10n
+template-arb-file: app_it.arb
+output-localization-file: app_localizations.dart
+nullable-getter: false
