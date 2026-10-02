@@ -8,6 +8,7 @@ import '../../../app/providers.dart';
 import '../../../core/errors/failure.dart';
 import '../../../core/logging/app_log.dart';
 import '../../../core/network/http_client.dart';
+import '../../recipes/data/recipe_files.dart';
 import '../../recipes/data/recipe_repository.dart';
 import '../../recipes/domain/recipe_enums.dart';
 import '../domain/import_flow.dart';
@@ -22,15 +23,18 @@ import 'audio/ffmpeg_audio_extractor.dart';
 import 'audio/whisper_transcriber.dart';
 import 'downloader.dart';
 import 'link_resolver.dart';
+import 'llm/gemini_provider.dart';
 import 'platforms/instagram_client.dart';
 import 'platforms/tiktok_client.dart';
 import 'screen_awake.dart';
 import 'steps/audio_step.dart';
+import 'steps/extract_step.dart';
 import 'steps/media_step.dart';
 import 'steps/metadata_step.dart';
 import 'steps/normalize_link_step.dart';
 import 'steps/transcribe_step.dart';
 import 'steps/pass_through_nutrition_step.dart';
+import 'steps/save_recipe_step.dart';
 
 final jobStorageProvider = Provider<JobStorage>(
   (ref) => JobStorage(() async {
@@ -50,9 +54,9 @@ final platformClientsProvider = Provider<Map<SourcePlatform, PlatformClient>>((
   };
 });
 
-/// Tappe disponibili. La fase 7 della F1 aggiunge le altre: finché una
-/// tappa manca, il job che la raggiunge si ferma con "non ancora
-/// disponibile" (o la salta, se è facoltativa).
+/// Tappe dell'importazione, una per stato (D-09). Se una tappa mancasse, il
+/// job che la raggiunge si fermerebbe con "non ancora disponibile" (o la
+/// salterebbe, se facoltativa) e ripartirebbe da solo quando c'è (D-33).
 final importStepsProvider = Provider<List<ImportStep>>((ref) {
   final clients = ref.watch(platformClientsProvider);
   final downloader = Downloader(ref.watch(httpClientProvider));
@@ -76,7 +80,12 @@ final importStepsProvider = Provider<List<ImportStep>>((ref) {
       models: models,
       screenAwake: ref.watch(screenAwakeProvider),
     ),
+    ExtractStep(llm: ref.watch(llmProviderProvider)),
     const PassThroughNutritionStep(),
+    SaveRecipeStep(
+      recipes: ref.watch(recipeRepositoryProvider),
+      files: ref.watch(recipeFilesProvider),
+    ),
   ];
 });
 
@@ -150,6 +159,18 @@ class ImportEngine {
     final job = await _repo.getById(jobId);
     if (job == null || job.status != ImportStatus.failed) return;
     await _repo.save(_restarted(job));
+    unawaited(wake());
+  }
+
+  /// Fa ripartire tutti i job falliti con uno dei [codes]: per esempio
+  /// quelli fermi per la chiave Gemini quando l'utente la salva (D-39).
+  Future<void> resumeFailed(Set<FailureCode> codes) async {
+    for (final code in codes) {
+      for (final job in await _repo.failedWith(code)) {
+        await _repo.save(_restarted(job));
+        _log.info('${_tag(job)} riparte dopo ${code.name}');
+      }
+    }
     unawaited(wake());
   }
 

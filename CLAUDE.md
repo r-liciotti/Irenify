@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-02, fase 6)
+## Stato (aggiornato al 2026-10-02, fase 7)
 
 Fase **F1 in corso** (piano in `F1_PIANO.md`, 8 fasi). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -22,14 +22,18 @@ arrivano dalla fase 4.
 tappa `NormalizeLinkStep` + `LinkResolver`, scorciatoia di condivisione e correzione "app recenti" in
 `MainActivity.kt`, elenco minimo in Importazioni (prova del video dalla galleria rimandata alla fase 8, D-29).
 **Fase 5 (didascalia e video) completata il 2026-10-02**: `PlatformClient` + `InstagramClient`/`TikTokClient` in
-`data/platforms/`, tappe `MetadataStep` e `MediaStep`, `Downloader`. I job reali ora si fermano a «estrazione della
-ricetta» ("non ancora disponibile") fino alla fase 7 (la prossima). All'avvio i job fermi su una tappa che ora esiste
-ripartono da soli (D-33).
+`data/platforms/`, tappe `MetadataStep` e `MediaStep`, `Downloader`. All'avvio i job fermi su una tappa che ora esiste ripartono da soli (D-33).
 **Fase 6 (audio e trascrizione) completata il 2026-10-02**: contratto in `domain/transcription.dart`, tappe `AudioStep` e
 `TranscribeStep`, implementazioni in `data/audio/` (FFmpeg diretto, Whisper, controllo CPU), testo e qualità in
 `domain/transcript_text.dart`, modello gestito da `features/settings/data/whisper_model_manager.dart` (Impostazioni →
 "Trascrizione"). Sottotitoli TikTok in italiano al posto di Whisper (D-31); Whisper solo ad app aperta e con lo schermo
 acceso (D-34). Sul Pixel: 0,89 s per secondo di audio (build di debug), picco ~935 MB PSS.
+**Fase 7 (estrazione con Gemini) completata il 2026-10-02**: contratto in `domain/llm_provider.dart` e
+`domain/recipe_schema.dart`, client REST in `data/llm/gemini_provider.dart` (+ `gemini_prompt.dart`), tappe
+`ExtractStep` e `SaveRecipeStep`, validazione e conversione in `domain/recipe_extraction.dart`, miniature in
+`recipes/data/recipe_files.dart`, chiave e modello in Impostazioni (`settings/data/llm_settings_store.dart`,
+`settings/presentation/gemini_*`). Un link condiviso ora diventa una ricetta nella scheda Ricette. Prossima: **fase 8**
+(interfaccia provvisoria, prova completa con 6–8 link, eliminazione di `lib/spike/`).
 La schermata di prova della F0 (`lib/spike/`) è raggiungibile da Impostazioni → "Strumenti di prova (F0)" (solo link
 inseriti a mano: le condivisioni non le riceve più). **Non** va estesa; va eliminata in fase 8.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
@@ -140,6 +144,10 @@ flutter run -d <device>             # telefono Android / iPhone reale
 - Database: righe drift `*Row`, entità di dominio freezed separate; conversioni solo nei repository. Enum salvati
   per nome: mai rinominarli (D-18). Test: `newTestDatabase()` in `test/data/db/`; widget test con DB tramite
   `appTest(...)` in `test/app/app_test.dart` (smonta l'app e chiude il DB dentro il test, altrimenti si blocca).
-- Registro interno `AppLog` (`appLogProvider`): oscura le chiavi `AIza…`; mai loggare segreti in altro modo.
+- Registro interno `AppLog` (`appLogProvider`): oscura le chiavi `AIza…` e `AQ.…`; mai loggare segreti in altro modo.
+- Gemini: client dio **separato** (`geminiHttpClientProvider`, niente UA Safari), chiave solo nell'header
+  `x-goog-api-key`, mai un `DioException` come causa di un `Failure` (contiene le intestazioni). Nei test `FakeHttp`
+  (`jsonResponse`, `sequence`) e `FakeLlmProvider`/`FakeLlmSettings`; mai chiavi reali. Lo schema inviato a Gemini è
+  `recipeResponseSchema`: cambiarlo insieme a validatore e prompt.
 - Non committare `WORKLOG.md` (è in `.gitignore`). Commit solo su richiesta esplicita.
 - Registro attività obbligatorio: a fine attività aggiornare `WORKLOG.md` (regola globale dell'utente).

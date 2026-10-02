@@ -35,6 +35,17 @@ void main() {
     expect(log.export(), contains('[chiave nascosta]'));
   });
 
+  test('oscura anche le chiavi nuove "AQ." (D-39)', () {
+    const key = 'AQ.Ab8RN6Kp0-prova_FINTA.1234567890xyz';
+    final log = newLog()
+      ..info('x-goog-api-key: $key')
+      ..error('richiesta fallita', Exception('chiave $key rifiutata'));
+    expect(log.export(), isNot(contains('Ab8RN6Kp0')));
+    expect(log.export(), contains('AQ.…[chiave nascosta]'));
+    // Un testo qualsiasi con "AQ." non viene toccato.
+    expect(AppLog.redact('FAQ. Vedi sopra'), 'FAQ. Vedi sopra');
+  });
+
   test('negli errori riporta causa e prime righe dello stack', () {
     final log = newLog()
       ..error('Errore non gestito', StateError('x'), StackTrace.current);

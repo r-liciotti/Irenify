@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/providers.dart';
 import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
+import 'gemini_settings_tile.dart';
 import 'speech_model_tile.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -18,6 +19,9 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.navSettings)),
       body: ListView(
         children: [
+          _SectionHeader(l10n.geminiSection),
+          const GeminiKeyTile(),
+          const GeminiModelTile(),
           _SectionHeader(l10n.settingsTranscription),
           const SpeechModelTile(),
           _SectionHeader(l10n.settingsDiagnostics),

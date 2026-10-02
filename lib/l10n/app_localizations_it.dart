@@ -107,6 +107,99 @@ class AppLocalizationsIt extends AppLocalizations {
       'Schermata provvisoria: analisi link, download e Whisper';
 
   @override
+  String get geminiSection => 'Estrazione delle ricette';
+
+  @override
+  String get geminiKeyTitle => 'Chiave Gemini';
+
+  @override
+  String get geminiKeyLoading => 'Lettura in corso…';
+
+  @override
+  String get geminiKeyMissing =>
+      'Non inserita — necessaria per estrarre le ricette';
+
+  @override
+  String get geminiKeyChecking => 'Verifica della chiave in corso…';
+
+  @override
+  String get geminiKeyValid => 'Chiave funzionante';
+
+  @override
+  String get geminiKeyRejected =>
+      'Gemini ha rifiutato questa chiave: controlla di averla copiata per intero.';
+
+  @override
+  String geminiKeyUnverified(String message) {
+    return 'Salvata ma non verificata. $message';
+  }
+
+  @override
+  String get geminiKeyInsert => 'Inserisci';
+
+  @override
+  String get geminiKeyChange => 'Cambia';
+
+  @override
+  String get geminiKeyTry => 'Prova la chiave';
+
+  @override
+  String get geminiKeyDelete => 'Elimina';
+
+  @override
+  String get geminiKeyDeleteTitle => 'Eliminare la chiave?';
+
+  @override
+  String get geminiKeyDeleteBody =>
+      'Senza chiave le nuove importazioni si fermano prima dell\'estrazione della ricetta.';
+
+  @override
+  String get geminiCancel => 'Annulla';
+
+  @override
+  String get geminiKeySave => 'Salva';
+
+  @override
+  String get geminiKeyFieldLabel => 'Chiave API';
+
+  @override
+  String get geminiKeyHelp =>
+      'Creala gratis su aistudio.google.com → Get API key';
+
+  @override
+  String get geminiKeyShow => 'Mostra la chiave';
+
+  @override
+  String get geminiKeyHide => 'Nascondi la chiave';
+
+  @override
+  String get geminiKeyEmpty => 'Incolla la chiave';
+
+  @override
+  String get geminiModelTitle => 'Modello';
+
+  @override
+  String get geminiModelFlashLite35 => 'Gemini 3.5 Flash-Lite';
+
+  @override
+  String get geminiModelFlashLite35Hint =>
+      'Consigliato: circa 500 ricette al giorno gratis';
+
+  @override
+  String get geminiModelFlashLite31 => 'Gemini 3.1 Flash-Lite';
+
+  @override
+  String get geminiModelFlashLite31Hint =>
+      'Quota separata: usalo se l\'altro ha esaurito la quota';
+
+  @override
+  String get geminiModelFlash38 => 'Gemini 3.8 Flash';
+
+  @override
+  String get geminiModelFlash38Hint =>
+      'Più preciso: circa 20 ricette al giorno gratis';
+
+  @override
   String get settingsTranscription => 'Trascrizione';
 
   @override
@@ -188,6 +281,37 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get failureTranscriptionFailed =>
       'La trascrizione dell\'audio non è riuscita.';
+
+  @override
+  String get failureMissingApiKey =>
+      'Manca la chiave Gemini: inseriscila nelle Impostazioni.';
+
+  @override
+  String get failureInvalidApiKey =>
+      'Gemini ha rifiutato la chiave: controllala nelle Impostazioni.';
+
+  @override
+  String get failureQuotaExceeded =>
+      'Quota gratuita di Gemini esaurita: riprova più tardi o domani.';
+
+  @override
+  String get failureNotARecipe =>
+      'Questo post non sembra contenere una ricetta.';
+
+  @override
+  String get failureNothingToExtract =>
+      'Il post non ha testo da cui ricavare la ricetta: né didascalia né parlato.';
+
+  @override
+  String get failureInvalidExtraction =>
+      'Gemini non ha restituito una ricetta valida.';
+
+  @override
+  String get failureContentBlocked => 'Gemini ha bloccato questo contenuto.';
+
+  @override
+  String get failureLlmUnavailable =>
+      'Gemini non risponde in questo momento: riprova più tardi.';
 
   @override
   String get actionRetry => 'Riprova';

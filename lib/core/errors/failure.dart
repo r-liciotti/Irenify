@@ -22,7 +22,15 @@ enum FailureCode {
   alreadyImporting,
   stepNotAvailable,
   sourceUnavailable,
-  transcriptionFailed;
+  transcriptionFailed,
+  missingApiKey,
+  invalidApiKey,
+  quotaExceeded,
+  notARecipe,
+  nothingToExtract,
+  invalidExtraction,
+  contentBlocked,
+  llmUnavailable;
 
   /// Codice salvato → [FailureCode]; un nome sconosciuto diventa [unexpected].
   static FailureCode fromName(String? name) =>
@@ -35,12 +43,21 @@ enum FailureCode {
     unexpected ||
     stepInterrupted ||
     sourceUnavailable ||
-    transcriptionFailed => RecoveryAction.retry,
+    transcriptionFailed ||
+    quotaExceeded ||
+    invalidExtraction ||
+    llmUnavailable => RecoveryAction.retry,
+    // Il rimedio è inserire o correggere la chiave; salvandola il job
+    // riparte da solo (D-39).
+    missingApiKey || invalidApiKey => RecoveryAction.openSettings,
     // Ripetere non cambierebbe nulla (D-26).
     unsupportedLink ||
     invalidLink ||
     alreadyImporting ||
-    stepNotAvailable => RecoveryAction.none,
+    stepNotAvailable ||
+    notARecipe ||
+    nothingToExtract ||
+    contentBlocked => RecoveryAction.none,
   };
 }
 
@@ -153,4 +170,80 @@ final class TranscriptionFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.transcriptionFailed;
+}
+
+/// Manca la chiave Gemini: si inserisce dalle Impostazioni (D-39).
+final class MissingApiKeyFailure extends Failure {
+  const MissingApiKeyFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.missingApiKey;
+}
+
+/// Gemini ha rifiutato la chiave (non valida, revocata o senza permessi).
+final class InvalidApiKeyFailure extends Failure {
+  const InvalidApiKeyFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.invalidApiKey;
+}
+
+/// Quota gratuita di Gemini esaurita (D-38). [daily] distingue il limite
+/// giornaliero, che si azzera a mezzanotte ora del Pacifico, da quello al
+/// minuto rimasto tale anche dopo le attese.
+final class QuotaExceededFailure extends Failure {
+  const QuotaExceededFailure({
+    this.daily = false,
+    super.cause,
+    super.stackTrace,
+  });
+
+  final bool daily;
+
+  @override
+  FailureCode get code => FailureCode.quotaExceeded;
+}
+
+/// Il post non contiene una ricetta (secondo l'LLM): nessuna ricetta salvata.
+final class NotARecipeFailure extends Failure {
+  const NotARecipeFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.notARecipe;
+}
+
+/// Né la didascalia né la trascrizione hanno testo utilizzabile: l'LLM non
+/// viene nemmeno chiamato.
+final class NothingToExtractFailure extends Failure {
+  const NothingToExtractFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.nothingToExtract;
+}
+
+/// La risposta dell'LLM non era una ricetta valida neanche al secondo
+/// tentativo (D-36).
+final class InvalidExtractionFailure extends Failure {
+  const InvalidExtractionFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.invalidExtraction;
+}
+
+/// Gemini ha bloccato la richiesta o la risposta (filtri di sicurezza,
+/// contenuto vietato, citazione di testi protetti).
+final class ContentBlockedFailure extends Failure {
+  const ContentBlockedFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.contentBlocked;
+}
+
+/// Gemini non risponde (sovraccarico, 5xx, modello non disponibile) anche
+/// dopo i nuovi tentativi: di solito è temporaneo.
+final class LlmUnavailableFailure extends Failure {
+  const LlmUnavailableFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.llmUnavailable;
 }

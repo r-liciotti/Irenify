@@ -10,6 +10,10 @@ class FakeHttp implements HttpClientAdapter {
   final Map<String, ResponseBody Function()> routes;
   final requested = <Uri>[];
 
+  /// Richieste complete (metodo, intestazioni, corpo in `data`), nello
+  /// stesso ordine di [requested].
+  final requests = <RequestOptions>[];
+
   Dio get dio => Dio()..httpClientAdapter = this;
 
   @override
@@ -19,6 +23,7 @@ class FakeHttp implements HttpClientAdapter {
     Future<void>? cancelFuture,
   ) async {
     requested.add(options.uri);
+    requests.add(options);
     final route = routes[options.uri.toString()];
     if (route == null) {
       throw DioException.connectionError(
@@ -50,3 +55,24 @@ ResponseBody Function() page(String html, [int status = 200]) =>
         'content-type': ['text/html; charset=utf-8'],
       },
     );
+
+/// Risposta JSON: [body] è già il testo del corpo.
+ResponseBody Function() jsonResponse(String body, [int status = 200]) =>
+    () => ResponseBody.fromString(
+      body,
+      status,
+      headers: {
+        'content-type': ['application/json; charset=UTF-8'],
+      },
+    );
+
+/// Risposte diverse alle chiamate successive allo stesso URL; dopo l'ultima
+/// si ripete l'ultima.
+ResponseBody Function() sequence(List<ResponseBody Function()> responses) {
+  var next = 0;
+  return () {
+    final response = responses[next];
+    if (next < responses.length - 1) next++;
+    return response();
+  };
+}

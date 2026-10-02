@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": 400,
+    "message": "Invalid JSON payload received. Unknown name \"propertyOrdering\" at 'generation_config.response_json_schema': Cannot find field.",
+    "status": "INVALID_ARGUMENT"
+  }
+}

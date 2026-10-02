@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "{\"isRecipe\":true,\"notRecipeReason\":null,\"title\":\"Pasta al pomodoro\",\"description\":\"Un primo semplice e veloce.\",\"servings\":2,\"servingsUnit\":\"persone\",\"prepMinutes\":5,\"cookMinutes\":15,\"restMinutes\":null,\"difficulty\":\"easy\",\"tags\":[\"primo\",\"vegetariano\"],\"ingredients\":[{\"group\":null,\"name\":\"spaghetti\",\"quantity\":200,\"quantityMax\":null,\"unit\":\"gram\",\"gramsEstimate\":200,\"isEstimated\":false,\"note\":null,\"scalingRule\":\"linear\",\"canonicalNameEn\":\"spaghetti\"},{\"group\":null,\"name\":\"passata di pomodoro\",\"quantity\":300,\"quantityMax\":null,\"unit\":\"gram\",\"gramsEstimate\":300,\"isEstimated\":false,\"note\":null,\"scalingRule\":\"linear\",\"canonicalNameEn\":\"tomato puree\"},{\"group\":null,\"name\":\"sale\",\"quantity\":null,\"quantityMax\":null,\"unit\":\"none\",\"gramsEstimate\":null,\"isEstimated\":false,\"note\":null,\"scalingRule\":\"toTaste\",\"canonicalNameEn\":\"salt\"}],\"steps\":[{\"text\":\"Cuoci la passata con un filo d'olio per 10 minuti.\",\"durationMinutes\":10,\"temperatureC\":null},{\"text\":\"Lessa gli spaghetti e condiscili con il sugo.\",\"durationMinutes\":null,\"temperatureC\":null}]}"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 1342,
+    "candidatesTokenCount": 412,
+    "totalTokenCount": 1754,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 1342
+      }
+    ]
+  },
+  "modelVersion": "gemini-3.5-flash-lite",
+  "responseId": "q7bdaKfFAuOWkdUPprXq0QQ"
+}

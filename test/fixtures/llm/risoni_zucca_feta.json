@@ -1,0 +1,25 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Risoni cremosi alla zucca e feta",
+  "description": null,
+  "servings": null,
+  "servingsUnit": null,
+  "prepMinutes": 10,
+  "cookMinutes": 25,
+  "restMinutes": null,
+  "difficulty": "unknown",
+  "tags": ["primo", "autunno"],
+  "ingredients": [
+    {"group": "Per la crema di zucca", "name": "zucca", "quantity": 400, "quantityMax": null, "unit": "gram", "gramsEstimate": 400, "isEstimated": false, "note": "già pulita", "scalingRule": "linear", "canonicalNameEn": "pumpkin"},
+    {"group": "Per la crema di zucca", "name": "feta", "quantity": 100, "quantityMax": null, "unit": "gram", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "feta cheese"},
+    {"group": "Per i risoni", "name": "risoni", "quantity": 200, "quantityMax": null, "unit": "gram", "gramsEstimate": 200, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "orzo pasta"},
+    {"group": "Per i risoni", "name": "brodo vegetale", "quantity": 500, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 500, "isEstimated": true, "note": "caldo", "scalingRule": "linear", "canonicalNameEn": "vegetable broth"},
+    {"group": "Per la crema di zucca", "name": "paprika affumicata", "quantity": 1, "quantityMax": null, "unit": "teaspoon", "gramsEstimate": 2, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "smoked paprika"}
+  ],
+  "steps": [
+    {"text": "Cuocete la zucca a cubetti in forno.", "durationMinutes": 20, "temperatureC": 200},
+    {"text": "Frullate la zucca con la feta e la paprika.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Tostate i risoni, cuoceteli con il brodo e mantecate con la crema.", "durationMinutes": 12, "temperatureC": null}
+  ]
+}

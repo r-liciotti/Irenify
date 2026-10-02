@@ -171,7 +171,7 @@ estratto in 0,4 s, trascrizione in 34 s (0,89 s/s; 49 s a freddo con il primo ca
 ~935 MB PSS poi rilasciato; video TikTok → sottotitoli in 3 s senza estrarre l'audio; reel con musica su licenza →
 audio e trascrizione saltati. Nessun `audio.wav.wav` rimasto.
 
-## Fase 7 — Estrazione della ricetta con Gemini (≈ 1 gg) — *serve la tua chiave Gemini*
+## Fase 7 — Estrazione della ricetta con Gemini (≈ 1 gg) — ✅ completata il 2026-10-02
 
 **Perché:** è il passaggio che trasforma testo libero in una ricetta strutturata.
 
@@ -190,6 +190,20 @@ audio e trascrizione saltati. Nessun `audio.wav.wav` rimasto.
    "non è una ricetta").
 
 **Uscita:** da didascalia + trascrizione a ricetta salvata nel database.
+
+**Come è stata fatta:** contratto comune (`domain/llm_provider.dart` con `LlmProvider`, `GeminiModel`, `LlmSettings`;
+`domain/recipe_schema.dart` con lo schema JSON a ingredienti piatti; 8 nuovi `FailureCode`; `ImportEngine.resumeFailed`;
+chiave cifrata in `settings/data/llm_settings_store.dart`; oscuramento delle chiavi `AQ.`), poi tre subagent in
+parallelo: client Gemini REST (`data/llm/`, `generateContent` v1beta con `responseJsonSchema`, chiave nell'header,
+tentativi sui 429 al minuto e sui 5xx, stop sulla quota giornaliera, D-38), tappe `ExtractStep` (validazione +
+secondo tentativo con l'errore, "non è una ricetta", niente testo) e `SaveRecipeStep` (id ricetta = id del job,
+doppioni → "già nel ricettario", miniatura copiata in `recipes/<id>/` con percorso relativo), Impostazioni (chiave con
+verifica, scelta del modello, ripresa dei job fermi per la chiave). Differenze dal piano: temperatura predefinita
+(D-36), categoria = `scalingRule` (D-37), modello `gemini-3.5-flash-lite` (D-35). Prova sul Pixel con la chiave
+dell'utente: schema accettato al primo colpo, ~1,3 s per richiesta; i 9 job condivisi nei giorni precedenti sono
+ripartiti al salvataggio della chiave: 2 ricette ("Risoni con zucca e feta" da IG e da TikTok, quantità, intervalli,
+q.b. e passi corretti), 2 doppioni riconosciuti, 5 "non è una ricetta" tutti corretti (pubblicità, post di moda, foto
+con il solo nome del piatto).
 
 ## Fase 8 — Interfaccia provvisoria e prova completa (≈ 0,5 gg)
 
@@ -219,5 +233,5 @@ audio e trascrizione saltati. Nessun `audio.wav.wav` rimasto.
 | 4 | Ricezione condivisione e link ✅ | prova sul telefono | 0,5 gg |
 | 5 | Didascalia e video ✅ | prova sul telefono | 0,75 gg |
 | 6 | Audio e trascrizione ✅ | prova sul telefono | 0,75 gg |
-| 7 | Estrazione con Gemini | **chiave Gemini** | 1 gg |
+| 7 | Estrazione con Gemini ✅ | **chiave Gemini** | 1 gg |
 | 8 | Interfaccia provvisoria e prova completa | 6–8 link reali | 0,5 gg |

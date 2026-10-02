@@ -13,11 +13,13 @@ import 'package:irenefy/core/logging/app_log.dart';
 import 'package:irenefy/data/db/app_database.dart';
 import 'package:irenefy/data/db/database_provider.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
+import 'package:irenefy/features/settings/data/llm_settings_store.dart';
 import 'package:irenefy/features/settings/data/whisper_model_manager.dart';
 import 'package:irenefy/l10n/app_localizations.dart';
 
 import '../data/db/test_database.dart';
 import '../features/recipes/data/recipe_repository_test.dart' show sampleRecipe;
+import '../features/settings/fake_llm_settings.dart';
 
 /// Widget test sull'app intera, con database in memoria.
 ///
@@ -48,6 +50,8 @@ void appTest(
             speechModelDirectoryProvider.overrideWithValue(
               () async => modelDir,
             ),
+            // Chiave e modello in memoria, mai nel secure storage.
+            llmSettingsProvider.overrideWithValue(FakeLlmSettings()),
           ],
           child: const IrenefyApp(),
         ),
@@ -87,6 +91,12 @@ void main() {
 
     await tester.tap(find.text('Impostazioni'));
     await tester.pumpAndSettle();
+    // In fondo alle impostazioni, sotto la chiave Gemini e la trascrizione.
+    await tester.scrollUntilVisible(
+      find.text('Strumenti di prova (F0)'),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
     expect(find.text('Strumenti di prova (F0)'), findsOneWidget);
 
     await tester.tap(find.text('Ricette'));

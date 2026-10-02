@@ -30,6 +30,14 @@ extension FailureCodeText on FailureCode {
     FailureCode.stepNotAvailable => l10n.failureStepNotAvailable,
     FailureCode.sourceUnavailable => l10n.failureSourceUnavailable,
     FailureCode.transcriptionFailed => l10n.failureTranscriptionFailed,
+    FailureCode.missingApiKey => l10n.failureMissingApiKey,
+    FailureCode.invalidApiKey => l10n.failureInvalidApiKey,
+    FailureCode.quotaExceeded => l10n.failureQuotaExceeded,
+    FailureCode.notARecipe => l10n.failureNotARecipe,
+    FailureCode.nothingToExtract => l10n.failureNothingToExtract,
+    FailureCode.invalidExtraction => l10n.failureInvalidExtraction,
+    FailureCode.contentBlocked => l10n.failureContentBlocked,
+    FailureCode.llmUnavailable => l10n.failureLlmUnavailable,
   };
 }
 

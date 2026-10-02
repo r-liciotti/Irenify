@@ -514,6 +514,41 @@ void main() {
     expect(steps[ImportStatus.normalized]!.runs, 1, reason: 'riparte da lì');
   });
 
+  test(
+    'i job fermi per la chiave ripartono quando la si salva (D-39)',
+    () async {
+      var keySaved = false;
+      steps[ImportStatus.extracted]!.body = (job, files, runs) async {
+        if (!keySaved) throw const MissingApiKeyFailure();
+        return StepResult.done(job);
+      };
+      final waiting = await repo.create(sharedText: 'A');
+      final other = await repo.create(sharedText: 'B');
+      steps[ImportStatus.metadata]!.body = (job, files, runs) async {
+        if (job.sharedText == 'B') throw const InvalidLinkFailure();
+        return StepResult.done(job);
+      };
+      final engine = newEngine();
+      await engine.wake();
+      expect((await repo.getById(waiting.id))!.errorCode, 'missingApiKey');
+
+      keySaved = true;
+      await engine.resumeFailed({
+        FailureCode.missingApiKey,
+        FailureCode.invalidApiKey,
+      });
+      await engine.wake();
+
+      expect((await repo.getById(waiting.id))!.status, ImportStatus.completed);
+      expect(
+        steps[ImportStatus.transcribed]!.runs,
+        1,
+        reason: 'non rifà tutto',
+      );
+      expect((await repo.getById(other.id))!.errorCode, 'invalidLink');
+    },
+  );
+
   test('una tappa non ancora disponibile ferma il job', () async {
     steps.remove(ImportStatus.extracted);
     final job = await repo.create(sharedText: 'A');

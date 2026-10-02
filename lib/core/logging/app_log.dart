@@ -16,8 +16,10 @@ class AppLog {
   final DateTime Function() _clock;
   final _lines = ListQueue<String>();
 
-  // Formato delle chiavi Gemini / Google AI Studio.
+  // Formati delle chiavi Gemini / Google AI Studio: quelle storiche `AIza…`
+  // e le "auth key" `AQ.…` rilasciate dal 2026 (D-39).
   static final _googleApiKey = RegExp(r'AIza[0-9A-Za-z_-]{35}');
+  static final _googleAuthKey = RegExp(r'AQ\.[0-9A-Za-z._-]{16,}');
 
   List<String> get lines => List.unmodifiable(_lines);
 
@@ -48,8 +50,9 @@ class AppLog {
   }
 
   /// Oscura le chiavi API presenti in [text].
-  static String redact(String text) =>
-      text.replaceAll(_googleApiKey, 'AIza…[chiave nascosta]');
+  static String redact(String text) => text
+      .replaceAll(_googleApiKey, 'AIza…[chiave nascosta]')
+      .replaceAll(_googleAuthKey, 'AQ.…[chiave nascosta]');
 
   String _timestamp() {
     final t = _clock();

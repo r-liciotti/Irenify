@@ -1,0 +1,28 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "  Pasta alla Norma ",
+  "description": "Il classico primo siciliano con melanzane fritte e ricotta salata.",
+  "servings": 4,
+  "servingsUnit": "persone",
+  "prepMinutes": 20,
+  "cookMinutes": 30.0,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["Primo", "vegetariano", "primo", " siciliana ", "", "estate", "pasta", "melanzane"],
+  "ingredients": [
+    {"group": null, "name": "rigatoni", "quantity": 320, "quantityMax": null, "unit": "gram", "gramsEstimate": 320, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "rigatoni pasta"},
+    {"group": null, "name": "melanzane", "quantity": 2, "quantityMax": 3, "unit": "piece", "gramsEstimate": 600, "isEstimated": false, "note": "tonde e sode", "scalingRule": "integer", "canonicalNameEn": "eggplant"},
+    {"group": null, "name": "passata di pomodoro", "quantity": 500, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 500, "isEstimated": true, "note": null, "scalingRule": "linear", "canonicalNameEn": "tomato puree"},
+    {"group": null, "name": "aglio", "quantity": 1, "quantityMax": 1, "unit": "clove", "gramsEstimate": 3, "isEstimated": false, "note": "", "scalingRule": "integer", "canonicalNameEn": "garlic"},
+    {"group": null, "name": "ricotta salata", "quantity": 80, "quantityMax": null, "unit": "gram", "gramsEstimate": 80, "isEstimated": false, "note": "da grattugiare", "scalingRule": "linear", "canonicalNameEn": "ricotta salata cheese"},
+    {"group": null, "name": "basilico", "quantity": null, "quantityMax": null, "unit": "leaf", "gramsEstimate": null, "isEstimated": true, "note": null, "scalingRule": "linear", "canonicalNameEn": "basil"},
+    {"group": null, "name": "sale", "quantity": null, "quantityMax": 5, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": " "},
+    {"group": null, "name": "olio di semi", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": 40, "isEstimated": false, "note": "per friggere", "scalingRule": "toTaste", "canonicalNameEn": "sunflower oil"}
+  ],
+  "steps": [
+    {"text": "Tagliate le melanzane a cubetti e friggetele in olio di semi ben caldo.", "durationMinutes": 10, "temperatureC": 170.0},
+    {"text": " Rosolate l'aglio, aggiungete la passata e cuocete il sugo. ", "durationMinutes": 15.0, "temperatureC": null},
+    {"text": "Lessate la pasta, unitela al sugo con le melanzane e servite con ricotta salata e basilico.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

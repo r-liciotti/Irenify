@@ -11,6 +11,41 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-39 — Chiave Gemini nelle Impostazioni, job in attesa ripresi al salvataggio (2026-10-02) — Attiva
+- **Decisione:** la chiave si inserisce dalle Impostazioni, si salva cifrata (`flutter_secure_storage`) e si verifica con
+  "Prova la chiave" (`GET /v1beta/models/{id}`, non consuma quota). Al salvataggio ripartono i job fermi per chiave
+  mancante o non valida. Il registro oscura anche le chiavi nuove `AQ.…`, oltre ad `AIza…`. Mai dal `.env`.
+- **Perché:** dal 2026 AI Studio rilascia chiavi `AQ.`; senza ripresa i job già condivisi resterebbero fermi.
+- **Deciso da:** utente (punto E del resoconto della fase 7).
+
+## D-38 — Quota Gemini esaurita: attesa breve per il limite al minuto, stop per quello giornaliero (2026-10-02) — Attiva
+- **Decisione:** su un 429 con quota al minuto si attende quanto indica Google (`retryDelay`, al massimo 60 s) e si
+  riprova al massimo 2 volte; con la quota giornaliera il job fallisce subito con "quota esaurita" e "Riprova". Anche
+  i 5xx si riprovano 2 volte con attese brevi. Il passaggio a un altro modello è manuale.
+- **Perché:** il motore lavora un job alla volta: attese lunghe dentro la tappa fermerebbero tutta la coda.
+- **Deciso da:** Claude (punto D del resoconto della fase 7: l'utente non ha risposto, applicata la proposta).
+
+## D-37 — Categoria dell'ingrediente = regola delle porzioni, schema invariato (2026-10-02) — Attiva
+- **Decisione:** la "categoria per le porzioni" del piano è il campo esistente `scalingRule` (lineare, meno che
+  proporzionale, fisso, intero, q.b.), prodotto dall'LLM. Nessun nuovo campo nel database; una categoria merceologica
+  (es. "latticini") arriverà con la nutrizione in F4.
+- **Deciso da:** utente (punto C del resoconto della fase 7).
+
+## D-36 — Gemini senza temperatura bassa, con schema JSON vincolato (2026-10-02) — Attiva
+- **Decisione:** temperatura lasciata al valore predefinito di Google (il piano diceva "bassa"); precisione ottenuta con
+  `responseJsonSchema` (API `generateContent` v1beta, chiave nell'header `x-goog-api-key`) e ragionamento al minimo
+  (`thinkingLevel` MINIMAL per i Flash-Lite, LOW per i Flash 3.8). Risposta non valida → secondo tentativo con
+  l'errore nel prompt.
+- **Perché:** per i modelli Gemini 3 Google sconsiglia di abbassare la temperatura (ripetizioni, qualità peggiore).
+- **Deciso da:** utente (punto B del resoconto della fase 7).
+
+## D-35 — Modello Gemini predefinito `gemini-3.5-flash-lite`, sceglibile nelle Impostazioni (2026-10-02) — Attiva
+- **Decisione:** predefinito `gemini-3.5-flash-lite` (~500 richieste/giorno gratuite, dato di terzi da verificare);
+  in alternativa `gemini-3.1-flash-lite` (quota separata) e `gemini-3.8-flash` (migliore, ~20/giorno). ID stabili,
+  niente alias "latest".
+- **Perché:** i modelli 2.0 sono spenti e i 2.5 non sono disponibili per i progetti nuovi (verificato il 2026-10-02).
+- **Deciso da:** utente (punto A del resoconto della fase 7).
+
 ## D-34 — Trascrizione solo ad app aperta anche in fase 6 (2026-10-02) — Attiva, conferma D-23
 - **Decisione:** nessun servizio Android in primo piano per la trascrizione: se l'utente torna a un'altra app, Android
   congela Irenefy e la trascrizione riprende alla riapertura. Da rivalutare dopo la prova completa della fase 8.

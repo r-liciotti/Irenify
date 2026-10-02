@@ -256,6 +256,174 @@ abstract class AppLocalizations {
   /// **'Schermata provvisoria: analisi link, download e Whisper'**
   String get settingsSpikeToolsSubtitle;
 
+  /// No description provided for @geminiSection.
+  ///
+  /// In it, this message translates to:
+  /// **'Estrazione delle ricette'**
+  String get geminiSection;
+
+  /// No description provided for @geminiKeyTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiave Gemini'**
+  String get geminiKeyTitle;
+
+  /// No description provided for @geminiKeyLoading.
+  ///
+  /// In it, this message translates to:
+  /// **'Lettura in corso…'**
+  String get geminiKeyLoading;
+
+  /// No description provided for @geminiKeyMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'Non inserita — necessaria per estrarre le ricette'**
+  String get geminiKeyMissing;
+
+  /// No description provided for @geminiKeyChecking.
+  ///
+  /// In it, this message translates to:
+  /// **'Verifica della chiave in corso…'**
+  String get geminiKeyChecking;
+
+  /// No description provided for @geminiKeyValid.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiave funzionante'**
+  String get geminiKeyValid;
+
+  /// No description provided for @geminiKeyRejected.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini ha rifiutato questa chiave: controlla di averla copiata per intero.'**
+  String get geminiKeyRejected;
+
+  /// No description provided for @geminiKeyUnverified.
+  ///
+  /// In it, this message translates to:
+  /// **'Salvata ma non verificata. {message}'**
+  String geminiKeyUnverified(String message);
+
+  /// No description provided for @geminiKeyInsert.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci'**
+  String get geminiKeyInsert;
+
+  /// No description provided for @geminiKeyChange.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambia'**
+  String get geminiKeyChange;
+
+  /// No description provided for @geminiKeyTry.
+  ///
+  /// In it, this message translates to:
+  /// **'Prova la chiave'**
+  String get geminiKeyTry;
+
+  /// No description provided for @geminiKeyDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get geminiKeyDelete;
+
+  /// No description provided for @geminiKeyDeleteTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare la chiave?'**
+  String get geminiKeyDeleteTitle;
+
+  /// No description provided for @geminiKeyDeleteBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Senza chiave le nuove importazioni si fermano prima dell\'estrazione della ricetta.'**
+  String get geminiKeyDeleteBody;
+
+  /// No description provided for @geminiCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get geminiCancel;
+
+  /// No description provided for @geminiKeySave.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva'**
+  String get geminiKeySave;
+
+  /// No description provided for @geminiKeyFieldLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiave API'**
+  String get geminiKeyFieldLabel;
+
+  /// No description provided for @geminiKeyHelp.
+  ///
+  /// In it, this message translates to:
+  /// **'Creala gratis su aistudio.google.com → Get API key'**
+  String get geminiKeyHelp;
+
+  /// No description provided for @geminiKeyShow.
+  ///
+  /// In it, this message translates to:
+  /// **'Mostra la chiave'**
+  String get geminiKeyShow;
+
+  /// No description provided for @geminiKeyHide.
+  ///
+  /// In it, this message translates to:
+  /// **'Nascondi la chiave'**
+  String get geminiKeyHide;
+
+  /// No description provided for @geminiKeyEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Incolla la chiave'**
+  String get geminiKeyEmpty;
+
+  /// No description provided for @geminiModelTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Modello'**
+  String get geminiModelTitle;
+
+  /// No description provided for @geminiModelFlashLite35.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini 3.5 Flash-Lite'**
+  String get geminiModelFlashLite35;
+
+  /// No description provided for @geminiModelFlashLite35Hint.
+  ///
+  /// In it, this message translates to:
+  /// **'Consigliato: circa 500 ricette al giorno gratis'**
+  String get geminiModelFlashLite35Hint;
+
+  /// No description provided for @geminiModelFlashLite31.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini 3.1 Flash-Lite'**
+  String get geminiModelFlashLite31;
+
+  /// No description provided for @geminiModelFlashLite31Hint.
+  ///
+  /// In it, this message translates to:
+  /// **'Quota separata: usalo se l\'altro ha esaurito la quota'**
+  String get geminiModelFlashLite31Hint;
+
+  /// No description provided for @geminiModelFlash38.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini 3.8 Flash'**
+  String get geminiModelFlash38;
+
+  /// No description provided for @geminiModelFlash38Hint.
+  ///
+  /// In it, this message translates to:
+  /// **'Più preciso: circa 20 ricette al giorno gratis'**
+  String get geminiModelFlash38Hint;
+
   /// No description provided for @settingsTranscription.
   ///
   /// In it, this message translates to:
@@ -387,6 +555,54 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'La trascrizione dell\'audio non è riuscita.'**
   String get failureTranscriptionFailed;
+
+  /// No description provided for @failureMissingApiKey.
+  ///
+  /// In it, this message translates to:
+  /// **'Manca la chiave Gemini: inseriscila nelle Impostazioni.'**
+  String get failureMissingApiKey;
+
+  /// No description provided for @failureInvalidApiKey.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini ha rifiutato la chiave: controllala nelle Impostazioni.'**
+  String get failureInvalidApiKey;
+
+  /// No description provided for @failureQuotaExceeded.
+  ///
+  /// In it, this message translates to:
+  /// **'Quota gratuita di Gemini esaurita: riprova più tardi o domani.'**
+  String get failureQuotaExceeded;
+
+  /// No description provided for @failureNotARecipe.
+  ///
+  /// In it, this message translates to:
+  /// **'Questo post non sembra contenere una ricetta.'**
+  String get failureNotARecipe;
+
+  /// No description provided for @failureNothingToExtract.
+  ///
+  /// In it, this message translates to:
+  /// **'Il post non ha testo da cui ricavare la ricetta: né didascalia né parlato.'**
+  String get failureNothingToExtract;
+
+  /// No description provided for @failureInvalidExtraction.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini non ha restituito una ricetta valida.'**
+  String get failureInvalidExtraction;
+
+  /// No description provided for @failureContentBlocked.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini ha bloccato questo contenuto.'**
+  String get failureContentBlocked;
+
+  /// No description provided for @failureLlmUnavailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini non risponde in questo momento: riprova più tardi.'**
+  String get failureLlmUnavailable;
 
   /// No description provided for @actionRetry.
   ///
