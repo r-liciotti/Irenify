@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Scorciatoia di condivisione: fa comparire "Importa ricetta" nella fila in
+     alto del menu di condivisione di Android. La scorciatoia vera e propria la
+     pubblica MainActivity con la stessa categoria. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <share-target android:targetClass="it.overside.irenefy.MainActivity">
+        <data android:mimeType="text/plain" />
+        <data android:mimeType="video/*" />
+        <category android:name="it.overside.irenefy.category.IMPORT_RECIPE" />
+    </share-target>
+</shortcuts>

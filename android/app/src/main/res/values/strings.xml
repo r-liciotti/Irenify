@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Scorciatoia nel menu di condivisione di Android. -->
+    <string name="share_shortcut_label">Importa ricetta</string>
+    <string name="share_shortcut_long_label">Importa la ricetta in Irenefy</string>
+</resources>

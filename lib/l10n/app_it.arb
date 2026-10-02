@@ -12,6 +12,30 @@
 
   "importsEmptyTitle": "Nessuna importazione",
   "importsEmptyBody": "Qui vedrai l'avanzamento dei reel condivisi e gli eventuali errori.",
+  "importSharedVideo": "Video condiviso",
+  "importInProgress": "In corso: {step}",
+  "@importInProgress": {
+    "placeholders": {
+      "step": { "type": "String" }
+    }
+  },
+  "importFailedAt": "Ferma a «{step}»: {message}",
+  "@importFailedAt": {
+    "placeholders": {
+      "step": { "type": "String" },
+      "message": { "type": "String" }
+    }
+  },
+  "importCompleted": "Ricetta salvata",
+  "importAlreadyInRecipes": "Già nel ricettario",
+  "importStepNormalized": "lettura del link",
+  "importStepMetadata": "didascalia",
+  "importStepMedia": "download del video",
+  "importStepAudio": "estrazione dell'audio",
+  "importStepTranscribed": "trascrizione",
+  "importStepExtracted": "estrazione della ricetta",
+  "importStepNutrition": "valori nutrizionali",
+  "importStepCompleted": "salvataggio",
 
   "settingsDiagnostics": "Diagnostica",
   "settingsCopyLog": "Copia registro",
@@ -28,6 +52,10 @@
   "failureNetwork": "Connessione assente o troppo lenta.",
   "failureUnexpected": "Si è verificato un errore imprevisto.",
   "failureStepInterrupted": "L'importazione si è interrotta più volte allo stesso punto.",
+  "failureUnsupportedLink": "Link non supportato: condividi un post di Instagram o TikTok.",
+  "failureInvalidLink": "Il link non porta a un post: forse è scaduto o è stato rimosso.",
+  "failureAlreadyImporting": "Questo post è già in un'altra importazione.",
+  "failureStepNotAvailable": "Questa parte dell'importazione non è ancora disponibile.",
   "actionRetry": "Riprova",
   "actionOpenSettings": "Apri impostazioni"
 }

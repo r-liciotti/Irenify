@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
 import 'app/providers.dart';
+import 'app/router.dart';
 import 'core/logging/app_log.dart';
 import 'features/import_pipeline/data/import_engine.dart';
+import 'features/share_intake/data/share_intake.dart';
 
 void main() {
   // Serve prima di usare i plugin (path_provider) fuori da un widget.
@@ -29,9 +31,19 @@ void main() {
     retry: noAutomaticRetry,
     overrides: [appLogProvider.overrideWithValue(log)],
   );
-  // Riprende le importazioni lasciate a metà. Il motore parte da qui e non
-  // dall'app: i widget test montano IrenefyApp senza avviarlo.
-  unawaited(container.read(importEngineProvider).start());
+  // Motore e ricezione delle condivisioni partono da qui e non dall'app: i
+  // widget test montano IrenefyApp senza avviarli. Prima la pulizia delle
+  // cartelle, poi le condivisioni, poi la ripresa dei job (ImportEngine.start).
+  final engine = container.read(importEngineProvider);
+  container
+      .read(shareIntakeProvider)
+      .start(
+        ready: engine.start(),
+        onJobCreated: (_) {
+          unawaited(engine.wake());
+          container.read(routerProvider).go(Routes.imports);
+        },
+      );
   runApp(
     UncontrolledProviderScope(container: container, child: const IrenefyApp()),
   );

@@ -97,6 +97,9 @@ abstract class ImportJobData with _$ImportJobData {
 
     /// Scelta dell'utente: saltare video, audio e trascrizione.
     @Default(false) bool captionOnly,
+
+    /// Il post era già nel ricettario: `recipeId` è la ricetta esistente.
+    @Default(false) bool alreadyImported,
     String? caption,
     String? authorName,
     String? thumbnailUrl,

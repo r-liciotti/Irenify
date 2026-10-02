@@ -52,4 +52,15 @@ void main() {
     expect(FailureCode.fromName('rinominato'), FailureCode.unexpected);
     expect(FailureCode.fromName(null), FailureCode.unexpected);
   });
+
+  test('"Riprova" solo dove ripetere può servire (D-26)', () {
+    expect(const NetworkFailure().action, RecoveryAction.retry);
+    expect(const StepInterruptedFailure().action, RecoveryAction.retry);
+    expect(const UnsupportedLinkFailure().action, RecoveryAction.none);
+    expect(const InvalidLinkFailure().action, RecoveryAction.none);
+    expect(const AlreadyImportingFailure().action, RecoveryAction.none);
+    expect(const StepNotAvailableFailure().action, RecoveryAction.none);
+    // Un job salvato ha solo il codice: l'azione si ricava da lì.
+    expect(FailureCode.fromName('unsupportedLink').action, RecoveryAction.none);
+  });
 }

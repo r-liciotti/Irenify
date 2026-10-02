@@ -9,7 +9,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../features/import_pipeline/data/url_normalizer.dart';
@@ -47,7 +46,6 @@ class _SpikeScreenState extends State<SpikeScreen> {
   final _whisperProbe = WhisperProbe();
   final _linkController = TextEditingController();
   final _items = <_Item>[];
-  StreamSubscription<List<SharedMediaFile>>? _shareSub;
 
   ProbeModel _model = probeModels[1]; // base, già scaricato nelle prime prove
   int _threads = 6; // misurato: 6 thread ≈ 2× più veloce di 4 sul Tensor G4
@@ -62,15 +60,8 @@ class _SpikeScreenState extends State<SpikeScreen> {
   @override
   void initState() {
     super.initState();
-    _shareSub = ReceiveSharingIntent.instance.getMediaStream().listen(
-      _onShared,
-    );
-    unawaited(
-      ReceiveSharingIntent.instance.getInitialMedia().then((files) {
-        _onShared(files);
-        return ReceiveSharingIntent.instance.reset();
-      }),
-    );
+    // Le condivisioni le riceve ora share_intake (F1 fase 4): qui restano
+    // solo l'inserimento manuale dei link e i video già salvati.
     unawaited(_refreshModel());
     unawaited(_loadCachedVideos());
   }
@@ -138,21 +129,8 @@ class _SpikeScreenState extends State<SpikeScreen> {
 
   @override
   void dispose() {
-    unawaited(_shareSub?.cancel());
     _linkController.dispose();
     super.dispose();
-  }
-
-  void _onShared(List<SharedMediaFile> files) {
-    for (final f in files) {
-      if (f.type == SharedMediaType.video || f.type == SharedMediaType.file) {
-        _add(
-          _Item(label: 'File condiviso: ${f.path}', videoFile: File(f.path)),
-        );
-      } else {
-        _addText(f.path, source: 'Condiviso (${f.type.value})');
-      }
-    }
   }
 
   void _addText(String text, {required String source}) {

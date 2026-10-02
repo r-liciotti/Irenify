@@ -7,11 +7,15 @@ import 'package:path_provider/path_provider.dart';
 import '../../../app/providers.dart';
 import '../../../core/errors/failure.dart';
 import '../../../core/logging/app_log.dart';
+import '../../../core/network/http_client.dart';
+import '../../recipes/data/recipe_repository.dart';
 import '../domain/import_flow.dart';
 import '../domain/import_job.dart';
 import '../domain/import_step.dart';
 import 'import_job_repository.dart';
 import 'job_storage.dart';
+import 'link_resolver.dart';
+import 'steps/normalize_link_step.dart';
 import 'steps/pass_through_nutrition_step.dart';
 
 final jobStorageProvider = Provider<JobStorage>(
@@ -21,11 +25,18 @@ final jobStorageProvider = Provider<JobStorage>(
   }),
 );
 
-/// Tappe disponibili. Le fasi 4–7 della F1 aggiungono quelle reali: finché
-/// una tappa manca, il job che la raggiunge fallisce (o la salta, se è
-/// facoltativa).
+/// Tappe disponibili. Le fasi 5–7 della F1 aggiungono le altre: finché una
+/// tappa manca, il job che la raggiunge si ferma con "non ancora
+/// disponibile" (o la salta, se è facoltativa).
 final importStepsProvider = Provider<List<ImportStep>>(
-  (ref) => const [PassThroughNutritionStep()],
+  (ref) => [
+    NormalizeLinkStep(
+      resolver: LinkResolver(ref.watch(httpClientProvider)),
+      recipes: ref.watch(recipeRepositoryProvider),
+      jobs: ref.watch(importJobRepositoryProvider),
+    ),
+    const PassThroughNutritionStep(),
+  ],
 );
 
 final importEngineProvider = Provider<ImportEngine>((ref) {
@@ -70,11 +81,13 @@ class ImportEngine {
   bool _disposed = false;
   Future<void> _loopDone = Future.value();
 
-  /// All'avvio dell'app: elimina le cartelle dei job rimaste orfane e
-  /// riprende i job lasciati a metà.
+  /// All'avvio dell'app: elimina le cartelle dei job rimaste orfane, poi
+  /// riprende in background i job lasciati a metà. Il Future si completa a
+  /// pulizia finita: solo da lì la ricezione delle condivisioni può creare
+  /// nuove cartelle senza che la pulizia le scambi per orfane.
   Future<void> start() async {
     await _cleanUpFolders();
-    await wake();
+    unawaited(wake());
   }
 
   /// Avvisa il motore che c'è lavoro (nuovo job, "Riprova"…). Il Future si
@@ -170,16 +183,19 @@ class ImportEngine {
       _log.info('${_tag(job)} ${step.name}, tentativo ${started.attempts}');
 
       try {
+        final ImportStatus reached;
         if (step == ImportStatus.completed) {
           // Ricetta salvata e job completato nella stessa transazione: un
           // crash in mezzo non lascia una ricetta da salvare di nuovo.
-          await _repo.transaction(() async {
-            await _finish(step, await _run(started, step));
-          });
+          reached = await _repo.transaction(
+            () async => _finish(step, await _run(started, step)),
+          );
+        } else {
+          reached = await _finish(step, await _run(started, step));
+        }
+        if (reached == ImportStatus.completed) {
           await _storage.delete(job.id);
           _log.info('${_tag(job)} completata');
-        } else {
-          await _finish(step, await _run(started, step));
         }
       } on ImportJobNotFoundException {
         rethrow;
@@ -194,21 +210,38 @@ class ImportEngine {
 
   Future<StepResult> _run(ImportJob job, ImportStatus step) async {
     final impl = _steps[step];
-    if (impl == null) throw StateError('Tappa ${step.name} non disponibile');
+    if (impl == null) {
+      throw StepNotAvailableFailure(
+        cause: 'Tappa ${step.name} non disponibile',
+      );
+    }
     return impl.run(job, await _storage.filesFor(job.id));
   }
 
-  Future<void> _finish(ImportStatus step, StepResult result) async {
+  /// Salva il risultato della tappa e restituisce lo stato raggiunto.
+  Future<ImportStatus> _finish(ImportStatus step, StepResult result) async {
     final done = result.job.copyWith(status: step, attempts: 0);
     switch (result) {
       case StepDone():
         await _save(done);
+        return step;
       case StepNotApplicable():
         await _skip(
           done,
           step,
           const SkippedStep(reason: SkipReason.notApplicable),
         );
+        return step;
+      case StepAlreadyImported(:final recipeId):
+        _log.info('${_tag(done)} già nel ricettario');
+        await _save(
+          done.copyWith(
+            status: ImportStatus.completed,
+            recipeId: recipeId,
+            data: done.data.copyWith(alreadyImported: true),
+          ),
+        );
+        return ImportStatus.completed;
     }
   }
 

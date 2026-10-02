@@ -24,6 +24,10 @@ extension FailureCodeText on FailureCode {
     FailureCode.network => l10n.failureNetwork,
     FailureCode.unexpected => l10n.failureUnexpected,
     FailureCode.stepInterrupted => l10n.failureStepInterrupted,
+    FailureCode.unsupportedLink => l10n.failureUnsupportedLink,
+    FailureCode.invalidLink => l10n.failureInvalidLink,
+    FailureCode.alreadyImporting => l10n.failureAlreadyImporting,
+    FailureCode.stepNotAvailable => l10n.failureStepNotAvailable,
   };
 }
 

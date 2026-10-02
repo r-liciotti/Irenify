@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-09-29)
+## Stato (aggiornato al 2026-10-02)
 
 Fase **F1 in corso** (piano in `F1_PIANO.md`, 8 fasi). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -17,9 +17,14 @@ entità freezed in `features/*/domain/`, `RecipeRepository` e `ImportJobReposito
 **Fase 3 (motore delle importazioni) completata il 2026-09-29**: `ImportEngine` in `features/import_pipeline/data/`
 (coda = database, un job alla volta, ripresa all'avvio da `main.dart`, limite di 3 interruzioni per tappa), regole in
 `domain/import_flow.dart`, interfaccia `ImportStep`. Nessuna tappa reale ancora (solo la nutrizione che passa oltre):
-arrivano dalla fase 4, che è la prossima.
-La schermata di prova della F0 (`lib/spike/`) è raggiungibile da Impostazioni → "Strumenti di prova (F0)" ed è
-l'unica che riceve le condivisioni fino alla fase 4. **Non** va estesa; va eliminata in fase 8.
+arrivano dalla fase 4.
+**Fase 4 (condivisione e link) completata il 2026-10-02**: `lib/features/share_intake/` riceve le condivisioni a
+livello di app (non più `lib/spike/`), tappa `NormalizeLinkStep` + `LinkResolver`, scorciatoia di condivisione e
+correzione "app recenti" in `MainActivity.kt`, elenco minimo in Importazioni. I job reali si fermano alla didascalia
+("non ancora disponibile") fino alla fase 5, che è la prossima. Provati sul Pixel un reel IG e un link breve TikTok
+reali; la prova del video condiviso dalla galleria è rimandata alla fase 8 (D-29).
+La schermata di prova della F0 (`lib/spike/`) è raggiungibile da Impostazioni → "Strumenti di prova (F0)" (solo link
+inseriti a mano: le condivisioni non le riceve più). **Non** va estesa; va eliminata in fase 8.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT
@@ -110,7 +115,12 @@ flutter run -d <device>             # telefono Android / iPhone reale
 - Importazioni: ogni tappa implementa `ImportStep` (idempotente, lancia `Failure`, non tocca stato né tentativi) ed
   è registrata in `importStepsProvider`. File del job solo tramite `JobFiles` (`writeAtomically` per download e
   conversioni). Il motore parte da `main.dart` (`UncontrolledProviderScope`), non dall'app: i widget test non lo avviano.
-  Codici d'errore salvati per nome (`FailureCode`, D-25): mai rinominarli.
+  Codici d'errore salvati per nome (`FailureCode`, D-25): mai rinominarli; l'azione ("Riprova" o nessuna) sta sul codice.
+- Rete: un solo client dio (`httpClientProvider`, UA Safari iPhone verificato in F0); nei test `FakeHttp`
+  (`test/features/import_pipeline/data/fake_http.dart`) al posto della rete.
+- Prove della condivisione senza toccare il telefono: `adb shell am start -a android.intent.action.SEND -t text/plain
+  --es android.intent.extra.TEXT '<testo>' -n it.overside.irenefy/.MainActivity` (con `-f 0x00100000` simula la
+  riapertura dalle app recenti).
 - Database: righe drift `*Row`, entità di dominio freezed separate; conversioni solo nei repository. Enum salvati
   per nome: mai rinominarli (D-18). Test: `newTestDatabase()` in `test/data/db/`; widget test con DB tramite
   `appTest(...)` in `test/app/app_test.dart` (smonta l'app e chiude il DB dentro il test, altrimenti si blocca).

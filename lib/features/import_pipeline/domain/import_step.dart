@@ -27,6 +27,11 @@ sealed class StepResult {
   /// il motore la annota come saltata e prosegue.
   const factory StepResult.notApplicable(ImportJob job) = StepNotApplicable;
 
+  /// Il post è già nel ricettario come [recipeId]: il job si chiude subito e
+  /// l'app apre la ricetta esistente (D-17).
+  const factory StepResult.alreadyImported(ImportJob job, String recipeId) =
+      StepAlreadyImported;
+
   final ImportJob job;
 }
 
@@ -36,6 +41,12 @@ final class StepDone extends StepResult {
 
 final class StepNotApplicable extends StepResult {
   const StepNotApplicable(super.job);
+}
+
+final class StepAlreadyImported extends StepResult {
+  const StepAlreadyImported(super.job, this.recipeId);
+
+  final String recipeId;
 }
 
 /// Cartella di lavoro di un job (video, audio, miniatura), in Application

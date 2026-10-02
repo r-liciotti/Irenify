@@ -81,6 +81,43 @@ void main() {
     expect((await repo.getById(job.id))!.data, updated.data);
   });
 
+  test(
+    'un job può nascere con id e dati già decisi (video condiviso)',
+    () async {
+      final id = ImportJobRepository.newId();
+      final job = await repo.create(
+        id: id,
+        sharedFilePath: '/jobs/$id/condiviso.mp4',
+        data: const ImportJobData(thumbnailPath: '/jobs/x/miniatura.png'),
+      );
+      expect(job.id, id);
+      expect(
+        (await repo.getById(id))!.data.thumbnailPath,
+        '/jobs/x/miniatura.png',
+      );
+    },
+  );
+
+  test('altri job attivi per lo stesso post: conta anche un fallito', () async {
+    final a = await repo.create(sharedText: 'a');
+    final b = await repo.create(sharedText: 'b');
+    await repo.save(a.copyWith(sourceKey: 'tiktok:1'));
+    await repo.save(b.copyWith(sourceKey: 'tiktok:1'));
+
+    expect(await repo.hasOtherActive('tiktok:1', exceptId: b.id), isTrue);
+    expect(await repo.hasOtherActive('tiktok:2', exceptId: b.id), isFalse);
+
+    await repo.save(
+      a.copyWith(sourceKey: 'tiktok:1', status: ImportStatus.failed),
+    );
+    expect(await repo.hasOtherActive('tiktok:1', exceptId: b.id), isTrue);
+
+    await repo.save(
+      a.copyWith(sourceKey: 'tiktok:1', status: ImportStatus.completed),
+    );
+    expect(await repo.hasOtherActive('tiktok:1', exceptId: b.id), isFalse);
+  });
+
   test('salvare un job inesistente è un errore', () async {
     final ghost = (await repo.create(sharedText: 'x')).copyWith(id: 'fantasma');
     await expectLater(

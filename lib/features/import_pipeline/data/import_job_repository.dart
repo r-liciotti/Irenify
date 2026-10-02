@@ -30,19 +30,29 @@ class ImportJobRepository {
   final DateTime Function() _clock;
   static const _uuid = Uuid();
 
+  /// Nuovo id per un job: serve prima di [create] quando il file condiviso va
+  /// spostato nella cartella del job.
+  static String newId() => _uuid.v4();
+
   /// Crea un job nello stato [ImportStatus.received] da un testo condiviso
   /// o da un file video già copiato nella cartella dell'app.
-  Future<ImportJob> create({String? sharedText, String? sharedFilePath}) async {
+  Future<ImportJob> create({
+    String? id,
+    String? sharedText,
+    String? sharedFilePath,
+    ImportJobData data = const ImportJobData(),
+  }) async {
     assert(
       sharedText != null || sharedFilePath != null,
       'Serve un testo o un file condiviso',
     );
     final now = _clock();
     final job = ImportJob(
-      id: _uuid.v4(),
+      id: id ?? newId(),
       status: ImportStatus.received,
       sharedText: sharedText,
       sharedFilePath: sharedFilePath,
+      data: data,
       createdAt: now,
       updatedAt: now,
     );
@@ -81,6 +91,25 @@ class ImportJobRepository {
               ..orderBy([(j) => OrderingTerm(expression: j.createdAt)]))
             .get();
     return rows.map(_fromRow).toList();
+  }
+
+  /// C'è un altro job, non completato, per lo stesso post? Anche un job
+  /// fallito conta: si riprende quello invece di aprirne un secondo.
+  Future<bool> hasOtherActive(
+    String sourceKey, {
+    required String exceptId,
+  }) async {
+    final row =
+        await (_db.select(_db.importJobs)
+              ..where(
+                (j) =>
+                    j.sourceKey.equals(sourceKey) &
+                    j.id.equals(exceptId).not() &
+                    j.status.equalsValue(ImportStatus.completed).not(),
+              )
+              ..limit(1))
+            .getSingleOrNull();
+    return row != null;
   }
 
   /// Job più recenti per la schermata Importazioni; si aggiorna da solo.

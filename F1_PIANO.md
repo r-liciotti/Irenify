@@ -96,7 +96,7 @@ Decisioni D-21…D-25. Per le fasi 4–7: ogni tappa reale implementa `ImportSte
 `importStepsProvider`; la tappa del salvataggio (`completed`) gira già dentro una transazione e deve spostare la
 miniatura fuori da `jobs/<id>/` prima che la cartella venga eliminata.
 
-## Fase 4 — Ricezione della condivisione e normalizzazione del link (≈ 0,5 gg)
+## Fase 4 — Ricezione della condivisione e normalizzazione del link (≈ 0,5 gg) — ✅ completata il 2026-10-02 (prova del video dalla galleria rimandata alla fase 8, D-29)
 
 **Perché:** è il punto d'ingresso. Oggi lo gestisce la schermata di prova.
 
@@ -109,6 +109,13 @@ miniatura fuori da `jobs/<id>/` prima che la cartella venga eliminata.
 5. Testo senza link riconoscibile: messaggio "Link non supportato".
 
 **Uscita:** condivido dal telefono e compare il job nella schermata Importazioni.
+
+**Come è stata fatta:** `lib/features/share_intake/` (`ShareIntake` + `ShareSource`), avviata da `main.dart` dopo la
+pulizia delle cartelle; tappa `NormalizeLinkStep` con `LinkResolver` (redirect uno alla volta, `next` del login IG,
+`og:url`); link Instagram `/share/…` da risolvere; `MainActivity.kt` ignora le condivisioni riconsegnate dalle app
+recenti e pubblica la scorciatoia "Importa ricetta" (D-27); file spostati solo dalla cache (D-28); elenco minimo in
+Importazioni. Aperta dalla ricetta esistente (D-17): il job si chiude "già importato", l'apertura della ricetta arriva
+con la schermata di dettaglio (fase 8).
 
 ## Fase 5 — Didascalia e video (≈ 0,75 gg)
 
@@ -187,7 +194,7 @@ miniatura fuori da `jobs/<id>/` prima che la cartella venga eliminata.
 | 1 | Fondamenta dell'app ✅ | — | 0,5 gg |
 | 2 | Modello dati e database ✅ | — | 0,75 gg |
 | 3 | Motore delle importazioni ✅ | — | 0,75 gg |
-| 4 | Ricezione condivisione e link | prova sul telefono | 0,5 gg |
+| 4 | Ricezione condivisione e link ✅ | prova sul telefono | 0,5 gg |
 | 5 | Didascalia e video | prova sul telefono | 0,75 gg |
 | 6 | Audio e trascrizione | prova sul telefono | 0,75 gg |
 | 7 | Estrazione con Gemini | **chiave Gemini** | 1 gg |

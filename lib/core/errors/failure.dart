@@ -16,11 +16,26 @@ enum RecoveryAction { retry, openSettings, none }
 enum FailureCode {
   network,
   unexpected,
-  stepInterrupted;
+  stepInterrupted,
+  unsupportedLink,
+  invalidLink,
+  alreadyImporting,
+  stepNotAvailable;
 
   /// Codice salvato → [FailureCode]; un nome sconosciuto diventa [unexpected].
   static FailureCode fromName(String? name) =>
       values.asNameMap()[name] ?? unexpected;
+
+  /// Azione da proporre; sta sul codice perché anche un job salvato, che ha
+  /// solo il codice, deve sapere se mostrare "Riprova".
+  RecoveryAction get action => switch (this) {
+    network || unexpected || stepInterrupted => RecoveryAction.retry,
+    // Ripetere non cambierebbe nulla (D-26).
+    unsupportedLink ||
+    invalidLink ||
+    alreadyImporting ||
+    stepNotAvailable => RecoveryAction.none,
+  };
 }
 
 sealed class Failure implements Exception {
@@ -42,7 +57,7 @@ sealed class Failure implements Exception {
 
   FailureCode get code;
 
-  RecoveryAction get action;
+  RecoveryAction get action => code.action;
 
   static bool _isConnectivity(DioExceptionType type) => switch (type) {
     DioExceptionType.connectionError ||
@@ -62,9 +77,6 @@ final class NetworkFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.network;
-
-  @override
-  RecoveryAction get action => RecoveryAction.retry;
 }
 
 /// Errore non previsto: va nel registro con la causa completa.
@@ -73,9 +85,6 @@ final class UnexpectedFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.unexpected;
-
-  @override
-  RecoveryAction get action => RecoveryAction.retry;
 }
 
 /// Una tappa dell'importazione è stata interrotta troppe volte (chiusura o
@@ -86,7 +95,38 @@ final class StepInterruptedFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.stepInterrupted;
+}
+
+/// Il testo condiviso non contiene un link Instagram o TikTok riconoscibile
+/// (D-26).
+final class UnsupportedLinkFailure extends Failure {
+  const UnsupportedLinkFailure({super.cause, super.stackTrace});
 
   @override
-  RecoveryAction get action => RecoveryAction.retry;
+  FailureCode get code => FailureCode.unsupportedLink;
+}
+
+/// Il link è riconosciuto ma non porta a un post: per esempio un link breve
+/// TikTok scaduto, che rimanda alla home.
+final class InvalidLinkFailure extends Failure {
+  const InvalidLinkFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.invalidLink;
+}
+
+/// Lo stesso post è già in un'altra importazione non conclusa.
+final class AlreadyImportingFailure extends Failure {
+  const AlreadyImportingFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.alreadyImporting;
+}
+
+/// La tappa non è ancora stata sviluppata (fasi successive della F1).
+final class StepNotAvailableFailure extends Failure {
+  const StepNotAvailableFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.stepNotAvailable;
 }

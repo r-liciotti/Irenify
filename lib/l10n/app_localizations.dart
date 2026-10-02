@@ -142,6 +142,84 @@ abstract class AppLocalizations {
   /// **'Qui vedrai l\'avanzamento dei reel condivisi e gli eventuali errori.'**
   String get importsEmptyBody;
 
+  /// No description provided for @importSharedVideo.
+  ///
+  /// In it, this message translates to:
+  /// **'Video condiviso'**
+  String get importSharedVideo;
+
+  /// No description provided for @importInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In corso: {step}'**
+  String importInProgress(String step);
+
+  /// No description provided for @importFailedAt.
+  ///
+  /// In it, this message translates to:
+  /// **'Ferma a «{step}»: {message}'**
+  String importFailedAt(String step, String message);
+
+  /// No description provided for @importCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricetta salvata'**
+  String get importCompleted;
+
+  /// No description provided for @importAlreadyInRecipes.
+  ///
+  /// In it, this message translates to:
+  /// **'Già nel ricettario'**
+  String get importAlreadyInRecipes;
+
+  /// No description provided for @importStepNormalized.
+  ///
+  /// In it, this message translates to:
+  /// **'lettura del link'**
+  String get importStepNormalized;
+
+  /// No description provided for @importStepMetadata.
+  ///
+  /// In it, this message translates to:
+  /// **'didascalia'**
+  String get importStepMetadata;
+
+  /// No description provided for @importStepMedia.
+  ///
+  /// In it, this message translates to:
+  /// **'download del video'**
+  String get importStepMedia;
+
+  /// No description provided for @importStepAudio.
+  ///
+  /// In it, this message translates to:
+  /// **'estrazione dell\'audio'**
+  String get importStepAudio;
+
+  /// No description provided for @importStepTranscribed.
+  ///
+  /// In it, this message translates to:
+  /// **'trascrizione'**
+  String get importStepTranscribed;
+
+  /// No description provided for @importStepExtracted.
+  ///
+  /// In it, this message translates to:
+  /// **'estrazione della ricetta'**
+  String get importStepExtracted;
+
+  /// No description provided for @importStepNutrition.
+  ///
+  /// In it, this message translates to:
+  /// **'valori nutrizionali'**
+  String get importStepNutrition;
+
+  /// No description provided for @importStepCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'salvataggio'**
+  String get importStepCompleted;
+
   /// No description provided for @settingsDiagnostics.
   ///
   /// In it, this message translates to:
@@ -195,6 +273,30 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'L\'importazione si è interrotta più volte allo stesso punto.'**
   String get failureStepInterrupted;
+
+  /// No description provided for @failureUnsupportedLink.
+  ///
+  /// In it, this message translates to:
+  /// **'Link non supportato: condividi un post di Instagram o TikTok.'**
+  String get failureUnsupportedLink;
+
+  /// No description provided for @failureInvalidLink.
+  ///
+  /// In it, this message translates to:
+  /// **'Il link non porta a un post: forse è scaduto o è stato rimosso.'**
+  String get failureInvalidLink;
+
+  /// No description provided for @failureAlreadyImporting.
+  ///
+  /// In it, this message translates to:
+  /// **'Questo post è già in un\'altra importazione.'**
+  String get failureAlreadyImporting;
+
+  /// No description provided for @failureStepNotAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa parte dell\'importazione non è ancora disponibile.'**
+  String get failureStepNotAvailable;
 
   /// No description provided for @actionRetry.
   ///

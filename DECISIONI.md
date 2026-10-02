@@ -11,6 +11,36 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-29 — Prova del video condiviso dalla galleria rimandata alla fase 8 (2026-10-02) — Attiva
+- **Decisione:** la fase 4 si chiude senza la prova manuale di un video condiviso da Google Foto; la prova rientra in
+  quella completa della fase 8 ("un video condiviso come file").
+- **Perché:** l'utente non è interessato ora a quel percorso. Il codice è coperto dai test (spostamento dalla cache,
+  copia dei file fuori cache con l'originale intatto, video non più presente).
+- **Rischio accettato:** un comportamento del plugin con i content URI reali di Google Foto emergerebbe solo in fase 8.
+- **Deciso da:** utente ("saltiamo da google, non mi interessa ora").
+
+## D-28 — File condivisi: si spostano solo dalla cache dell'app (2026-09-29) — Attiva
+- **Decisione:** un video condiviso viene **spostato** nella cartella del job solo se sta nella cache dell'app (dove
+  `receive_sharing_intent` lo copia di solito); altrimenti viene **copiato** e l'originale non si tocca.
+- **Perché:** per i file scelti dall'app File di Android (memoria interna) e per i `file://` il plugin passa il
+  percorso **originale** (letto in `FileDirectory.kt`): spostarlo toglierebbe il video dalla galleria dell'utente.
+- **Deciso da:** Claude durante lo sviluppo della fase 4 (correzione di sicurezza sui dati dell'utente).
+
+## D-27 — Scorciatoia di condivisione "Importa ricetta" (2026-09-29) — Attiva
+- **Decisione:** l'app pubblica una scorciatoia di condivisione (`res/xml/shortcuts.xml` + `pushDynamicShortcut` in
+  `MainActivity`) e segnala ad Android ogni condivisione ricevuta (`reportShortcutUsed`), che la fa salire nella fila
+  in alto del menu di condivisione con l'uso.
+- **Limite verificato:** sul Pixel (Android 17) una scorciatoia esclusa dal menu dell'icona
+  (`setExcludedFromSurfaces`) non viene pubblicata affatto; quindi compare anche tenendo premuta l'icona dell'app
+  (apre l'app). La riga rapida dentro Instagram resta decisa da Instagram.
+- **Deciso da:** utente ("aggiungi la scorciatoia di condivisione"), limite scoperto da Claude sul telefono.
+
+## D-26 — Testo senza link supportato: job fallito visibile (2026-09-29) — Attiva
+- **Decisione:** se il testo condiviso non contiene un link Instagram/TikTok riconoscibile, il job viene creato e
+  si ferma subito con il messaggio "Link non supportato", senza pulsante "Riprova" (ripetere non cambierebbe nulla).
+- **Alternativa scartata:** solo un avviso temporaneo senza creare il job (sparirebbe senza lasciare traccia).
+- **Deciso da:** utente, nel resoconto della F1 fase 4.
+
 ## D-25 — Codici d'errore stabili salvati per nome (2026-09-29) — Attiva
 - **Decisione:** ogni `Failure` espone un `FailureCode` (enum). Il job di importazione ne salva il nome in
   `errorCode` e l'interfaccia ricava il messaggio dal codice (`FailureCode.message`), anche dopo un riavvio. Come
@@ -75,8 +105,8 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 - **Decisione:** ogni ricetta importata da un post ha una chiave `piattaforma:id` (es. `instagram:DDle01fMxoA`),
   unica nel database e salvata anche sul job di importazione.
 - **Perché:** ricondividendo un reel già importato l'app deve riconoscerlo (fase 4).
-- **Aperto per la fase 4:** cosa fare quando il doppione c'è. Proposta: aprire la ricetta esistente;
-  alternativa: chiedere "Reimportare?".
+- **Doppione (deciso il 2026-09-29, fase 4):** se il post è già nel ricettario l'app **apre la ricetta esistente**
+  e il job si chiude come "già importato"; niente domanda "Reimportare?". Scelta dell'utente.
 - **Deciso da:** Claude, approvato dall'utente.
 
 ## D-16 — Vincoli tra tabelle attivi ed eliminazione a cascata (2026-09-28) — Attiva

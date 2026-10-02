@@ -35,6 +35,49 @@ class AppLocalizationsIt extends AppLocalizations {
       'Qui vedrai l\'avanzamento dei reel condivisi e gli eventuali errori.';
 
   @override
+  String get importSharedVideo => 'Video condiviso';
+
+  @override
+  String importInProgress(String step) {
+    return 'In corso: $step';
+  }
+
+  @override
+  String importFailedAt(String step, String message) {
+    return 'Ferma a «$step»: $message';
+  }
+
+  @override
+  String get importCompleted => 'Ricetta salvata';
+
+  @override
+  String get importAlreadyInRecipes => 'Già nel ricettario';
+
+  @override
+  String get importStepNormalized => 'lettura del link';
+
+  @override
+  String get importStepMetadata => 'didascalia';
+
+  @override
+  String get importStepMedia => 'download del video';
+
+  @override
+  String get importStepAudio => 'estrazione dell\'audio';
+
+  @override
+  String get importStepTranscribed => 'trascrizione';
+
+  @override
+  String get importStepExtracted => 'estrazione della ricetta';
+
+  @override
+  String get importStepNutrition => 'valori nutrizionali';
+
+  @override
+  String get importStepCompleted => 'salvataggio';
+
+  @override
   String get settingsDiagnostics => 'Diagnostica';
 
   @override
@@ -72,6 +115,22 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get failureStepInterrupted =>
       'L\'importazione si è interrotta più volte allo stesso punto.';
+
+  @override
+  String get failureUnsupportedLink =>
+      'Link non supportato: condividi un post di Instagram o TikTok.';
+
+  @override
+  String get failureInvalidLink =>
+      'Il link non porta a un post: forse è scaduto o è stato rimosso.';
+
+  @override
+  String get failureAlreadyImporting =>
+      'Questo post è già in un\'altra importazione.';
+
+  @override
+  String get failureStepNotAvailable =>
+      'Questa parte dell\'importazione non è ancora disponibile.';
 
   @override
   String get actionRetry => 'Riprova';

@@ -324,6 +324,29 @@ void main() {
     },
   );
 
+  test('un post già nel ricettario chiude subito il job (D-17)', () async {
+    // Il job punta alla ricetta: deve esistere davvero (vincolo, D-16).
+    await RecipeRepository(db).insert(sampleRecipe(id: 'ricetta-esistente'));
+    steps[ImportStatus.normalized]!.body = (job, files, _) async {
+      await files.file('miniatura.jpg').writeAsString('jpg');
+      return StepResult.alreadyImported(
+        job.copyWith(sourceKey: 'instagram:ABC'),
+        'ricetta-esistente',
+      );
+    };
+    final job = await repo.create(sharedText: 'A');
+
+    await newEngine().wake();
+
+    final done = (await repo.getById(job.id))!;
+    expect(done.status, ImportStatus.completed);
+    expect(done.recipeId, 'ricetta-esistente');
+    expect(done.sourceKey, 'instagram:ABC');
+    expect(done.data.alreadyImported, isTrue);
+    expect(calls, ['A:normalized'], reason: 'nessun\'altra tappa');
+    expect(await folderOf(job.id).exists(), isFalse);
+  });
+
   group('sola didascalia', () {
     test('video, audio e trascrizione vengono saltati', () async {
       final job = await repo.create(sharedText: 'A');
@@ -463,7 +486,9 @@ void main() {
         throw const NetworkFailure();
     await storage.filesFor('orfano');
 
-    await newEngine().start();
+    final engine = newEngine();
+    await engine.start(); // si completa a pulizia finita…
+    await engine.wake(); // …mentre i job ripartono in background
 
     expect(await folderOf(oldFailure.id).exists(), isFalse);
     expect(await folderOf(completed.id).exists(), isFalse);
@@ -481,6 +506,7 @@ void main() {
 
     final failed = (await repo.getById(job.id))!;
     expect(failed.failedStep, ImportStatus.extracted);
+    expect(failed.errorCode, 'stepNotAvailable');
     expect(failed.errorDetail, contains('non disponibile'));
   });
 }

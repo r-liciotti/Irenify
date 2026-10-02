@@ -34,6 +34,7 @@ _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>
           ) ??
           const {},
       captionOnly: json['captionOnly'] as bool? ?? false,
+      alreadyImported: json['alreadyImported'] as bool? ?? false,
       caption: json['caption'] as String?,
       authorName: json['authorName'] as String?,
       thumbnailUrl: json['thumbnailUrl'] as String?,
@@ -61,6 +62,7 @@ Map<String, dynamic> _$ImportJobDataToJson(
     (k, e) => MapEntry(_$ImportStatusEnumMap[k]!, e.toJson()),
   ),
   'captionOnly': instance.captionOnly,
+  'alreadyImported': instance.alreadyImported,
   'caption': instance.caption,
   'authorName': instance.authorName,
   'thumbnailUrl': instance.thumbnailUrl,

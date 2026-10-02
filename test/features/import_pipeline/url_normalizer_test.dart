@@ -32,6 +32,29 @@ void main() {
       expect(link?.postId, 'Cxyz987');
     });
 
+    test('link di condivisione /share/ va risolto: il token non è il post', () {
+      for (final path in ['share/reel/BAabcdEFgh', 'share/p/BAabcdEFgh']) {
+        final link = parseSharedText(
+          'https://www.instagram.com/$path/?igsh=MWZ0cXg1',
+        );
+        expect(link?.platform, SocialPlatform.instagram, reason: path);
+        expect(link?.needsRedirectResolution, isTrue, reason: path);
+        expect(link?.url.toString(), 'https://www.instagram.com/$path/');
+        expect(link?.sourceKey, isNull);
+      }
+    });
+
+    test('chiave anti-doppioni piattaforma:codice (D-17)', () {
+      final link = parseSharedText(
+        'https://www.instagram.com/reel/DAbc_12-xY/',
+      );
+      expect(link?.sourceKey, 'instagram:DAbc_12-xY');
+      final tiktok = parseSharedText(
+        'https://www.tiktok.com/@chef/video/7412345678901234567',
+      );
+      expect(tiktok?.sourceKey, 'tiktok:7412345678901234567');
+    });
+
     test('profilo senza post non è supportato', () {
       expect(parseSharedText('https://www.instagram.com/chef.anna/'), isNull);
     });
