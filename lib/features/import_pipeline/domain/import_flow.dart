@@ -38,6 +38,9 @@ abstract final class ImportFlow {
   /// dell'app) oltre le quali il motore smette di riprovarla (D-21).
   static const maxInterruptions = 3;
 
+  /// Video più lunghi non si scaricano: ricetta dalla sola didascalia (D-30).
+  static const maxVideoDuration = Duration(minutes: 3);
+
   /// Da quanto tempo i file di un job fallito vengono conservati per
   /// "Riprova" (D-22).
   static const failedFilesRetention = Duration(days: 7);

@@ -619,7 +619,8 @@ mixin _$ImportJobData {
 /// Tappe saltate, con il motivo: la ricetta si fa con quello che c'è.
  Map<ImportStatus, SkippedStep> get skippedSteps;/// Scelta dell'utente: saltare video, audio e trascrizione.
  bool get captionOnly;/// Il post era già nel ricettario: `recipeId` è la ricetta esistente.
- bool get alreadyImported; String? get caption; String? get authorName; String? get thumbnailUrl; String? get thumbnailPath; String? get videoUrl; Map<String, String>? get videoHeaders; double? get videoDurationSeconds; String? get videoPath; String? get audioPath; String? get transcript; TranscriptQuality? get transcriptQuality;/// Risposta dell'LLM già validata, pronta per diventare una ricetta.
+ bool get alreadyImported; String? get caption; String? get authorName; String? get thumbnailUrl; String? get thumbnailPath; String? get videoUrl; Map<String, String>? get videoHeaders; double? get videoDurationSeconds; String? get videoPath;/// Sottotitoli automatici della piattaforma (WebVTT), se offerti (D-31).
+ String? get subtitlesPath; String? get audioPath; String? get transcript; TranscriptQuality? get transcriptQuality;/// Risposta dell'LLM già validata, pronta per diventare una ricetta.
  Map<String, Object?>? get extraction; String? get extractionModel;
 /// Create a copy of ImportJobData
 /// with the given fields replaced by the non-null parameter values.
@@ -633,16 +634,16 @@ $ImportJobDataCopyWith<ImportJobData> get copyWith => _$ImportJobDataCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportJobData&&const DeepCollectionEquality().equals(other.skippedSteps, skippedSteps)&&(identical(other.captionOnly, captionOnly) || other.captionOnly == captionOnly)&&(identical(other.alreadyImported, alreadyImported) || other.alreadyImported == alreadyImported)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.thumbnailPath, thumbnailPath) || other.thumbnailPath == thumbnailPath)&&(identical(other.videoUrl, videoUrl) || other.videoUrl == videoUrl)&&const DeepCollectionEquality().equals(other.videoHeaders, videoHeaders)&&(identical(other.videoDurationSeconds, videoDurationSeconds) || other.videoDurationSeconds == videoDurationSeconds)&&(identical(other.videoPath, videoPath) || other.videoPath == videoPath)&&(identical(other.audioPath, audioPath) || other.audioPath == audioPath)&&(identical(other.transcript, transcript) || other.transcript == transcript)&&(identical(other.transcriptQuality, transcriptQuality) || other.transcriptQuality == transcriptQuality)&&const DeepCollectionEquality().equals(other.extraction, extraction)&&(identical(other.extractionModel, extractionModel) || other.extractionModel == extractionModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ImportJobData&&const DeepCollectionEquality().equals(other.skippedSteps, skippedSteps)&&(identical(other.captionOnly, captionOnly) || other.captionOnly == captionOnly)&&(identical(other.alreadyImported, alreadyImported) || other.alreadyImported == alreadyImported)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.thumbnailPath, thumbnailPath) || other.thumbnailPath == thumbnailPath)&&(identical(other.videoUrl, videoUrl) || other.videoUrl == videoUrl)&&const DeepCollectionEquality().equals(other.videoHeaders, videoHeaders)&&(identical(other.videoDurationSeconds, videoDurationSeconds) || other.videoDurationSeconds == videoDurationSeconds)&&(identical(other.videoPath, videoPath) || other.videoPath == videoPath)&&(identical(other.subtitlesPath, subtitlesPath) || other.subtitlesPath == subtitlesPath)&&(identical(other.audioPath, audioPath) || other.audioPath == audioPath)&&(identical(other.transcript, transcript) || other.transcript == transcript)&&(identical(other.transcriptQuality, transcriptQuality) || other.transcriptQuality == transcriptQuality)&&const DeepCollectionEquality().equals(other.extraction, extraction)&&(identical(other.extractionModel, extractionModel) || other.extractionModel == extractionModel));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(skippedSteps),captionOnly,alreadyImported,caption,authorName,thumbnailUrl,thumbnailPath,videoUrl,const DeepCollectionEquality().hash(videoHeaders),videoDurationSeconds,videoPath,audioPath,transcript,transcriptQuality,const DeepCollectionEquality().hash(extraction),extractionModel);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(skippedSteps),captionOnly,alreadyImported,caption,authorName,thumbnailUrl,thumbnailPath,videoUrl,const DeepCollectionEquality().hash(videoHeaders),videoDurationSeconds,videoPath,subtitlesPath,audioPath,transcript,transcriptQuality,const DeepCollectionEquality().hash(extraction),extractionModel);
 
 @override
 String toString() {
-  return 'ImportJobData(skippedSteps: $skippedSteps, captionOnly: $captionOnly, alreadyImported: $alreadyImported, caption: $caption, authorName: $authorName, thumbnailUrl: $thumbnailUrl, thumbnailPath: $thumbnailPath, videoUrl: $videoUrl, videoHeaders: $videoHeaders, videoDurationSeconds: $videoDurationSeconds, videoPath: $videoPath, audioPath: $audioPath, transcript: $transcript, transcriptQuality: $transcriptQuality, extraction: $extraction, extractionModel: $extractionModel)';
+  return 'ImportJobData(skippedSteps: $skippedSteps, captionOnly: $captionOnly, alreadyImported: $alreadyImported, caption: $caption, authorName: $authorName, thumbnailUrl: $thumbnailUrl, thumbnailPath: $thumbnailPath, videoUrl: $videoUrl, videoHeaders: $videoHeaders, videoDurationSeconds: $videoDurationSeconds, videoPath: $videoPath, subtitlesPath: $subtitlesPath, audioPath: $audioPath, transcript: $transcript, transcriptQuality: $transcriptQuality, extraction: $extraction, extractionModel: $extractionModel)';
 }
 
 
@@ -653,7 +654,7 @@ abstract mixin class $ImportJobDataCopyWith<$Res>  {
   factory $ImportJobDataCopyWith(ImportJobData value, $Res Function(ImportJobData) _then) = _$ImportJobDataCopyWithImpl;
 @useResult
 $Res call({
- Map<ImportStatus, SkippedStep> skippedSteps, bool captionOnly, bool alreadyImported, String? caption, String? authorName, String? thumbnailUrl, String? thumbnailPath, String? videoUrl, Map<String, String>? videoHeaders, double? videoDurationSeconds, String? videoPath, String? audioPath, String? transcript, TranscriptQuality? transcriptQuality, Map<String, Object?>? extraction, String? extractionModel
+ Map<ImportStatus, SkippedStep> skippedSteps, bool captionOnly, bool alreadyImported, String? caption, String? authorName, String? thumbnailUrl, String? thumbnailPath, String? videoUrl, Map<String, String>? videoHeaders, double? videoDurationSeconds, String? videoPath, String? subtitlesPath, String? audioPath, String? transcript, TranscriptQuality? transcriptQuality, Map<String, Object?>? extraction, String? extractionModel
 });
 
 
@@ -670,7 +671,7 @@ class _$ImportJobDataCopyWithImpl<$Res>
 
 /// Create a copy of ImportJobData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? skippedSteps = null,Object? captionOnly = null,Object? alreadyImported = null,Object? caption = freezed,Object? authorName = freezed,Object? thumbnailUrl = freezed,Object? thumbnailPath = freezed,Object? videoUrl = freezed,Object? videoHeaders = freezed,Object? videoDurationSeconds = freezed,Object? videoPath = freezed,Object? audioPath = freezed,Object? transcript = freezed,Object? transcriptQuality = freezed,Object? extraction = freezed,Object? extractionModel = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? skippedSteps = null,Object? captionOnly = null,Object? alreadyImported = null,Object? caption = freezed,Object? authorName = freezed,Object? thumbnailUrl = freezed,Object? thumbnailPath = freezed,Object? videoUrl = freezed,Object? videoHeaders = freezed,Object? videoDurationSeconds = freezed,Object? videoPath = freezed,Object? subtitlesPath = freezed,Object? audioPath = freezed,Object? transcript = freezed,Object? transcriptQuality = freezed,Object? extraction = freezed,Object? extractionModel = freezed,}) {
   return _then(_self.copyWith(
 skippedSteps: null == skippedSteps ? _self.skippedSteps : skippedSteps // ignore: cast_nullable_to_non_nullable
 as Map<ImportStatus, SkippedStep>,captionOnly: null == captionOnly ? _self.captionOnly : captionOnly // ignore: cast_nullable_to_non_nullable
@@ -683,6 +684,7 @@ as String?,videoUrl: freezed == videoUrl ? _self.videoUrl : videoUrl // ignore: 
 as String?,videoHeaders: freezed == videoHeaders ? _self.videoHeaders : videoHeaders // ignore: cast_nullable_to_non_nullable
 as Map<String, String>?,videoDurationSeconds: freezed == videoDurationSeconds ? _self.videoDurationSeconds : videoDurationSeconds // ignore: cast_nullable_to_non_nullable
 as double?,videoPath: freezed == videoPath ? _self.videoPath : videoPath // ignore: cast_nullable_to_non_nullable
+as String?,subtitlesPath: freezed == subtitlesPath ? _self.subtitlesPath : subtitlesPath // ignore: cast_nullable_to_non_nullable
 as String?,audioPath: freezed == audioPath ? _self.audioPath : audioPath // ignore: cast_nullable_to_non_nullable
 as String?,transcript: freezed == transcript ? _self.transcript : transcript // ignore: cast_nullable_to_non_nullable
 as String?,transcriptQuality: freezed == transcriptQuality ? _self.transcriptQuality : transcriptQuality // ignore: cast_nullable_to_non_nullable
@@ -773,10 +775,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<ImportStatus, SkippedStep> skippedSteps,  bool captionOnly,  bool alreadyImported,  String? caption,  String? authorName,  String? thumbnailUrl,  String? thumbnailPath,  String? videoUrl,  Map<String, String>? videoHeaders,  double? videoDurationSeconds,  String? videoPath,  String? audioPath,  String? transcript,  TranscriptQuality? transcriptQuality,  Map<String, Object?>? extraction,  String? extractionModel)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Map<ImportStatus, SkippedStep> skippedSteps,  bool captionOnly,  bool alreadyImported,  String? caption,  String? authorName,  String? thumbnailUrl,  String? thumbnailPath,  String? videoUrl,  Map<String, String>? videoHeaders,  double? videoDurationSeconds,  String? videoPath,  String? subtitlesPath,  String? audioPath,  String? transcript,  TranscriptQuality? transcriptQuality,  Map<String, Object?>? extraction,  String? extractionModel)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ImportJobData() when $default != null:
-return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that.caption,_that.authorName,_that.thumbnailUrl,_that.thumbnailPath,_that.videoUrl,_that.videoHeaders,_that.videoDurationSeconds,_that.videoPath,_that.audioPath,_that.transcript,_that.transcriptQuality,_that.extraction,_that.extractionModel);case _:
+return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that.caption,_that.authorName,_that.thumbnailUrl,_that.thumbnailPath,_that.videoUrl,_that.videoHeaders,_that.videoDurationSeconds,_that.videoPath,_that.subtitlesPath,_that.audioPath,_that.transcript,_that.transcriptQuality,_that.extraction,_that.extractionModel);case _:
   return orElse();
 
 }
@@ -794,10 +796,10 @@ return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<ImportStatus, SkippedStep> skippedSteps,  bool captionOnly,  bool alreadyImported,  String? caption,  String? authorName,  String? thumbnailUrl,  String? thumbnailPath,  String? videoUrl,  Map<String, String>? videoHeaders,  double? videoDurationSeconds,  String? videoPath,  String? audioPath,  String? transcript,  TranscriptQuality? transcriptQuality,  Map<String, Object?>? extraction,  String? extractionModel)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Map<ImportStatus, SkippedStep> skippedSteps,  bool captionOnly,  bool alreadyImported,  String? caption,  String? authorName,  String? thumbnailUrl,  String? thumbnailPath,  String? videoUrl,  Map<String, String>? videoHeaders,  double? videoDurationSeconds,  String? videoPath,  String? subtitlesPath,  String? audioPath,  String? transcript,  TranscriptQuality? transcriptQuality,  Map<String, Object?>? extraction,  String? extractionModel)  $default,) {final _that = this;
 switch (_that) {
 case _ImportJobData():
-return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that.caption,_that.authorName,_that.thumbnailUrl,_that.thumbnailPath,_that.videoUrl,_that.videoHeaders,_that.videoDurationSeconds,_that.videoPath,_that.audioPath,_that.transcript,_that.transcriptQuality,_that.extraction,_that.extractionModel);case _:
+return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that.caption,_that.authorName,_that.thumbnailUrl,_that.thumbnailPath,_that.videoUrl,_that.videoHeaders,_that.videoDurationSeconds,_that.videoPath,_that.subtitlesPath,_that.audioPath,_that.transcript,_that.transcriptQuality,_that.extraction,_that.extractionModel);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -814,10 +816,10 @@ return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<ImportStatus, SkippedStep> skippedSteps,  bool captionOnly,  bool alreadyImported,  String? caption,  String? authorName,  String? thumbnailUrl,  String? thumbnailPath,  String? videoUrl,  Map<String, String>? videoHeaders,  double? videoDurationSeconds,  String? videoPath,  String? audioPath,  String? transcript,  TranscriptQuality? transcriptQuality,  Map<String, Object?>? extraction,  String? extractionModel)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Map<ImportStatus, SkippedStep> skippedSteps,  bool captionOnly,  bool alreadyImported,  String? caption,  String? authorName,  String? thumbnailUrl,  String? thumbnailPath,  String? videoUrl,  Map<String, String>? videoHeaders,  double? videoDurationSeconds,  String? videoPath,  String? subtitlesPath,  String? audioPath,  String? transcript,  TranscriptQuality? transcriptQuality,  Map<String, Object?>? extraction,  String? extractionModel)?  $default,) {final _that = this;
 switch (_that) {
 case _ImportJobData() when $default != null:
-return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that.caption,_that.authorName,_that.thumbnailUrl,_that.thumbnailPath,_that.videoUrl,_that.videoHeaders,_that.videoDurationSeconds,_that.videoPath,_that.audioPath,_that.transcript,_that.transcriptQuality,_that.extraction,_that.extractionModel);case _:
+return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that.caption,_that.authorName,_that.thumbnailUrl,_that.thumbnailPath,_that.videoUrl,_that.videoHeaders,_that.videoDurationSeconds,_that.videoPath,_that.subtitlesPath,_that.audioPath,_that.transcript,_that.transcriptQuality,_that.extraction,_that.extractionModel);case _:
   return null;
 
 }
@@ -829,7 +831,7 @@ return $default(_that.skippedSteps,_that.captionOnly,_that.alreadyImported,_that
 @JsonSerializable()
 
 class _ImportJobData implements ImportJobData {
-  const _ImportJobData({final  Map<ImportStatus, SkippedStep> skippedSteps = const {}, this.captionOnly = false, this.alreadyImported = false, this.caption, this.authorName, this.thumbnailUrl, this.thumbnailPath, this.videoUrl, final  Map<String, String>? videoHeaders, this.videoDurationSeconds, this.videoPath, this.audioPath, this.transcript, this.transcriptQuality, final  Map<String, Object?>? extraction, this.extractionModel}): _skippedSteps = skippedSteps,_videoHeaders = videoHeaders,_extraction = extraction;
+  const _ImportJobData({final  Map<ImportStatus, SkippedStep> skippedSteps = const {}, this.captionOnly = false, this.alreadyImported = false, this.caption, this.authorName, this.thumbnailUrl, this.thumbnailPath, this.videoUrl, final  Map<String, String>? videoHeaders, this.videoDurationSeconds, this.videoPath, this.subtitlesPath, this.audioPath, this.transcript, this.transcriptQuality, final  Map<String, Object?>? extraction, this.extractionModel}): _skippedSteps = skippedSteps,_videoHeaders = videoHeaders,_extraction = extraction;
   factory _ImportJobData.fromJson(Map<String, dynamic> json) => _$ImportJobDataFromJson(json);
 
 /// Tappe saltate, con il motivo: la ricetta si fa con quello che c'è.
@@ -861,6 +863,8 @@ class _ImportJobData implements ImportJobData {
 
 @override final  double? videoDurationSeconds;
 @override final  String? videoPath;
+/// Sottotitoli automatici della piattaforma (WebVTT), se offerti (D-31).
+@override final  String? subtitlesPath;
 @override final  String? audioPath;
 @override final  String? transcript;
 @override final  TranscriptQuality? transcriptQuality;
@@ -890,16 +894,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportJobData&&const DeepCollectionEquality().equals(other._skippedSteps, _skippedSteps)&&(identical(other.captionOnly, captionOnly) || other.captionOnly == captionOnly)&&(identical(other.alreadyImported, alreadyImported) || other.alreadyImported == alreadyImported)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.thumbnailPath, thumbnailPath) || other.thumbnailPath == thumbnailPath)&&(identical(other.videoUrl, videoUrl) || other.videoUrl == videoUrl)&&const DeepCollectionEquality().equals(other._videoHeaders, _videoHeaders)&&(identical(other.videoDurationSeconds, videoDurationSeconds) || other.videoDurationSeconds == videoDurationSeconds)&&(identical(other.videoPath, videoPath) || other.videoPath == videoPath)&&(identical(other.audioPath, audioPath) || other.audioPath == audioPath)&&(identical(other.transcript, transcript) || other.transcript == transcript)&&(identical(other.transcriptQuality, transcriptQuality) || other.transcriptQuality == transcriptQuality)&&const DeepCollectionEquality().equals(other._extraction, _extraction)&&(identical(other.extractionModel, extractionModel) || other.extractionModel == extractionModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ImportJobData&&const DeepCollectionEquality().equals(other._skippedSteps, _skippedSteps)&&(identical(other.captionOnly, captionOnly) || other.captionOnly == captionOnly)&&(identical(other.alreadyImported, alreadyImported) || other.alreadyImported == alreadyImported)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.thumbnailPath, thumbnailPath) || other.thumbnailPath == thumbnailPath)&&(identical(other.videoUrl, videoUrl) || other.videoUrl == videoUrl)&&const DeepCollectionEquality().equals(other._videoHeaders, _videoHeaders)&&(identical(other.videoDurationSeconds, videoDurationSeconds) || other.videoDurationSeconds == videoDurationSeconds)&&(identical(other.videoPath, videoPath) || other.videoPath == videoPath)&&(identical(other.subtitlesPath, subtitlesPath) || other.subtitlesPath == subtitlesPath)&&(identical(other.audioPath, audioPath) || other.audioPath == audioPath)&&(identical(other.transcript, transcript) || other.transcript == transcript)&&(identical(other.transcriptQuality, transcriptQuality) || other.transcriptQuality == transcriptQuality)&&const DeepCollectionEquality().equals(other._extraction, _extraction)&&(identical(other.extractionModel, extractionModel) || other.extractionModel == extractionModel));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_skippedSteps),captionOnly,alreadyImported,caption,authorName,thumbnailUrl,thumbnailPath,videoUrl,const DeepCollectionEquality().hash(_videoHeaders),videoDurationSeconds,videoPath,audioPath,transcript,transcriptQuality,const DeepCollectionEquality().hash(_extraction),extractionModel);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_skippedSteps),captionOnly,alreadyImported,caption,authorName,thumbnailUrl,thumbnailPath,videoUrl,const DeepCollectionEquality().hash(_videoHeaders),videoDurationSeconds,videoPath,subtitlesPath,audioPath,transcript,transcriptQuality,const DeepCollectionEquality().hash(_extraction),extractionModel);
 
 @override
 String toString() {
-  return 'ImportJobData(skippedSteps: $skippedSteps, captionOnly: $captionOnly, alreadyImported: $alreadyImported, caption: $caption, authorName: $authorName, thumbnailUrl: $thumbnailUrl, thumbnailPath: $thumbnailPath, videoUrl: $videoUrl, videoHeaders: $videoHeaders, videoDurationSeconds: $videoDurationSeconds, videoPath: $videoPath, audioPath: $audioPath, transcript: $transcript, transcriptQuality: $transcriptQuality, extraction: $extraction, extractionModel: $extractionModel)';
+  return 'ImportJobData(skippedSteps: $skippedSteps, captionOnly: $captionOnly, alreadyImported: $alreadyImported, caption: $caption, authorName: $authorName, thumbnailUrl: $thumbnailUrl, thumbnailPath: $thumbnailPath, videoUrl: $videoUrl, videoHeaders: $videoHeaders, videoDurationSeconds: $videoDurationSeconds, videoPath: $videoPath, subtitlesPath: $subtitlesPath, audioPath: $audioPath, transcript: $transcript, transcriptQuality: $transcriptQuality, extraction: $extraction, extractionModel: $extractionModel)';
 }
 
 
@@ -910,7 +914,7 @@ abstract mixin class _$ImportJobDataCopyWith<$Res> implements $ImportJobDataCopy
   factory _$ImportJobDataCopyWith(_ImportJobData value, $Res Function(_ImportJobData) _then) = __$ImportJobDataCopyWithImpl;
 @override @useResult
 $Res call({
- Map<ImportStatus, SkippedStep> skippedSteps, bool captionOnly, bool alreadyImported, String? caption, String? authorName, String? thumbnailUrl, String? thumbnailPath, String? videoUrl, Map<String, String>? videoHeaders, double? videoDurationSeconds, String? videoPath, String? audioPath, String? transcript, TranscriptQuality? transcriptQuality, Map<String, Object?>? extraction, String? extractionModel
+ Map<ImportStatus, SkippedStep> skippedSteps, bool captionOnly, bool alreadyImported, String? caption, String? authorName, String? thumbnailUrl, String? thumbnailPath, String? videoUrl, Map<String, String>? videoHeaders, double? videoDurationSeconds, String? videoPath, String? subtitlesPath, String? audioPath, String? transcript, TranscriptQuality? transcriptQuality, Map<String, Object?>? extraction, String? extractionModel
 });
 
 
@@ -927,7 +931,7 @@ class __$ImportJobDataCopyWithImpl<$Res>
 
 /// Create a copy of ImportJobData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? skippedSteps = null,Object? captionOnly = null,Object? alreadyImported = null,Object? caption = freezed,Object? authorName = freezed,Object? thumbnailUrl = freezed,Object? thumbnailPath = freezed,Object? videoUrl = freezed,Object? videoHeaders = freezed,Object? videoDurationSeconds = freezed,Object? videoPath = freezed,Object? audioPath = freezed,Object? transcript = freezed,Object? transcriptQuality = freezed,Object? extraction = freezed,Object? extractionModel = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? skippedSteps = null,Object? captionOnly = null,Object? alreadyImported = null,Object? caption = freezed,Object? authorName = freezed,Object? thumbnailUrl = freezed,Object? thumbnailPath = freezed,Object? videoUrl = freezed,Object? videoHeaders = freezed,Object? videoDurationSeconds = freezed,Object? videoPath = freezed,Object? subtitlesPath = freezed,Object? audioPath = freezed,Object? transcript = freezed,Object? transcriptQuality = freezed,Object? extraction = freezed,Object? extractionModel = freezed,}) {
   return _then(_ImportJobData(
 skippedSteps: null == skippedSteps ? _self._skippedSteps : skippedSteps // ignore: cast_nullable_to_non_nullable
 as Map<ImportStatus, SkippedStep>,captionOnly: null == captionOnly ? _self.captionOnly : captionOnly // ignore: cast_nullable_to_non_nullable
@@ -940,6 +944,7 @@ as String?,videoUrl: freezed == videoUrl ? _self.videoUrl : videoUrl // ignore: 
 as String?,videoHeaders: freezed == videoHeaders ? _self._videoHeaders : videoHeaders // ignore: cast_nullable_to_non_nullable
 as Map<String, String>?,videoDurationSeconds: freezed == videoDurationSeconds ? _self.videoDurationSeconds : videoDurationSeconds // ignore: cast_nullable_to_non_nullable
 as double?,videoPath: freezed == videoPath ? _self.videoPath : videoPath // ignore: cast_nullable_to_non_nullable
+as String?,subtitlesPath: freezed == subtitlesPath ? _self.subtitlesPath : subtitlesPath // ignore: cast_nullable_to_non_nullable
 as String?,audioPath: freezed == audioPath ? _self.audioPath : audioPath // ignore: cast_nullable_to_non_nullable
 as String?,transcript: freezed == transcript ? _self.transcript : transcript // ignore: cast_nullable_to_non_nullable
 as String?,transcriptQuality: freezed == transcriptQuality ? _self.transcriptQuality : transcriptQuality // ignore: cast_nullable_to_non_nullable

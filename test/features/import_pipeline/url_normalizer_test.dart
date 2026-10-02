@@ -74,6 +74,22 @@ void main() {
       expect(link?.needsRedirectResolution, isFalse);
     });
 
+    test('post di foto e link embed diventano /@utente/video/{id}', () {
+      // TikTok rifiuta /photo/ e /embed/v2/ in oEmbed e nella pagina.
+      final photo = parseSharedText(
+        'https://www.tiktok.com/@foodbysam83/photo/7166942728490732805',
+      );
+      expect(
+        photo?.url.toString(),
+        'https://www.tiktok.com/@foodbysam83/video/7166942728490732805',
+      );
+      expect(photo?.sourceKey, 'tiktok:7166942728490732805');
+      final embed = parseSharedText('https://www.tiktok.com/embed/v2/42');
+      expect(embed?.url.toString(), 'https://www.tiktok.com/@_/video/42');
+      final mobile = parseSharedText('https://m.tiktok.com/v/42.html');
+      expect(mobile?.url.toString(), 'https://www.tiktok.com/@_/video/42');
+    });
+
     test('link breve vm.tiktok.com richiede risoluzione del redirect', () {
       final link = parseSharedText(
         'Ricetta top! https://vm.tiktok.com/ZGeAbCdEf/.',

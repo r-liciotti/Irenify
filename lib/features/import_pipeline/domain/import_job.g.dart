@@ -21,6 +21,9 @@ const _$SkipReasonEnumMap = {
   SkipReason.notApplicable: 'notApplicable',
   SkipReason.captionOnly: 'captionOnly',
   SkipReason.failed: 'failed',
+  SkipReason.notAVideo: 'notAVideo',
+  SkipReason.videoBlocked: 'videoBlocked',
+  SkipReason.videoTooLong: 'videoTooLong',
 };
 
 _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>
@@ -45,6 +48,7 @@ _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>
       ),
       videoDurationSeconds: (json['videoDurationSeconds'] as num?)?.toDouble(),
       videoPath: json['videoPath'] as String?,
+      subtitlesPath: json['subtitlesPath'] as String?,
       audioPath: json['audioPath'] as String?,
       transcript: json['transcript'] as String?,
       transcriptQuality: $enumDecodeNullable(
@@ -71,6 +75,7 @@ Map<String, dynamic> _$ImportJobDataToJson(
   'videoHeaders': instance.videoHeaders,
   'videoDurationSeconds': instance.videoDurationSeconds,
   'videoPath': instance.videoPath,
+  'subtitlesPath': instance.subtitlesPath,
   'audioPath': instance.audioPath,
   'transcript': instance.transcript,
   'transcriptQuality': _$TranscriptQualityEnumMap[instance.transcriptQuality],

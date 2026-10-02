@@ -28,6 +28,7 @@ extension FailureCodeText on FailureCode {
     FailureCode.invalidLink => l10n.failureInvalidLink,
     FailureCode.alreadyImporting => l10n.failureAlreadyImporting,
     FailureCode.stepNotAvailable => l10n.failureStepNotAvailable,
+    FailureCode.sourceUnavailable => l10n.failureSourceUnavailable,
   };
 }
 

@@ -498,6 +498,22 @@ void main() {
     expect(calls, contains('a metà:media'), reason: 'ripreso all\'avvio');
   });
 
+  test("all'avvio riparte un job fermo su una tappa che ora esiste", () async {
+    final missing = steps.remove(ImportStatus.metadata)!;
+    final job = await repo.create(sharedText: 'A');
+    await newEngine().wake();
+    expect((await repo.getById(job.id))!.errorCode, 'stepNotAvailable');
+
+    steps[ImportStatus.metadata] = missing; // l'aggiornamento dell'app
+    final engine = newEngine();
+    await engine.start();
+    await engine.wake();
+
+    final done = (await repo.getById(job.id))!;
+    expect(done.status, ImportStatus.completed);
+    expect(steps[ImportStatus.normalized]!.runs, 1, reason: 'riparte da lì');
+  });
+
   test('una tappa non ancora disponibile ferma il job', () async {
     steps.remove(ImportStatus.extracted);
     final job = await repo.create(sharedText: 'A');

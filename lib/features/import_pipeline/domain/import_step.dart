@@ -23,9 +23,11 @@ sealed class StepResult {
   /// Tappa eseguita; [job] contiene i risultati.
   const factory StepResult.done(ImportJob job) = StepDone;
 
-  /// La tappa non riguarda questo job (es. didascalia di un file condiviso):
-  /// il motore la annota come saltata e prosegue.
-  const factory StepResult.notApplicable(ImportJob job) = StepNotApplicable;
+  /// La tappa non riguarda questo job (es. didascalia di un file condiviso,
+  /// video di un post di foto): il motore la annota come saltata, con
+  /// [reason], e prosegue.
+  const factory StepResult.notApplicable(ImportJob job, [SkipReason reason]) =
+      StepNotApplicable;
 
   /// Il post è già nel ricettario come [recipeId]: il job si chiude subito e
   /// l'app apre la ricetta esistente (D-17).
@@ -40,7 +42,9 @@ final class StepDone extends StepResult {
 }
 
 final class StepNotApplicable extends StepResult {
-  const StepNotApplicable(super.job);
+  const StepNotApplicable(super.job, [this.reason = SkipReason.notApplicable]);
+
+  final SkipReason reason;
 }
 
 final class StepAlreadyImported extends StepResult {

@@ -56,6 +56,7 @@
   "failureInvalidLink": "Il link non porta a un post: forse è scaduto o è stato rimosso.",
   "failureAlreadyImporting": "Questo post è già in un'altra importazione.",
   "failureStepNotAvailable": "Questa parte dell'importazione non è ancora disponibile.",
+  "failureSourceUnavailable": "Instagram o TikTok non hanno risposto come previsto: riprova più tardi.",
   "actionRetry": "Riprova",
   "actionOpenSettings": "Apri impostazioni"
 }

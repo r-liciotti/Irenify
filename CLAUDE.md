@@ -18,11 +18,13 @@ entità freezed in `features/*/domain/`, `RecipeRepository` e `ImportJobReposito
 (coda = database, un job alla volta, ripresa all'avvio da `main.dart`, limite di 3 interruzioni per tappa), regole in
 `domain/import_flow.dart`, interfaccia `ImportStep`. Nessuna tappa reale ancora (solo la nutrizione che passa oltre):
 arrivano dalla fase 4.
-**Fase 4 (condivisione e link) completata il 2026-10-02**: `lib/features/share_intake/` riceve le condivisioni a
-livello di app (non più `lib/spike/`), tappa `NormalizeLinkStep` + `LinkResolver`, scorciatoia di condivisione e
-correzione "app recenti" in `MainActivity.kt`, elenco minimo in Importazioni. I job reali si fermano alla didascalia
-("non ancora disponibile") fino alla fase 5, che è la prossima. Provati sul Pixel un reel IG e un link breve TikTok
-reali; la prova del video condiviso dalla galleria è rimandata alla fase 8 (D-29).
+**Fase 4 (condivisione e link) completata il 2026-10-02**: `lib/features/share_intake/` riceve le condivisioni,
+tappa `NormalizeLinkStep` + `LinkResolver`, scorciatoia di condivisione e correzione "app recenti" in
+`MainActivity.kt`, elenco minimo in Importazioni (prova del video dalla galleria rimandata alla fase 8, D-29).
+**Fase 5 (didascalia e video) completata il 2026-10-02**: `PlatformClient` + `InstagramClient`/`TikTokClient` in
+`data/platforms/`, tappe `MetadataStep` e `MediaStep`, `Downloader`. I job reali ora si fermano a «estrazione della
+ricetta» ("non ancora disponibile") fino alla fase 7; audio e trascrizione (fase 6, la prossima) vengono saltati.
+All'avvio i job fermi su una tappa che ora esiste ripartono da soli (D-33).
 La schermata di prova della F0 (`lib/spike/`) è raggiungibile da Impostazioni → "Strumenti di prova (F0)" (solo link
 inseriti a mano: le condivisioni non le riceve più). **Non** va estesa; va eliminata in fase 8.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
@@ -65,13 +67,19 @@ flutter run -d <device>             # telefono Android / iPhone reale
 
 ## Fatti verificati sulle fonti (settembre 2026)
 
-- **Instagram**: l'oEmbed senza token restituisce solo un segnaposto, **senza didascalia**. La pagina pubblica
-  `https://www.instagram.com/p/{code}/embed/captioned/` contiene `"contextJSON":"…"` (stringa JSON dentro JSON:
-  va decodificata due volte) con `gql_data.shortcode_media` → didascalia, `owner.username`, `display_url`,
-  `video_duration`, `video_url` (mp4 scaricabile senza login).
-- **TikTok**: `https://www.tiktok.com/oembed?url=…` → `title` = didascalia, senza autenticazione. La pagina del
-  video contiene `__UNIVERSAL_DATA_FOR_REHYDRATION__`; il percorso di `itemStruct` cambia tra UA desktop e
-  mobile (va cercato). `video.playAddr` risponde **403 senza i cookie** della richiesta alla pagina.
+- **Instagram** (riverificato il 2026-10-02): l'oEmbed senza token non dà la didascalia. La pagina pubblica
+  `https://www.instagram.com/p/{code}/embed/captioned/` contiene `"contextJSON":"…"` (JSON dentro JSON: decodifica
+  doppia) **solo per i video** (per le foto è `null`): `data.gql_data.shortcode_media` → didascalia
+  (`edge_media_to_caption.edges[0].node.text`), `owner.username`, `display_url`, `video_duration`, `video_url`.
+  **I reel con musica su licenza hanno `data.context.copyright_blocked: true` e nessun `video_url`** (nessuna strada
+  pubblica: la GraphQL web chiede il login) → sola didascalia o file condiviso. Ripiego per la didascalia: `div.Caption`
+  dell'HTML. `EmbedBrokenMedia` = post rimosso/inesistente. Video e miniatura senza cookie; URL firmati (~32 h).
+- **TikTok** (riverificato il 2026-10-02): **solo con UA mobile** (desktop → 302 al login). Pagina del video:
+  `__UNIVERSAL_DATA_FOR_REHYDRATION__` → `__DEFAULT_SCOPE__["webapp.reflow.video.detail"].itemInfo.itemStruct`
+  (`statusCode` 10204 = inesistente). `desc` senza a capo (elenchi con "•"). `video.playAddr` si scarica solo con
+  `Cookie: tt_chain_token` **della stessa risposta** + `Referer: https://www.tiktok.com/` (URL firmato ~48 h).
+  `video.subtitleInfos` = sottotitoli automatici WebVTT scaricabili liberamente. Post di foto: usare `/video/{id}`
+  (con `/photo/` oEmbed dà 400). oEmbed (`title` = didascalia) come ripiego.
 - **Gemini API free tier**: i termini vietano i servizi gratuiti per app distribuite a utenti UE/SEE/UK/CH.
   Va bene per uso personale con la propria chiave, non per gli store.
 
@@ -116,8 +124,11 @@ flutter run -d <device>             # telefono Android / iPhone reale
   è registrata in `importStepsProvider`. File del job solo tramite `JobFiles` (`writeAtomically` per download e
   conversioni). Il motore parte da `main.dart` (`UncontrolledProviderScope`), non dall'app: i widget test non lo avviano.
   Codici d'errore salvati per nome (`FailureCode`, D-25): mai rinominarli; l'azione ("Riprova" o nessuna) sta sul codice.
-- Rete: un solo client dio (`httpClientProvider`, UA Safari iPhone verificato in F0); nei test `FakeHttp`
-  (`test/features/import_pipeline/data/fake_http.dart`) al posto della rete.
+- Rete: un solo client dio (`httpClientProvider`, UA Safari iPhone: **obbligatorio** per TikTok); nei test `FakeHttp`
+  (`test/features/import_pipeline/data/fake_http.dart`) al posto della rete. Pagine reali per i test solo come
+  estratti ridotti e anonimizzati in `test/fixtures/` (le pagine grezze contengono token e la città dell'utente).
+- Prove sul telefono: copiare il DB con `adb exec-out run-as it.overside.irenefy cat files/irenefy.sqlite > db.sqlite`
+  e interrogarlo con `sqlite3`; l'avvio dell'APK di debug impiega ~20 s prima che il motore parta.
 - Prove della condivisione senza toccare il telefono: `adb shell am start -a android.intent.action.SEND -t text/plain
   --es android.intent.extra.TEXT '<testo>' -n it.overside.irenefy/.MainActivity` (con `-f 0x00100000` simula la
   riapertura dalle app recenti).

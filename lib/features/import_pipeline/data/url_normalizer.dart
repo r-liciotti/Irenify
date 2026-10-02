@@ -47,7 +47,7 @@ final _instagramPath = RegExp(
   r'^/(?:[A-Za-z0-9._]+/)?(?:p|reels?|tv)/([A-Za-z0-9_-]+)',
 );
 final _instagramSharePath = RegExp(r'^/share/(?:[a-z]+/)?[A-Za-z0-9_-]+');
-final _tiktokVideoPath = RegExp(r'^/@[^/]+/(?:video|photo)/(\d+)');
+final _tiktokVideoPath = RegExp(r'^/@([^/]+)/(?:video|photo)/(\d+)');
 final _tiktokEmbedPath = RegExp(r'^/(?:embed/v2|v)/(\d+)');
 
 const _tiktokShortHosts = {'vm.tiktok.com', 'vt.tiktok.com'};
@@ -97,20 +97,18 @@ SocialLink? parseSocialUri(Uri uri) {
   }
 
   if (host == 'tiktok.com') {
+    // Forma canonica sempre `/@utente/video/{id}`: è l'unica che oEmbed e la
+    // pagina del post accettano, anche per i post di foto (`/photo/` dà 400 o
+    // rimanda al login; verificato il 2026-10-02). Senza utente va bene `@_`.
     final match = _tiktokVideoPath.firstMatch(uri.path);
-    if (match != null) {
-      return SocialLink(
-        platform: SocialPlatform.tiktok,
-        url: Uri.https('www.tiktok.com', match.group(0)!),
-        postId: match.group(1),
-      );
-    }
     final embed = _tiktokEmbedPath.firstMatch(uri.path);
-    if (embed != null) {
+    final user = match?.group(1) ?? '_';
+    final id = match?.group(2) ?? embed?.group(1);
+    if (id != null) {
       return SocialLink(
         platform: SocialPlatform.tiktok,
-        url: Uri.https('www.tiktok.com', '/embed/v2/${embed.group(1)}'),
-        postId: embed.group(1),
+        url: Uri.https('www.tiktok.com', '/@$user/video/$id'),
+        postId: id,
       );
     }
   }

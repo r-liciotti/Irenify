@@ -11,6 +11,32 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-33 — Job fermi per una tappa mancante ripartono da soli; i falliti senza rimedio non bloccano (2026-10-02) — Attiva
+- **Decisione:** (1) all'avvio il motore fa ripartire i job falliti con `stepNotAvailable` se la tappa ora esiste
+  (dopo un aggiornamento dell'app); (2) nel controllo dei doppioni (D-17) un job fallito con un errore senza "Riprova"
+  (post rimosso, link non valido…) non conta più come importazione in corso.
+- **Perché:** senza (1) i reel condivisi durante lo sviluppo resterebbero fermi per sempre, e senza (2) bloccherebbero
+  una nuova condivisione dello stesso post.
+- **Deciso da:** Claude durante lo sviluppo della fase 5 (problema scoperto prima della prova sul telefono).
+
+## D-32 — Sviluppo della fase 5 con subagent in parallelo (2026-10-02) — Attiva
+- **Decisione:** l'agente principale scrive le parti comuni (interfaccia `PlatformClient`, codici d'errore, dati del
+  job, tappe); due subagent scrivono in parallelo il client Instagram e il client TikTok con i loro test, ciascuno
+  **solo sui propri file** nella stessa cartella (niente worktree, che partirebbe dall'ultimo commit senza le parti
+  comuni); l'agente principale unisce, verifica e prova sul telefono.
+- **Deciso da:** utente ("va bene, ottimizza l'utilizzo dei subagent").
+
+## D-31 — Sottotitoli automatici di TikTok salvati con il video (2026-10-02) — Attiva
+- **Decisione:** se la pagina TikTok offre i sottotitoli automatici (WebVTT, preferibilmente in italiano), la tappa
+  video li scarica nella cartella del job. In fase 6 si decide se usarli al posto di Whisper o come confronto.
+- **Deciso da:** utente, nel resoconto della F1 fase 5.
+
+## D-30 — Durata massima del video da scaricare: 3 minuti (2026-10-02) — Attiva
+- **Decisione:** oltre 3 minuti il video non si scarica e la ricetta si fa con la sola didascalia (tappa video
+  saltata, motivo "video troppo lungo").
+- **Perché:** i reel di ricette durano di solito meno di 90 s; 3 minuti ≈ 2 minuti di trascrizione sul Pixel (D-10).
+- **Deciso da:** utente, nel resoconto della F1 fase 5.
+
 ## D-29 — Prova del video condiviso dalla galleria rimandata alla fase 8 (2026-10-02) — Attiva
 - **Decisione:** la fase 4 si chiude senza la prova manuale di un video condiviso da Google Foto; la prova rientra in
   quella completa della fase 8 ("un video condiviso come file").

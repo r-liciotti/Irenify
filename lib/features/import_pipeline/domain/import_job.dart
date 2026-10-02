@@ -72,6 +72,15 @@ enum SkipReason {
 
   /// La tappa è facoltativa ed è fallita: il job prosegue senza.
   failed,
+
+  /// Il post non è un video (foto): niente video né audio.
+  notAVideo,
+
+  /// Video non scaricabile (reel Instagram con musica su licenza).
+  videoBlocked,
+
+  /// Video oltre la durata massima (D-30).
+  videoTooLong,
 }
 
 @freezed
@@ -108,6 +117,9 @@ abstract class ImportJobData with _$ImportJobData {
     Map<String, String>? videoHeaders,
     double? videoDurationSeconds,
     String? videoPath,
+
+    /// Sottotitoli automatici della piattaforma (WebVTT), se offerti (D-31).
+    String? subtitlesPath,
     String? audioPath,
     String? transcript,
     TranscriptQuality? transcriptQuality,

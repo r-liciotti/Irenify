@@ -20,7 +20,8 @@ enum FailureCode {
   unsupportedLink,
   invalidLink,
   alreadyImporting,
-  stepNotAvailable;
+  stepNotAvailable,
+  sourceUnavailable;
 
   /// Codice salvato → [FailureCode]; un nome sconosciuto diventa [unexpected].
   static FailureCode fromName(String? name) =>
@@ -29,7 +30,10 @@ enum FailureCode {
   /// Azione da proporre; sta sul codice perché anche un job salvato, che ha
   /// solo il codice, deve sapere se mostrare "Riprova".
   RecoveryAction get action => switch (this) {
-    network || unexpected || stepInterrupted => RecoveryAction.retry,
+    network ||
+    unexpected ||
+    stepInterrupted ||
+    sourceUnavailable => RecoveryAction.retry,
     // Ripetere non cambierebbe nulla (D-26).
     unsupportedLink ||
     invalidLink ||
@@ -129,4 +133,13 @@ final class StepNotAvailableFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.stepNotAvailable;
+}
+
+/// Instagram o TikTok non hanno restituito i dati attesi (rimando al login,
+/// pagina senza dati, troppe richieste): di solito è temporaneo.
+final class SourceUnavailableFailure extends Failure {
+  const SourceUnavailableFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.sourceUnavailable;
 }

@@ -298,6 +298,12 @@ abstract class AppLocalizations {
   /// **'Questa parte dell\'importazione non è ancora disponibile.'**
   String get failureStepNotAvailable;
 
+  /// No description provided for @failureSourceUnavailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Instagram o TikTok non hanno risposto come previsto: riprova più tardi.'**
+  String get failureSourceUnavailable;
+
   /// No description provided for @actionRetry.
   ///
   /// In it, this message translates to:

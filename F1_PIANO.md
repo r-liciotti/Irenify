@@ -117,7 +117,7 @@ recenti e pubblica la scorciatoia "Importa ricetta" (D-27); file spostati solo d
 Importazioni. Aperta dalla ricetta esistente (D-17): il job si chiude "già importato", l'apertura della ricetta arriva
 con la schermata di dettaglio (fase 8).
 
-## Fase 5 — Didascalia e video (≈ 0,75 gg)
+## Fase 5 — Didascalia e video (≈ 0,75 gg) — ✅ completata il 2026-10-02
 
 **Perché:** la didascalia è la fonte principale della ricetta; il video serve per ottenere l'audio.
 
@@ -132,6 +132,14 @@ con la schermata di dettaglio (fase 8).
    layout di Instagram o TikTok salta subito all'occhio nei test.
 
 **Uscita:** sul telefono un link IG e uno TT arrivano fino a "video scaricato".
+
+**Come è stata fatta:** interfaccia `PlatformClient` (`domain/post_page.dart`) con `InstagramClient` e `TikTokClient`
+(`data/platforms/`, scritti da due subagent in parallelo, D-32), tappe `MetadataStep` e `MediaStep`, `Downloader`
+(a blocchi su disco, con tetto). La tappa video rilegge la pagina a ogni tentativo (URL firmati che scadono) e salta
+con il motivo foto, reel con musica su licenza (Instagram non dà il video) e video oltre 3 minuti (D-30); salva i
+sottotitoli automatici TikTok (D-31). Link TikTok `/photo/` ed `/embed/` riscritti in `/video/`. Prova sul Pixel:
+reel IG con audio originale → video; reel IG con musica su licenza → solo didascalia; video TikTok → video +
+sottotitoli; foto IG e post di foto TikTok → solo didascalia. Fixture ridotte e anonimizzate in `test/fixtures/`.
 
 ## Fase 6 — Audio e trascrizione (≈ 0,75 gg)
 
@@ -195,7 +203,7 @@ con la schermata di dettaglio (fase 8).
 | 2 | Modello dati e database ✅ | — | 0,75 gg |
 | 3 | Motore delle importazioni ✅ | — | 0,75 gg |
 | 4 | Ricezione condivisione e link ✅ | prova sul telefono | 0,5 gg |
-| 5 | Didascalia e video | prova sul telefono | 0,75 gg |
+| 5 | Didascalia e video ✅ | prova sul telefono | 0,75 gg |
 | 6 | Audio e trascrizione | prova sul telefono | 0,75 gg |
 | 7 | Estrazione con Gemini | **chiave Gemini** | 1 gg |
 | 8 | Interfaccia provvisoria e prova completa | 6–8 link reali | 0,5 gg |

@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../core/errors/failure.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/db/database_provider.dart';
 import '../domain/import_job.dart';
@@ -93,23 +94,45 @@ class ImportJobRepository {
     return rows.map(_fromRow).toList();
   }
 
-  /// C'è un altro job, non completato, per lo stesso post? Anche un job
-  /// fallito conta: si riprende quello invece di aprirne un secondo.
+  /// C'è un altro job ancora vivo per lo stesso post? Conta anche un job
+  /// fallito che si può riprovare (si riprende quello invece di aprirne un
+  /// secondo); non conta uno fallito senza rimedio (es. post rimosso).
   Future<bool> hasOtherActive(
     String sourceKey, {
     required String exceptId,
   }) async {
+    final dead = [
+      for (final code in FailureCode.values)
+        if (code.action == RecoveryAction.none) code.name,
+    ];
     final row =
         await (_db.select(_db.importJobs)
               ..where(
                 (j) =>
                     j.sourceKey.equals(sourceKey) &
                     j.id.equals(exceptId).not() &
-                    j.status.equalsValue(ImportStatus.completed).not(),
+                    j.status.equalsValue(ImportStatus.completed).not() &
+                    // In SQL `NULL NOT IN (…)` non è vero: un fallito senza
+                    // codice va contato esplicitamente.
+                    (j.status.equalsValue(ImportStatus.failed).not() |
+                        j.errorCode.isNull() |
+                        j.errorCode.isNotIn(dead)),
               )
               ..limit(1))
             .getSingleOrNull();
     return row != null;
+  }
+
+  /// Job falliti con il codice d'errore [code].
+  Future<List<ImportJob>> failedWith(FailureCode code) async {
+    final rows =
+        await (_db.select(_db.importJobs)..where(
+              (j) =>
+                  j.status.equalsValue(ImportStatus.failed) &
+                  j.errorCode.equals(code.name),
+            ))
+            .get();
+    return rows.map(_fromRow).toList();
   }
 
   /// Job più recenti per la schermata Importazioni; si aggiorna da solo.

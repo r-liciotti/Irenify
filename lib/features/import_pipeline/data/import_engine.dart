@@ -9,12 +9,19 @@ import '../../../core/errors/failure.dart';
 import '../../../core/logging/app_log.dart';
 import '../../../core/network/http_client.dart';
 import '../../recipes/data/recipe_repository.dart';
+import '../../recipes/domain/recipe_enums.dart';
 import '../domain/import_flow.dart';
 import '../domain/import_job.dart';
 import '../domain/import_step.dart';
+import '../domain/post_page.dart';
 import 'import_job_repository.dart';
 import 'job_storage.dart';
+import 'downloader.dart';
 import 'link_resolver.dart';
+import 'platforms/instagram_client.dart';
+import 'platforms/tiktok_client.dart';
+import 'steps/media_step.dart';
+import 'steps/metadata_step.dart';
 import 'steps/normalize_link_step.dart';
 import 'steps/pass_through_nutrition_step.dart';
 
@@ -25,19 +32,35 @@ final jobStorageProvider = Provider<JobStorage>(
   }),
 );
 
-/// Tappe disponibili. Le fasi 5–7 della F1 aggiungono le altre: finché una
+/// Lettori delle pagine pubbliche, uno per piattaforma.
+final platformClientsProvider = Provider<Map<SourcePlatform, PlatformClient>>((
+  ref,
+) {
+  final dio = ref.watch(httpClientProvider);
+  return {
+    SourcePlatform.instagram: InstagramClient(dio),
+    SourcePlatform.tiktok: TikTokClient(dio),
+  };
+});
+
+/// Tappe disponibili. Le fasi 6–7 della F1 aggiungono le altre: finché una
 /// tappa manca, il job che la raggiunge si ferma con "non ancora
 /// disponibile" (o la salta, se è facoltativa).
-final importStepsProvider = Provider<List<ImportStep>>(
-  (ref) => [
+final importStepsProvider = Provider<List<ImportStep>>((ref) {
+  final clients = ref.watch(platformClientsProvider);
+  final downloader = Downloader(ref.watch(httpClientProvider));
+  final log = ref.watch(appLogProvider);
+  return [
     NormalizeLinkStep(
       resolver: LinkResolver(ref.watch(httpClientProvider)),
       recipes: ref.watch(recipeRepositoryProvider),
       jobs: ref.watch(importJobRepositoryProvider),
     ),
+    MetadataStep(clients: clients, downloader: downloader, log: log),
+    MediaStep(clients: clients, downloader: downloader, log: log),
     const PassThroughNutritionStep(),
-  ],
-);
+  ];
+});
 
 final importEngineProvider = Provider<ImportEngine>((ref) {
   final engine = ImportEngine(
@@ -87,6 +110,7 @@ class ImportEngine {
   /// nuove cartelle senza che la pulizia le scambi per orfane.
   Future<void> start() async {
     await _cleanUpFolders();
+    await _resumeNowAvailable();
     unawaited(wake());
   }
 
@@ -225,12 +249,8 @@ class ImportEngine {
       case StepDone():
         await _save(done);
         return step;
-      case StepNotApplicable():
-        await _skip(
-          done,
-          step,
-          const SkippedStep(reason: SkipReason.notApplicable),
-        );
+      case StepNotApplicable(:final reason):
+        await _skip(done, step, SkippedStep(reason: reason));
         return step;
       case StepAlreadyImported(:final recipeId):
         _log.info('${_tag(done)} già nel ricettario');
@@ -302,6 +322,20 @@ class ImportEngine {
     errorCode: null,
     errorDetail: null,
   );
+
+  /// I job fermi su una tappa che non esisteva ancora ripartono da soli
+  /// quando un aggiornamento dell'app la aggiunge.
+  Future<void> _resumeNowAvailable() async {
+    try {
+      for (final job in await _repo.failedWith(FailureCode.stepNotAvailable)) {
+        if (!_steps.containsKey(job.failedStep)) continue;
+        await _repo.save(_restarted(job));
+        _log.info('${_tag(job)} riparte: ${job.failedStep?.name} ora c\'è');
+      }
+    } catch (e, st) {
+      _log.error('Ripresa dei job in attesa non riuscita', e, st);
+    }
+  }
 
   /// Elimina le cartelle dei job che non servono più: job eliminati o
   /// completati (crash prima della pulizia) e job falliti da oltre 7 giorni

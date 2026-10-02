@@ -133,6 +133,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Questa parte dell\'importazione non è ancora disponibile.';
 
   @override
+  String get failureSourceUnavailable =>
+      'Instagram o TikTok non hanno risposto come previsto: riprova più tardi.';
+
+  @override
   String get actionRetry => 'Riprova';
 
   @override

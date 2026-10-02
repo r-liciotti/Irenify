@@ -112,6 +112,26 @@ void main() {
     );
     expect(await repo.hasOtherActive('tiktok:1', exceptId: b.id), isTrue);
 
+    // Fallito senza rimedio (es. post rimosso): non blocca una nuova
+    // condivisione.
+    await repo.save(
+      a.copyWith(
+        sourceKey: 'tiktok:1',
+        status: ImportStatus.failed,
+        errorCode: 'invalidLink',
+      ),
+    );
+    expect(await repo.hasOtherActive('tiktok:1', exceptId: b.id), isFalse);
+
+    await repo.save(
+      a.copyWith(
+        sourceKey: 'tiktok:1',
+        status: ImportStatus.failed,
+        errorCode: 'network',
+      ),
+    );
+    expect(await repo.hasOtherActive('tiktok:1', exceptId: b.id), isTrue);
+
     await repo.save(
       a.copyWith(sourceKey: 'tiktok:1', status: ImportStatus.completed),
     );
