@@ -48,6 +48,44 @@
   },
   "settingsSpikeTools": "Strumenti di prova (F0)",
   "settingsSpikeToolsSubtitle": "Schermata provvisoria: analisi link, download e Whisper",
+  "settingsTranscription": "Trascrizione",
+  "speechModelTitle": "Modello di trascrizione",
+  "speechModelChecking": "Controllo in corso…",
+  "speechModelMissing": "Non scaricato. Senza modello i video si importano con la sola didascalia. Sono {megabytes} MB: meglio con il Wi-Fi.",
+  "@speechModelMissing": {
+    "placeholders": {
+      "megabytes": { "type": "int" }
+    }
+  },
+  "speechModelReady": "Pronto ({megabytes} MB): l'audio dei video viene trascritto sul telefono",
+  "@speechModelReady": {
+    "placeholders": {
+      "megabytes": { "type": "int" }
+    }
+  },
+  "speechModelDownloading": "Download in corso: {percent}%",
+  "@speechModelDownloading": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "speechModelVerifying": "Verifica in corso…",
+  "speechModelFailed": "Download non riuscito. {message}",
+  "@speechModelFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "speechModelDownload": "Scarica",
+  "speechModelCancel": "Annulla",
+  "speechModelDelete": "Elimina",
+  "speechModelDeleteTitle": "Eliminare il modello?",
+  "speechModelDeleteBody": "Libera {megabytes} MB. Fino a un nuovo download i video si importeranno con la sola didascalia.",
+  "@speechModelDeleteBody": {
+    "placeholders": {
+      "megabytes": { "type": "int" }
+    }
+  },
 
   "failureNetwork": "Connessione assente o troppo lenta.",
   "failureUnexpected": "Si è verificato un errore imprevisto.",
@@ -57,6 +95,7 @@
   "failureAlreadyImporting": "Questo post è già in un'altra importazione.",
   "failureStepNotAvailable": "Questa parte dell'importazione non è ancora disponibile.",
   "failureSourceUnavailable": "Instagram o TikTok non hanno risposto come previsto: riprova più tardi.",
+  "failureTranscriptionFailed": "La trascrizione dell'audio non è riuscita.",
   "actionRetry": "Riprova",
   "actionOpenSettings": "Apri impostazioni"
 }

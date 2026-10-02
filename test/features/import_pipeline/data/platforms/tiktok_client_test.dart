@@ -214,16 +214,13 @@ void main() {
       );
     });
 
-    test('senza italiano: il primo WebVTT', () {
+    test('senza italiano: nessuno, si trascrive con Whisper (D-31)', () {
       final html = withSubtitles([
         subtitle('spa-ES', 'srt'),
         subtitle('eng-US', 'webvtt'),
         subtitle('fra-FR', 'webvtt'),
       ]);
-      expect(
-        subtitlesOf(html).toString(),
-        'https://sottotitoli.example/eng-US/webvtt',
-      );
+      expect(subtitlesOf(html), isNull);
     });
 
     test('senza WebVTT o senza sottotitoli: nessuno', () {

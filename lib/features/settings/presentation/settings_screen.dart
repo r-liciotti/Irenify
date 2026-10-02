@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/providers.dart';
 import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
+import 'speech_model_tile.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -17,12 +18,9 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.navSettings)),
       body: ListView(
         children: [
-          ListTile(
-            title: Text(
-              l10n.settingsDiagnostics,
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
-            ),
-          ),
+          _SectionHeader(l10n.settingsTranscription),
+          const SpeechModelTile(),
+          _SectionHeader(l10n.settingsDiagnostics),
           ListTile(
             leading: const Icon(Icons.copy_all),
             title: Text(l10n.settingsCopyLog),
@@ -51,4 +49,18 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+    title: Text(
+      title,
+      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+    ),
+  );
 }

@@ -141,7 +141,7 @@ sottotitoli automatici TikTok (D-31). Link TikTok `/photo/` ed `/embed/` riscrit
 reel IG con audio originale → video; reel IG con musica su licenza → solo didascalia; video TikTok → video +
 sottotitoli; foto IG e post di foto TikTok → solo didascalia. Fixture ridotte e anonimizzate in `test/fixtures/`.
 
-## Fase 6 — Audio e trascrizione (≈ 0,75 gg)
+## Fase 6 — Audio e trascrizione (≈ 0,75 gg) — ✅ completata il 2026-10-02
 
 **Perché:** molte ricette sono spiegate a voce; la trascrizione completa la didascalia.
 
@@ -156,6 +156,20 @@ sottotitoli; foto IG e post di foto TikTok → solo didascalia. Fixture ridotte 
 6. Modello non scaricato → la tappa viene saltata con un avviso, e la ricetta si fa con la sola didascalia.
 
 **Uscita:** su un reel parlato la trascrizione compare nel job, con tempi simili a quelli di F0 (~0,7 s per secondo di audio).
+
+**Come è stata fatta:** contratto comune in `domain/transcription.dart` (`AudioExtractor`, `Transcriber`,
+`CpuCompatibility`, `SpeechModelStore`), poi due subagent in parallelo: modello e Impostazioni
+(`WhisperModelManager` a blocchi su `.part` con ripresa via Range, controllo di dimensione e sha256, sezione
+"Trascrizione" con scarica/annulla/elimina) e parti native (`FfmpegAudioExtractor` diretto con `-vn`, video senza
+audio riconosciuto; `WhisperTranscriber` che cancella il WAV duplicato; controllo delle istruzioni della CPU da
+`/proc/cpuinfo`, D-07). Tappe `AudioStep` e `TranscribeStep`: i sottotitoli TikTok in italiano vincono su Whisper
+(D-31), schermo acceso durante Whisper, trascrizione solo ad app aperta (D-34), testo ripulito da "[Musica]" e dalle
+frasi inventate sul silenzio, qualità `ok`/`low`/`empty`. Video e WAV non vengono cancellati dalla tappa: li toglie
+la pulizia della cartella del job (D-22), così un nuovo tentativo non riscarica nulla. Prova sul Pixel: modello
+della F0 riconosciuto ("Pronto (264 MB)"); reel IG con audio originale (38,4 s) → Whisper, qualità `ok`, audio
+estratto in 0,4 s, trascrizione in 34 s (0,89 s/s; 49 s a freddo con il primo caricamento del modello), picco di
+~935 MB PSS poi rilasciato; video TikTok → sottotitoli in 3 s senza estrarre l'audio; reel con musica su licenza →
+audio e trascrizione saltati. Nessun `audio.wav.wav` rimasto.
 
 ## Fase 7 — Estrazione della ricetta con Gemini (≈ 1 gg) — *serve la tua chiave Gemini*
 
@@ -204,6 +218,6 @@ sottotitoli; foto IG e post di foto TikTok → solo didascalia. Fixture ridotte 
 | 3 | Motore delle importazioni ✅ | — | 0,75 gg |
 | 4 | Ricezione condivisione e link ✅ | prova sul telefono | 0,5 gg |
 | 5 | Didascalia e video ✅ | prova sul telefono | 0,75 gg |
-| 6 | Audio e trascrizione | prova sul telefono | 0,75 gg |
+| 6 | Audio e trascrizione ✅ | prova sul telefono | 0,75 gg |
 | 7 | Estrazione con Gemini | **chiave Gemini** | 1 gg |
 | 8 | Interfaccia provvisoria e prova completa | 6–8 link reali | 0,5 gg |

@@ -170,7 +170,7 @@ packages:
     source: hosted
     version: "1.15.1"
   crypto:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: crypto
       sha256: c8ea0233063ba03258fbcf2ca4d6dadfefe14f02fab57702265467a19f27fadf
@@ -266,7 +266,7 @@ packages:
     source: hosted
     version: "0.1.2"
   ffmpeg_kit_flutter_new_min:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: ffmpeg_kit_flutter_new_min
       sha256: "1fce79b73ebbcf34e1063ed84cacc4920adfbb8631877e585302e68157b0ace3"

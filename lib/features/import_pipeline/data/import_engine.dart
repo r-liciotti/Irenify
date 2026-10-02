@@ -16,13 +16,20 @@ import '../domain/import_step.dart';
 import '../domain/post_page.dart';
 import 'import_job_repository.dart';
 import 'job_storage.dart';
+import '../../settings/data/whisper_model_manager.dart';
+import 'audio/cpu_compatibility.dart';
+import 'audio/ffmpeg_audio_extractor.dart';
+import 'audio/whisper_transcriber.dart';
 import 'downloader.dart';
 import 'link_resolver.dart';
 import 'platforms/instagram_client.dart';
 import 'platforms/tiktok_client.dart';
+import 'screen_awake.dart';
+import 'steps/audio_step.dart';
 import 'steps/media_step.dart';
 import 'steps/metadata_step.dart';
 import 'steps/normalize_link_step.dart';
+import 'steps/transcribe_step.dart';
 import 'steps/pass_through_nutrition_step.dart';
 
 final jobStorageProvider = Provider<JobStorage>(
@@ -43,13 +50,14 @@ final platformClientsProvider = Provider<Map<SourcePlatform, PlatformClient>>((
   };
 });
 
-/// Tappe disponibili. Le fasi 6–7 della F1 aggiungono le altre: finché una
+/// Tappe disponibili. La fase 7 della F1 aggiunge le altre: finché una
 /// tappa manca, il job che la raggiunge si ferma con "non ancora
 /// disponibile" (o la salta, se è facoltativa).
 final importStepsProvider = Provider<List<ImportStep>>((ref) {
   final clients = ref.watch(platformClientsProvider);
   final downloader = Downloader(ref.watch(httpClientProvider));
   final log = ref.watch(appLogProvider);
+  final models = ref.watch(whisperModelManagerProvider);
   return [
     NormalizeLinkStep(
       resolver: LinkResolver(ref.watch(httpClientProvider)),
@@ -58,6 +66,16 @@ final importStepsProvider = Provider<List<ImportStep>>((ref) {
     ),
     MetadataStep(clients: clients, downloader: downloader, log: log),
     MediaStep(clients: clients, downloader: downloader, log: log),
+    AudioStep(
+      extractor: ref.watch(audioExtractorProvider),
+      models: models,
+      cpu: ref.watch(cpuCompatibilityProvider),
+    ),
+    TranscribeStep(
+      transcriber: ref.watch(transcriberProvider),
+      models: models,
+      screenAwake: ref.watch(screenAwakeProvider),
+    ),
     const PassThroughNutritionStep(),
   ];
 });

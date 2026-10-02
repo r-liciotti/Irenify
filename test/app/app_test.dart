@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +13,7 @@ import 'package:irenefy/core/logging/app_log.dart';
 import 'package:irenefy/data/db/app_database.dart';
 import 'package:irenefy/data/db/database_provider.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
+import 'package:irenefy/features/settings/data/whisper_model_manager.dart';
 import 'package:irenefy/l10n/app_localizations.dart';
 
 import '../data/db/test_database.dart';
@@ -30,6 +33,10 @@ void appTest(
   testWidgets(description, (tester) async {
     final db = newTestDatabase();
     final log = AppLog()..info('prima riga');
+    // Il modello Whisper si cerca in una cartella vuota, mai in
+    // path_provider (che nei test non esiste).
+    final modelDir = Directory.systemTemp.createTempSync('irenefy_model_');
+    addTearDown(() => modelDir.deleteSync(recursive: true));
     try {
       if (seed != null) await tester.runAsync(() => seed(db));
       await tester.pumpWidget(
@@ -38,6 +45,9 @@ void appTest(
           overrides: [
             appLogProvider.overrideWithValue(log),
             appDatabaseProvider.overrideWithValue(db),
+            speechModelDirectoryProvider.overrideWithValue(
+              () async => modelDir,
+            ),
           ],
           child: const IrenefyApp(),
         ),

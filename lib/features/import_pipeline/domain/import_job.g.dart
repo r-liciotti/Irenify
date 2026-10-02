@@ -24,6 +24,10 @@ const _$SkipReasonEnumMap = {
   SkipReason.notAVideo: 'notAVideo',
   SkipReason.videoBlocked: 'videoBlocked',
   SkipReason.videoTooLong: 'videoTooLong',
+  SkipReason.noAudio: 'noAudio',
+  SkipReason.noModel: 'noModel',
+  SkipReason.cpuUnsupported: 'cpuUnsupported',
+  SkipReason.platformSubtitles: 'platformSubtitles',
 };
 
 _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>
@@ -55,6 +59,10 @@ _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>
         _$TranscriptQualityEnumMap,
         json['transcriptQuality'],
       ),
+      transcriptSource: $enumDecodeNullable(
+        _$TranscriptSourceEnumMap,
+        json['transcriptSource'],
+      ),
       extraction: json['extraction'] as Map<String, dynamic>?,
       extractionModel: json['extractionModel'] as String?,
     );
@@ -79,6 +87,7 @@ Map<String, dynamic> _$ImportJobDataToJson(
   'audioPath': instance.audioPath,
   'transcript': instance.transcript,
   'transcriptQuality': _$TranscriptQualityEnumMap[instance.transcriptQuality],
+  'transcriptSource': _$TranscriptSourceEnumMap[instance.transcriptSource],
   'extraction': instance.extraction,
   'extractionModel': instance.extractionModel,
 };
@@ -101,4 +110,9 @@ const _$TranscriptQualityEnumMap = {
   TranscriptQuality.low: 'low',
   TranscriptQuality.empty: 'empty',
   TranscriptQuality.none: 'none',
+};
+
+const _$TranscriptSourceEnumMap = {
+  TranscriptSource.platformSubtitles: 'platformSubtitles',
+  TranscriptSource.whisper: 'whisper',
 };

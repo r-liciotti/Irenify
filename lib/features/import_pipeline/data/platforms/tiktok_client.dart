@@ -197,19 +197,14 @@ PostPage _pageFromItem(Map<String, Object?> item, String? chainToken) {
   );
 }
 
-/// Sottotitoli WebVTT: in italiano se ci sono, altrimenti i primi offerti.
+/// Sottotitoli WebVTT in italiano, se ci sono: in un'altra lingua non
+/// servono e si trascrive con Whisper (D-31).
 Uri? _subtitlesUrl(Object? infos) {
   if (infos is! List<Object?>) return null;
-  final webvtt = [
-    for (final entry in infos.map(_map).nonNulls)
-      if (entry['Format'] == 'webvtt') entry,
-  ];
-  final italian = webvtt.where(
-    (e) => (_text(e['LanguageCodeName']) ?? '').startsWith('ita'),
-  );
-  for (final entry in [...italian, ...webvtt]) {
+  for (final entry in infos.map(_map).nonNulls) {
+    final italian = (_text(entry['LanguageCodeName']) ?? '').startsWith('ita');
     final url = _uri(entry['Url']);
-    if (url != null) return url;
+    if (entry['Format'] == 'webvtt' && italian && url != null) return url;
   }
   return null;
 }

@@ -256,6 +256,84 @@ abstract class AppLocalizations {
   /// **'Schermata provvisoria: analisi link, download e Whisper'**
   String get settingsSpikeToolsSubtitle;
 
+  /// No description provided for @settingsTranscription.
+  ///
+  /// In it, this message translates to:
+  /// **'Trascrizione'**
+  String get settingsTranscription;
+
+  /// No description provided for @speechModelTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Modello di trascrizione'**
+  String get speechModelTitle;
+
+  /// No description provided for @speechModelChecking.
+  ///
+  /// In it, this message translates to:
+  /// **'Controllo in corso…'**
+  String get speechModelChecking;
+
+  /// No description provided for @speechModelMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'Non scaricato. Senza modello i video si importano con la sola didascalia. Sono {megabytes} MB: meglio con il Wi-Fi.'**
+  String speechModelMissing(int megabytes);
+
+  /// No description provided for @speechModelReady.
+  ///
+  /// In it, this message translates to:
+  /// **'Pronto ({megabytes} MB): l\'audio dei video viene trascritto sul telefono'**
+  String speechModelReady(int megabytes);
+
+  /// No description provided for @speechModelDownloading.
+  ///
+  /// In it, this message translates to:
+  /// **'Download in corso: {percent}%'**
+  String speechModelDownloading(int percent);
+
+  /// No description provided for @speechModelVerifying.
+  ///
+  /// In it, this message translates to:
+  /// **'Verifica in corso…'**
+  String get speechModelVerifying;
+
+  /// No description provided for @speechModelFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Download non riuscito. {message}'**
+  String speechModelFailed(String message);
+
+  /// No description provided for @speechModelDownload.
+  ///
+  /// In it, this message translates to:
+  /// **'Scarica'**
+  String get speechModelDownload;
+
+  /// No description provided for @speechModelCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get speechModelCancel;
+
+  /// No description provided for @speechModelDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get speechModelDelete;
+
+  /// No description provided for @speechModelDeleteTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare il modello?'**
+  String get speechModelDeleteTitle;
+
+  /// No description provided for @speechModelDeleteBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Libera {megabytes} MB. Fino a un nuovo download i video si importeranno con la sola didascalia.'**
+  String speechModelDeleteBody(int megabytes);
+
   /// No description provided for @failureNetwork.
   ///
   /// In it, this message translates to:
@@ -303,6 +381,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Instagram o TikTok non hanno risposto come previsto: riprova più tardi.'**
   String get failureSourceUnavailable;
+
+  /// No description provided for @failureTranscriptionFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'La trascrizione dell\'audio non è riuscita.'**
+  String get failureTranscriptionFailed;
 
   /// No description provided for @actionRetry.
   ///

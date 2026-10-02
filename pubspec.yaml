@@ -51,6 +51,10 @@ dependencies:
     sdk: flutter
   whisper_ggml: ^2.6.0
   wakelock_plus: ^1.7.0
+  # Già usate da whisper_ggml: rese dirette per la conversione audio e per
+  # verificare il modello scaricato (F1 fase 6). Stesse versioni del lock.
+  ffmpeg_kit_flutter_new_min: 2.1.0
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:

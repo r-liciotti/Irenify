@@ -21,7 +21,8 @@ enum FailureCode {
   invalidLink,
   alreadyImporting,
   stepNotAvailable,
-  sourceUnavailable;
+  sourceUnavailable,
+  transcriptionFailed;
 
   /// Codice salvato → [FailureCode]; un nome sconosciuto diventa [unexpected].
   static FailureCode fromName(String? name) =>
@@ -33,7 +34,8 @@ enum FailureCode {
     network ||
     unexpected ||
     stepInterrupted ||
-    sourceUnavailable => RecoveryAction.retry,
+    sourceUnavailable ||
+    transcriptionFailed => RecoveryAction.retry,
     // Ripetere non cambierebbe nulla (D-26).
     unsupportedLink ||
     invalidLink ||
@@ -142,4 +144,13 @@ final class SourceUnavailableFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.sourceUnavailable;
+}
+
+/// Whisper non è riuscito a trascrivere l'audio (modello rovinato, WAV
+/// illeggibile…). La tappa è facoltativa: il job prosegue con la didascalia.
+final class TranscriptionFailure extends Failure {
+  const TranscriptionFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.transcriptionFailed;
 }

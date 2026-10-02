@@ -11,6 +11,13 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-34 — Trascrizione solo ad app aperta anche in fase 6 (2026-10-02) — Attiva, conferma D-23
+- **Decisione:** nessun servizio Android in primo piano per la trascrizione: se l'utente torna a un'altra app, Android
+  congela Irenefy e la trascrizione riprende alla riapertura. Da rivalutare dopo la prova completa della fase 8.
+- **Perché:** dopo una condivisione Irenefy si apre in primo piano; con i sottotitoli TikTok (D-31) spesso Whisper non
+  serve; il servizio costerebbe circa mezza giornata.
+- **Deciso da:** utente (opzione B del resoconto della fase 6).
+
 ## D-33 — Job fermi per una tappa mancante ripartono da soli; i falliti senza rimedio non bloccano (2026-10-02) — Attiva
 - **Decisione:** (1) all'avvio il motore fa ripartire i job falliti con `stepNotAvailable` se la tappa ora esiste
   (dopo un aggiornamento dell'app); (2) nel controllo dei doppioni (D-17) un job fallito con un errore senza "Riprova"
@@ -26,9 +33,12 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
   comuni); l'agente principale unisce, verifica e prova sul telefono.
 - **Deciso da:** utente ("va bene, ottimizza l'utilizzo dei subagent").
 
-## D-31 — Sottotitoli automatici di TikTok salvati con il video (2026-10-02) — Attiva
-- **Decisione:** se la pagina TikTok offre i sottotitoli automatici (WebVTT, preferibilmente in italiano), la tappa
-  video li scarica nella cartella del job. In fase 6 si decide se usarli al posto di Whisper o come confronto.
+## D-31 — Sottotitoli automatici di TikTok al posto di Whisper quando ci sono (2026-10-02) — Attiva
+- **Decisione:** se la pagina TikTok offre i sottotitoli automatici **in italiano** (WebVTT), la tappa video li
+  scarica e la trascrizione usa quelli (niente Whisper, niente conversione audio); se mancano o sono vuoti si usa
+  Whisper. Il job annota la fonte della trascrizione.
+- **Perché (misurato il 2026-10-02 sul Pixel, 1 video da 28 s):** sottotitoli ≈2 errori su ~70 parole, 0 s; Whisper
+  small-q8_0 ≈9 errori (anche sui passaggi), 22 s. Da riverificare su 2–3 TikTok nella prova della fase 8.
 - **Deciso da:** utente, nel resoconto della F1 fase 5.
 
 ## D-30 — Durata massima del video da scaricare: 3 minuti (2026-10-02) — Attiva

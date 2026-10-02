@@ -1,0 +1,81 @@
+import 'dart:io';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:whisper_ggml/whisper_ggml.dart';
+
+import '../../../../core/errors/failure.dart';
+import '../../domain/transcription.dart';
+
+final transcriberProvider = Provider<Transcriber>(
+  (ref) => WhisperTranscriber(),
+);
+
+/// Chiamata a whisper.cpp: restituisce il testo trascritto. Separata perché
+/// sul Mac (test) la libreria nativa non esiste.
+typedef WhisperCall =
+    Future<String> Function({
+      required String modelPath,
+      required TranscribeRequest request,
+    });
+
+/// Chiamata reale tramite `whisper_ggml`.
+Future<String> whisperGgmlCall({
+  required String modelPath,
+  required TranscribeRequest request,
+}) async {
+  // `model` serve al pacchetto solo come default: conta `modelPath`, che
+  // permette i modelli quantizzati (small-q8_0) assenti dall'enum.
+  final response = await const Whisper(
+    model: WhisperModel.base,
+  ).transcribe(transcribeRequest: request, modelPath: modelPath);
+  return response.text;
+}
+
+/// Trascrive in italiano con whisper.cpp sul telefono (parametri D-10).
+class WhisperTranscriber implements Transcriber {
+  WhisperTranscriber({WhisperCall call = whisperGgmlCall}) : _call = call;
+
+  final WhisperCall _call;
+
+  /// Un thread per core del Pixel 9 Pro (D-10).
+  static const threads = 8;
+
+  /// Richiesta per whisper.cpp: italiano, senza timestamp e **senza
+  /// `initialPrompt`** (lo rallenta da 1,3 a 9 volte, D-10).
+  static TranscribeRequest request(File wav) => TranscribeRequest(
+    audio: wav.path,
+    language: 'it',
+    threads: threads,
+    isNoTimestamps: true,
+    splitOnWord: false,
+  );
+
+  @override
+  Future<String> transcribe(File wav, File model) async {
+    // Niente timeout: whisper.cpp non si può interrompere e una seconda
+    // trascrizione partirebbe mentre la prima gira ancora (D-09).
+    try {
+      final text = await _call(modelPath: model.path, request: request(wav));
+      return text.trim();
+    } on Object catch (error, stackTrace) {
+      throw TranscriptionFailure(cause: error, stackTrace: stackTrace);
+    } finally {
+      await _deleteDuplicate(wav);
+    }
+  }
+
+  /// `Whisper.transcribe` riconverte sempre l'ingresso con FFmpeg in
+  /// `<ingresso>.wav`, anche se è già un WAV: il doppione va eliminato.
+  /// Se la riconversione fallisce (per esempio con spazi nel percorso, perché
+  /// il pacchetto unisce gli argomenti con spazi) il pacchetto trascrive
+  /// l'originale, che è già nel formato giusto.
+  static Future<void> _deleteDuplicate(File wav) async {
+    final duplicate = File('${wav.path}.wav');
+    try {
+      if (duplicate.existsSync()) await duplicate.delete();
+    } on FileSystemException {
+      // Non deve nascondere l'esito della trascrizione: al peggio resta un
+      // file in più nella cartella del job.
+    }
+  }
+}

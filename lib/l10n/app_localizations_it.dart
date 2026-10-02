@@ -107,6 +107,55 @@ class AppLocalizationsIt extends AppLocalizations {
       'Schermata provvisoria: analisi link, download e Whisper';
 
   @override
+  String get settingsTranscription => 'Trascrizione';
+
+  @override
+  String get speechModelTitle => 'Modello di trascrizione';
+
+  @override
+  String get speechModelChecking => 'Controllo in corso…';
+
+  @override
+  String speechModelMissing(int megabytes) {
+    return 'Non scaricato. Senza modello i video si importano con la sola didascalia. Sono $megabytes MB: meglio con il Wi-Fi.';
+  }
+
+  @override
+  String speechModelReady(int megabytes) {
+    return 'Pronto ($megabytes MB): l\'audio dei video viene trascritto sul telefono';
+  }
+
+  @override
+  String speechModelDownloading(int percent) {
+    return 'Download in corso: $percent%';
+  }
+
+  @override
+  String get speechModelVerifying => 'Verifica in corso…';
+
+  @override
+  String speechModelFailed(String message) {
+    return 'Download non riuscito. $message';
+  }
+
+  @override
+  String get speechModelDownload => 'Scarica';
+
+  @override
+  String get speechModelCancel => 'Annulla';
+
+  @override
+  String get speechModelDelete => 'Elimina';
+
+  @override
+  String get speechModelDeleteTitle => 'Eliminare il modello?';
+
+  @override
+  String speechModelDeleteBody(int megabytes) {
+    return 'Libera $megabytes MB. Fino a un nuovo download i video si importeranno con la sola didascalia.';
+  }
+
+  @override
   String get failureNetwork => 'Connessione assente o troppo lenta.';
 
   @override
@@ -135,6 +184,10 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get failureSourceUnavailable =>
       'Instagram o TikTok non hanno risposto come previsto: riprova più tardi.';
+
+  @override
+  String get failureTranscriptionFailed =>
+      'La trascrizione dell\'audio non è riuscita.';
 
   @override
   String get actionRetry => 'Riprova';

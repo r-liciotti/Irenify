@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-02)
+## Stato (aggiornato al 2026-10-02, fase 6)
 
 Fase **F1 in corso** (piano in `F1_PIANO.md`, 8 fasi). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -23,8 +23,13 @@ tappa `NormalizeLinkStep` + `LinkResolver`, scorciatoia di condivisione e correz
 `MainActivity.kt`, elenco minimo in Importazioni (prova del video dalla galleria rimandata alla fase 8, D-29).
 **Fase 5 (didascalia e video) completata il 2026-10-02**: `PlatformClient` + `InstagramClient`/`TikTokClient` in
 `data/platforms/`, tappe `MetadataStep` e `MediaStep`, `Downloader`. I job reali ora si fermano a «estrazione della
-ricetta» ("non ancora disponibile") fino alla fase 7; audio e trascrizione (fase 6, la prossima) vengono saltati.
-All'avvio i job fermi su una tappa che ora esiste ripartono da soli (D-33).
+ricetta» ("non ancora disponibile") fino alla fase 7 (la prossima). All'avvio i job fermi su una tappa che ora esiste
+ripartono da soli (D-33).
+**Fase 6 (audio e trascrizione) completata il 2026-10-02**: contratto in `domain/transcription.dart`, tappe `AudioStep` e
+`TranscribeStep`, implementazioni in `data/audio/` (FFmpeg diretto, Whisper, controllo CPU), testo e qualità in
+`domain/transcript_text.dart`, modello gestito da `features/settings/data/whisper_model_manager.dart` (Impostazioni →
+"Trascrizione"). Sottotitoli TikTok in italiano al posto di Whisper (D-31); Whisper solo ad app aperta e con lo schermo
+acceso (D-34). Sul Pixel: 0,89 s per secondo di audio (build di debug), picco ~935 MB PSS.
 La schermata di prova della F0 (`lib/spike/`) è raggiungibile da Impostazioni → "Strumenti di prova (F0)" (solo link
 inseriti a mano: le condivisioni non le riceve più). **Non** va estesa; va eliminata in fase 8.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
@@ -107,10 +112,10 @@ flutter run -d <device>             # telefono Android / iPhone reale
   altri telefoni").
 - `ndkVersion = "29.0.13113456"` in `android/app/build.gradle.kts` (richiesto dai plugin nativi).
 - Swift Package Manager abilitato per progetto in `pubspec.yaml` (`flutter: config:`), non globalmente.
-- `whisper_ggml`: converte da solo mp4 → WAV con l'FFmpeg incluso (`ffmpeg_kit_flutter_new_min`, LGPL).
-  `downloadModel()` tiene l'intero file in RAM: scaricare i modelli in streaming con dio.
-  `transcribe()` accetta solo `WhisperModel` (nessun `modelPath`): i modelli quantizzati richiedono un
-  accorgimento. `TranscribeResult` non è esportato.
+- `whisper_ggml` 2.6.0: riconverte sempre l'input in `<input>.wav` (lo cancella `WhisperTranscriber`); trascrizione
+  in `Isolate.run` + FFI, **non annullabile** (niente timeout). `downloadModel()` tiene il file in RAM: il modello lo
+  scarica `WhisperModelManager` con dio. La conversione mp4 → WAV usa `ffmpeg_kit_flutter_new_min` 2.1.0 (LGPL)
+  direttamente, non `WhisperAudioConvert` (rompe i percorsi con spazi e deduce il formato dall'estensione).
 
 ## Convenzioni
 

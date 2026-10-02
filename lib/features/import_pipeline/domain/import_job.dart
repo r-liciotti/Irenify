@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../recipes/domain/recipe_enums.dart';
+import 'transcription.dart';
 
 part 'import_job.freezed.dart';
 part 'import_job.g.dart';
@@ -81,6 +82,19 @@ enum SkipReason {
 
   /// Video oltre la durata massima (D-30).
   videoTooLong,
+
+  /// Il video non ha una traccia audio.
+  noAudio,
+
+  /// Modello Whisper non scaricato (si scarica dalle Impostazioni).
+  noModel,
+
+  /// Processore senza le istruzioni della build di whisper.cpp (D-07).
+  cpuUnsupported,
+
+  /// Audio non necessario: la trascrizione arriva dai sottotitoli della
+  /// piattaforma (D-31).
+  platformSubtitles,
 }
 
 @freezed
@@ -123,6 +137,7 @@ abstract class ImportJobData with _$ImportJobData {
     String? audioPath,
     String? transcript,
     TranscriptQuality? transcriptQuality,
+    TranscriptSource? transcriptSource,
 
     /// Risposta dell'LLM già validata, pronta per diventare una ricetta.
     Map<String, Object?>? extraction,
