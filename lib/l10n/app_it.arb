@@ -84,6 +84,27 @@
     }
   },
   "importCaptionOnlyChosen": "Solo didascalia",
+  "importProgressTitle": "Importo la ricetta",
+  "importProgressQueued": "In coda: parte appena finisce l'importazione precedente.",
+  "importProgressNormalized": "Leggo il link…",
+  "importProgressMetadata": "Leggo la didascalia…",
+  "importProgressMedia": "Scarico il video…",
+  "importProgressAudio": "Estraggo l'audio…",
+  "importProgressTranscribed": "Trascrivo il parlato…",
+  "importProgressExtracted": "Scrivo la ricetta…",
+  "importProgressNutrition": "Calcolo i valori nutrizionali…",
+  "importProgressCompleted": "Salvo la ricetta…",
+  "importProgressDone": "Ricetta pronta!",
+  "importProgressFailed": "Importazione non riuscita",
+  "importProgressKeepOpen": "Tieni l'app aperta: la trascrizione si ferma se la chiudi.",
+  "importProgressBackground": "Continua in background",
+  "settingsImports": "Importazioni",
+  "settingsImportsSubtitle": "{count, plural, =0{Nessuna da seguire} =1{1 da seguire} other{{count} da seguire}}",
+  "@settingsImportsSubtitle": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "importAddVideo": "Aggiungi il video",
   "importAddVideoHint": "Il video del post non si è potuto scaricare. Salvalo nella galleria e aggiungilo qui: la ricetta verrà rifatta anche con il parlato.",
   "importAddVideoFailed": "Impossibile usare questo video.",
@@ -470,6 +491,7 @@
   "failureLlmUnavailable": "Gemini non risponde in questo momento: riprova più tardi.",
   "failureSpeechModelMissing": "Per questo video serve la trascrizione: scarica il modello nelle Impostazioni.",
   "failureVideoTooLong": "Il video dura più di 3 minuti e non ha una didascalia da usare.",
+  "failureImportsInProgress": "C'è un'importazione in corso: aspetta che finisca, poi elimina i dati.",
   "actionRetry": "Riprova",
   "actionOpenSettings": "Apri impostazioni"
 }

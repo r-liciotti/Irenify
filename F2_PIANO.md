@@ -133,6 +133,8 @@ rimaste dalla F1 (D-44).
 
 ## Idee annotate, fuori dalla F2
 
+**2026-10-06, dall'utente:** la barra in basso avrà più avanti anche le schede **Piano pasti** e **Spesa** (D-52).
+
 Dagli screenshot di riferimento (2026-10-06), da valutare dopo l'MVP: raccolte / ricettari personali, lista della spesa,
 piano pasti, modalità cucina (schermo acceso, passo per passo), voto e note personali sulla ricetta, condivisione della
 ricetta. Lista della spesa e modalità cucina erano già nella "Fase 2 (fuori MVP)" del piano approvato.

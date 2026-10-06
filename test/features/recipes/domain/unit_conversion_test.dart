@@ -161,6 +161,77 @@ void main() {
     });
   });
 
+  group('decisioni sul valore come si legge', () {
+    test('999,6 g si leggono "1000": diventano 1 kg', () {
+      final d = convert(999.6, IngredientUnit.gram);
+      expect(d.unit, IngredientUnit.kilogram);
+      expect(d.quantity, closeTo(0.9996, 1e-9));
+    });
+
+    test('999,4 g restano grammi', () {
+      expect(convert(999.4, IngredientUnit.gram).unit, IngredientUnit.gram);
+    });
+
+    test('0,9996 kg restano chili (non "1000 g")', () {
+      expect(
+        convert(0.9996, IngredientUnit.kilogram),
+        shown(0.9996, IngredientUnit.kilogram),
+      );
+      expect(
+        convert(0.9996, IngredientUnit.liter),
+        shown(0.9996, IngredientUnit.liter),
+      );
+    });
+
+    test('0,996 kg → grammi (si leggono 996 g)', () {
+      expect(convert(0.996, IngredientUnit.kilogram).unit, IngredientUnit.gram);
+    });
+
+    test('999,7 ml → 1 l', () {
+      expect(
+        convert(999.7, IngredientUnit.milliliter).unit,
+        IngredientUnit.liter,
+      );
+    });
+
+    test('2,98 cucchiaini si leggono "3": diventano 1 cucchiaio', () {
+      expect(
+        convert(2.98, IngredientUnit.teaspoon),
+        shown(1, IngredientUnit.tablespoon),
+      );
+    });
+
+    test('3,05 cucchiaini si leggono "3,1": restano cucchiaini', () {
+      expect(
+        convert(3.05, IngredientUnit.teaspoon),
+        shown(3.05, IngredientUnit.teaspoon),
+      );
+    });
+
+    test('0,99 cucchiai si leggono "1": restano cucchiai', () {
+      expect(
+        convert(0.99, IngredientUnit.tablespoon),
+        shown(0.99, IngredientUnit.tablespoon),
+      );
+    });
+  });
+
+  group('valore mostrato (roundForDisplay)', () {
+    test('grammi: mai 0 per una quantità positiva', () {
+      expect(roundForDisplay(0.05, IngredientUnit.gram), 0.05);
+      expect(roundForDisplay(0.0125, IngredientUnit.gram), 0.01);
+      expect(roundForDisplay(0.001, IngredientUnit.gram), 0.01);
+      expect(roundForDisplay(0, IngredientUnit.gram), 0);
+    });
+
+    test('unità a pezzi: frazioni solo se vicine', () {
+      expect(roundForDisplay(0.26, IngredientUnit.tablespoon), 0.25);
+      expect(roundForDisplay(0.29, IngredientUnit.tablespoon), 0.3);
+      expect(roundForDisplay(2.98, IngredientUnit.teaspoon), 3);
+      expect(roundForDisplay(3.05, IngredientUnit.teaspoon), 3.1);
+    });
+  });
+
   group('nessuna conversione', () {
     test('quantità fissa: 1500 g restano', () {
       expect(

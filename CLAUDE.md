@@ -48,7 +48,9 @@ all'elenco guidato, filtri in `watchSummaries`. Fase 3 (2026-10-06): home a sche
 del job con tappe e tempi (`stepStartedAt`/`stepEndedAt` nel JSON del job), "Aggiungi il video" (D-49: `addVideo` del
 motore, `canAddVideo` in `domain/import_flow.dart`, `takeFile` in `job_storage.dart`). Fase 6 (2026-10-06): primo
 avvio (`features/onboarding/`, D-50), impostazioni con tema, "Elimina dati" (`settings/data/data_eraser.dart`), guida,
-versione e licenze. Resta la prova completa con link reali (D-44), poi `/code-review` di fine F2. Prove dal vivo D-44 ancora aperte.
+versione e licenze. Revisione del codice della F2 fatta e corretta (16 difetti). D-52: barra a 2 schede (Ricette, Impostazioni; in futuro
+Piano pasti e Spesa), Importazioni dentro le Impostazioni (`/impostazioni/importazioni`), schermata di caricamento
+`/importazione/:id` aperta da ogni condivisione. Prova dal vivo completa rimandata (D-51). Prossima: F4 (nutrizione). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT
@@ -150,7 +152,9 @@ flutter run -d <device>             # telefono Android / iPhone reale
   (`test/features/import_pipeline/data/fake_http.dart`) al posto della rete. Pagine reali per i test solo come
   estratti ridotti e anonimizzati in `test/fixtures/` (le pagine grezze contengono token e la città dell'utente).
 - Widget test con l'app intera: `appTest` sovrascrive anche `onboardingStoreProvider` (benvenuto già fatto); senza,
-  i test vedrebbero il benvenuto.
+  i test vedrebbero il benvenuto. La schermata di caricamento ha una barra animata all'infinito: nei test che la
+  aprono disattivare le animazioni (`FakeAccessibilityFeatures(disableAnimations: true)`), altrimenti
+  `pumpAndSettle` non termina.
 - Prove sul telefono: copiare il DB con `adb exec-out run-as it.overside.irenefy cat files/irenefy.sqlite > db.sqlite`
   e interrogarlo con `sqlite3`; l'avvio dell'APK di debug impiega ~20 s prima che il motore parta.
 - **Mai cambiare impostazioni di sistema del telefono via adb** (tema scuro, display…) senza conferma dell'utente: il
@@ -164,6 +168,9 @@ flutter run -d <device>             # telefono Android / iPhone reale
   coperto da un test nostro (`test/data/db/migration_v2_test.dart`), perché `migrateAndValidate` non lo vede. La riga
   dell'indice la scrive il repository nella stessa transazione del salvataggio; il testo dell'utente passa sempre da
   `ftsQueryFromUserText`. Il database usa `busy_timeout` 5 s (lock transitori all'avvio dopo un aggiornamento).
+  Ogni passo di migrazione deve essere **ripetibile** (`IF NOT EXISTS`, svuotare prima di riempire, conversioni
+  stabili): `user_version` lo salva `runMigrationSteps` dentro la transazione, ma la scrittura finale di drift
+  avviene fuori, e un passo ripetuto non deve mai impedire l'apertura del database (test in `migration_v2_test.dart`).
 - Database: righe drift `*Row`, entità di dominio freezed separate; conversioni solo nei repository. Enum salvati
   per nome: mai rinominarli (D-18). Test: `newTestDatabase()` in `test/data/db/`; widget test con DB tramite
   `appTest(...)` in `test/app/app_test.dart` (smonta l'app e chiude il DB dentro il test, altrimenti si blocca).

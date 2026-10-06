@@ -18,9 +18,10 @@ import 'job/import_step_timeline.dart';
 /// Job con l'id dato, letto dal database (anche se è fuori dalle 50
 /// importazioni recenti): si aggiorna a ogni salvataggio del motore. `null`
 /// se il job non c'è più.
-final importJobDetailProvider = StreamProvider.family<ImportJob?, String>(
-  (ref, id) => ref.watch(importJobRepositoryProvider).watchById(id),
-);
+final importJobDetailProvider = StreamProvider.autoDispose
+    .family<ImportJob?, String>(
+      (ref, id) => ref.watch(importJobRepositoryProvider).watchById(id),
+    );
 
 /// Dettaglio di un'importazione (D-49): fonte, tappe in verticale con stato
 /// e durata, azioni (rimedio, sola didascalia, "Aggiungi il video", ricetta,
@@ -269,11 +270,15 @@ class _Actions extends ConsumerWidget {
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
     if (!await confirmImportDelete(context) || !context.mounted) return;
     final actions = ref.read(importActionsProvider);
+    // Preso prima dell'attesa: il motore cancella la riga prima della
+    // cartella, lo stream emette `null` e questi pulsanti vengono smontati
+    // prima che l'eliminazione finisca (`context.mounted` sarebbe falso).
+    final navigator = Navigator.of(context);
     final deleted = await runImportAction(
       context,
       () => actions.delete(job.id),
     );
-    if (deleted && context.mounted) await Navigator.of(context).maybePop();
+    if (deleted && navigator.mounted) await navigator.maybePop();
   }
 }
 

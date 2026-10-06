@@ -158,14 +158,31 @@ const _italianPhrases = <String, IngredientKind>{
   'polpa di granchio': IngredientKind.crab,
   'spaghetti di riso': IngredientKind.noodles,
   'crema pasticcera': IngredientKind.custard,
+  'polpa di zucca': IngredientKind.pumpkin,
+  'colla di pesce': IngredientKind.custard,
+  'pasta di zucchero': IngredientKind.sugar,
+  'pasta di mandorle': IngredientKind.peanut,
+  'pasta di mandorla': IngredientKind.peanut,
+  'pasta di pistacchio': IngredientKind.peanut,
+  'pasta di pistacchi': IngredientKind.peanut,
+  'pasta di nocciole': IngredientKind.peanut,
+  'pasta di acciughe': IngredientKind.fish,
+  'pasta di acciuga': IngredientKind.fish,
+  'pasta d acciughe': IngredientKind.fish,
+  'pasta d acciuga': IngredientKind.fish,
 };
+
+/// Pezzi tagliati che precedono il vero ingrediente ("dadi di zucca" è
+/// zucca): saltati se seguiti da "di". "Dado" al singolare resta il dado da
+/// brodo ("dado di carne").
+const _cutWords = <String>{'dadi', 'dadino', 'dadini', 'cubetto', 'cubetti'};
 
 /// Parole chiave italiane (al singolare o al plurale: le altre forme si
 /// ricavano con [italianWordForms]).
 const _italianWords = <IngredientKind, List<String>>{
   IngredientKind.pumpkin: ['zucca'],
   IngredientKind.carrot: ['carota'],
-  IngredientKind.potato: ['patata'],
+  IngredientKind.potato: ['patata', 'patatina'],
   IngredientKind.sweetPotato: ['batata'],
   IngredientKind.garlic: ['aglio'],
   IngredientKind.onion: [
@@ -193,6 +210,7 @@ const _italianWords = <IngredientKind, List<String>>{
     'cavolo',
     'verza',
     'cavoletti',
+    'cavolino',
     'romanesco',
   ],
   IngredientKind.corn: ['mais', 'polenta', 'pannocchia'],
@@ -322,7 +340,13 @@ const _italianWords = <IngredientKind, List<String>>{
     'crostino', 'biscottate', 'cracker', 'taralli', 'bruschetta',
   ],
   IngredientKind.baguette: ['baguette', 'grissino', 'filoncino', 'ciabatta'],
-  IngredientKind.flatbread: ['piadina', 'tortilla', 'focaccia', 'pita'],
+  IngredientKind.flatbread: [
+    'piadina',
+    'tortilla',
+    'focaccia',
+    'pita',
+    'nacho',
+  ],
   IngredientKind.croissant: ['cornetto', 'croissant', 'brioche'],
   IngredientKind.pie: ['crostata', 'quiche'],
   IngredientKind.pizza: ['pizza'],
@@ -386,7 +410,9 @@ const _italianWords = <IngredientKind, List<String>>{
     'plumcake',
   ],
   IngredientKind.iceCream: ['gelato', 'sorbetto', 'semifreddo'],
-  IngredientKind.custard: ['vaniglia', 'vanillina', 'budino'],
+
+  /// Anche gelatina e colla di pesce (🍮).
+  IngredientKind.custard: ['vaniglia', 'vanillina', 'budino', 'gelatina'],
   IngredientKind.salt: ['sale'],
   IngredientKind.spice: [
     'pepe', 'paprika', 'curry', 'cannella', 'curcuma', 'zafferano', 'cumino', //
@@ -622,11 +648,12 @@ IngredientKind ingredientKindOf(Ingredient ingredient) {
     for (final MapEntry(key: key, value: kind) in _italianPhrases.entries) {
       if (phrase.contains(' $key ')) return kind;
     }
-    for (final word in words) {
-      for (final form in italianWordForms(word)) {
-        final kind = _italianIndex[form];
-        if (kind != null) return kind;
-      }
+    for (var i = 0; i < words.length; i++) {
+      final word = words[i];
+      final next = i + 1 < words.length ? words[i + 1] : null;
+      if (_cutWords.contains(word) && (next == 'di' || next == 'd')) continue;
+      final kind = _italianKindOf(word);
+      if (kind != null) return kind;
     }
   }
   final english = ingredient.canonicalNameEn;
@@ -647,6 +674,19 @@ IngredientKind ingredientKindOf(Ingredient ingredient) {
     }
   }
   return IngredientKind.generic;
+}
+
+/// Categoria di una parola italiana (al singolare o al plurale); anche i
+/// plurali in -s delle parole straniere ("tortillas", "crackers", "nachos").
+IngredientKind? _italianKindOf(String word) {
+  for (final form in italianWordForms(word)) {
+    final kind = _italianIndex[form];
+    if (kind != null) return kind;
+  }
+  if (word.length > 3 && word.endsWith('s')) {
+    return _italianIndex[word.substring(0, word.length - 1)];
+  }
+  return null;
 }
 
 /// La parola inglese e il suo singolare: "tomatoes" → tomato, "berries" →

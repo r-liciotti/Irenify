@@ -10,6 +10,7 @@ import 'package:irenefy/app/router.dart';
 import 'package:irenefy/app/theme_mode.dart';
 import 'package:irenefy/core/logging/app_log.dart';
 import 'package:irenefy/data/db/database_provider.dart';
+import 'package:irenefy/features/import_pipeline/data/import_job_repository.dart';
 import 'package:irenefy/features/onboarding/data/onboarding_store.dart';
 import 'package:irenefy/features/onboarding/presentation/onboarding_controller.dart';
 import 'package:irenefy/features/onboarding/presentation/welcome_screen.dart';
@@ -20,6 +21,15 @@ import '../../app/fake_onboarding_store.dart';
 import '../../app/fake_theme_mode_store.dart';
 import '../../data/db/test_database.dart';
 import '../settings/fake_llm_settings.dart';
+
+/// Crea nel database il job [id], come farebbe la condivisione: la schermata
+/// di caricamento esce se il job non esiste.
+Future<void> createJob(WidgetTester tester, WelcomeEnv env, String id) =>
+    tester.runAsync(
+      () => env.container
+          .read(importJobRepositoryProvider)
+          .create(id: id, sharedText: 'https://vm.tiktok.com/$id'),
+    );
 
 /// Ambiente di una prova: il flag del benvenuto e il container dell'app.
 typedef WelcomeEnv = ({FakeOnboardingStore store, ProviderContainer container});
@@ -43,6 +53,11 @@ void welcomeTest(
     }
     tester.platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    // La barra della schermata di caricamento è animata all'infinito: senza
+    // animazioni `pumpAndSettle` termina.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
     final db = newTestDatabase();
     final modelDir = Directory.systemTemp.createTempSync('irenefy_model_');
     addTearDown(() => modelDir.deleteSync(recursive: true));
@@ -168,28 +183,55 @@ void main() {
     expect(env.store.saved, isTrue);
   });
 
-  welcomeTest('una condivisione durante il benvenuto apre le Importazioni', (
-    tester,
-    env,
-  ) async {
+  welcomeTest('una condivisione durante il benvenuto apre la sua schermata di '
+      'caricamento', (tester, env) async {
     await tapText(tester, 'Avanti');
     // Quello che fa `main` quando una condivisione diventa un job.
-    openImportsAfterShare(env.container);
+    await createJob(tester, env, 'j1');
+    openImportAfterShare(env.container, 'j1');
     await settle(tester);
+    final router = env.container.read(routerProvider);
+    expect(
+      router.routerDelegate.currentConfiguration.uri.path,
+      Routes.importProgress('j1'),
+    );
     expect(find.byType(WelcomeScreen), findsNothing);
-    expect(find.text('Nessuna importazione'), findsOneWidget);
     expect(env.store.saved, isTrue);
 
     // Il benvenuto non ritorna: si naviga normalmente.
-    await tapText(tester, 'Ricette');
+    router.go(Routes.recipes);
+    await settle(tester);
+    expect(find.byType(WelcomeScreen), findsNothing);
     expect(find.text('Nessuna ricetta'), findsOneWidget);
   });
+
+  welcomeTest(
+    'una seconda condivisione sostituisce la schermata della prima',
+    done: true,
+    (tester, env) async {
+      final router = env.container.read(routerProvider);
+      await createJob(tester, env, 'j1');
+      await createJob(tester, env, 'j2');
+      openImportAfterShare(env.container, 'j1');
+      await settle(tester);
+      openImportAfterShare(env.container, 'j2');
+      await settle(tester);
+      expect(
+        router.routerDelegate.currentConfiguration.uri.path,
+        Routes.importProgress('j2'),
+      );
+      // Una sola schermata di caricamento nella pila: niente da chiudere.
+      expect(router.canPop(), isFalse);
+      expect(env.store.writes, 0);
+    },
+  );
 
   welcomeTest(
     'aperto dalle Impostazioni torna indietro alla fine',
     done: true,
     (tester, env) async {
       final router = env.container.read(routerProvider);
+      await tapText(tester, 'Impostazioni');
       await tapText(tester, 'Importazioni');
       unawaited(router.push(Routes.welcome));
       await settle(tester);

@@ -90,17 +90,6 @@ Future<FakeImportActions> _pumpScreen(
     initialLocation: Routes.imports,
     routes: [
       GoRoute(
-        path: Routes.imports,
-        builder: (context, state) => const ImportsScreen(),
-        routes: [
-          GoRoute(
-            path: ':id',
-            builder: (context, state) =>
-                Text('Dettaglio importazione ${state.pathParameters['id']}'),
-          ),
-        ],
-      ),
-      GoRoute(
         path: '${Routes.recipes}/:id',
         builder: (context, state) =>
             Text('Dettaglio ${state.pathParameters['id']}'),
@@ -108,6 +97,21 @@ Future<FakeImportActions> _pumpScreen(
       GoRoute(
         path: Routes.settings,
         builder: (context, state) => const Text('Pagina impostazioni'),
+        // Come nel router vero: l'elenco è una sotto-rotta delle Impostazioni.
+        routes: [
+          GoRoute(
+            path: 'importazioni',
+            builder: (context, state) => const ImportsScreen(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (context, state) => Text(
+                  'Dettaglio importazione ${state.pathParameters['id']}',
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

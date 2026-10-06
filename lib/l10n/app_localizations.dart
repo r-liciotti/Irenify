@@ -358,6 +358,102 @@ abstract class AppLocalizations {
   /// **'Solo didascalia'**
   String get importCaptionOnlyChosen;
 
+  /// No description provided for @importProgressTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Importo la ricetta'**
+  String get importProgressTitle;
+
+  /// No description provided for @importProgressQueued.
+  ///
+  /// In it, this message translates to:
+  /// **'In coda: parte appena finisce l\'importazione precedente.'**
+  String get importProgressQueued;
+
+  /// No description provided for @importProgressNormalized.
+  ///
+  /// In it, this message translates to:
+  /// **'Leggo il link…'**
+  String get importProgressNormalized;
+
+  /// No description provided for @importProgressMetadata.
+  ///
+  /// In it, this message translates to:
+  /// **'Leggo la didascalia…'**
+  String get importProgressMetadata;
+
+  /// No description provided for @importProgressMedia.
+  ///
+  /// In it, this message translates to:
+  /// **'Scarico il video…'**
+  String get importProgressMedia;
+
+  /// No description provided for @importProgressAudio.
+  ///
+  /// In it, this message translates to:
+  /// **'Estraggo l\'audio…'**
+  String get importProgressAudio;
+
+  /// No description provided for @importProgressTranscribed.
+  ///
+  /// In it, this message translates to:
+  /// **'Trascrivo il parlato…'**
+  String get importProgressTranscribed;
+
+  /// No description provided for @importProgressExtracted.
+  ///
+  /// In it, this message translates to:
+  /// **'Scrivo la ricetta…'**
+  String get importProgressExtracted;
+
+  /// No description provided for @importProgressNutrition.
+  ///
+  /// In it, this message translates to:
+  /// **'Calcolo i valori nutrizionali…'**
+  String get importProgressNutrition;
+
+  /// No description provided for @importProgressCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Salvo la ricetta…'**
+  String get importProgressCompleted;
+
+  /// No description provided for @importProgressDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricetta pronta!'**
+  String get importProgressDone;
+
+  /// No description provided for @importProgressFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Importazione non riuscita'**
+  String get importProgressFailed;
+
+  /// No description provided for @importProgressKeepOpen.
+  ///
+  /// In it, this message translates to:
+  /// **'Tieni l\'app aperta: la trascrizione si ferma se la chiudi.'**
+  String get importProgressKeepOpen;
+
+  /// No description provided for @importProgressBackground.
+  ///
+  /// In it, this message translates to:
+  /// **'Continua in background'**
+  String get importProgressBackground;
+
+  /// No description provided for @settingsImports.
+  ///
+  /// In it, this message translates to:
+  /// **'Importazioni'**
+  String get settingsImports;
+
+  /// No description provided for @settingsImportsSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =0{Nessuna da seguire} =1{1 da seguire} other{{count} da seguire}}'**
+  String settingsImportsSubtitle(int count);
+
   /// No description provided for @importAddVideo.
   ///
   /// In it, this message translates to:
@@ -1431,6 +1527,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Il video dura più di 3 minuti e non ha una didascalia da usare.'**
   String get failureVideoTooLong;
+
+  /// No description provided for @failureImportsInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'C\'è un\'importazione in corso: aspetta che finisca, poi elimina i dati.'**
+  String get failureImportsInProgress;
 
   /// No description provided for @actionRetry.
   ///

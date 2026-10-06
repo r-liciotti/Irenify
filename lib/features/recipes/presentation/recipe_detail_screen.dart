@@ -155,10 +155,35 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
   }
 
   Future<void> _toggleFavorite(Recipe recipe) async {
-    await ref
-        .read(recipeRepositoryProvider)
-        .setFavorite(recipe.id, favorite: !recipe.isFavorite);
+    final repository = ref.read(recipeRepositoryProvider);
+    if (!await _run(
+      () => repository.setFavorite(recipe.id, favorite: !recipe.isFavorite),
+    )) {
+      return;
+    }
+    // Se intanto si è tornati indietro, il `ref` non si può più usare.
+    if (!mounted) return;
     ref.invalidate(recipeDetailProvider(recipe.id));
+  }
+
+  /// Esegue [action]; se fallisce lo dice con uno SnackBar. `true` se è
+  /// andata a buon fine.
+  Future<bool> _run(Future<void> Function() action) async {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = AppLocalizations.of(context);
+    try {
+      await action();
+      return true;
+    } on Object catch (error, stackTrace) {
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text(
+            failureFromProviderError(error, stackTrace).message(l10n),
+          ),
+        ),
+      );
+      return false;
+    }
   }
 
   Future<void> _delete(Recipe recipe) async {
@@ -180,9 +205,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
         ],
       ),
     );
-    if (confirmed != true) return;
-    await ref.read(recipeRemoverProvider).delete(recipe.id);
-    if (mounted) context.pop();
+    if (confirmed != true || !mounted) return;
+    final remover = ref.read(recipeRemoverProvider);
+    if (await _run(() => remover.delete(recipe.id)) && mounted) context.pop();
   }
 
   Future<void> _openPost(String url) async {

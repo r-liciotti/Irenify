@@ -11,6 +11,33 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-52 — Importazioni dentro Impostazioni e schermata di caricamento (2026-10-06) — Attiva
+- **Decisione:**
+  - **Barra in basso con 2 schede**, Ricette e Impostazioni. Il badge delle importazioni da seguire passa sulla
+    scheda Impostazioni. L'elenco delle importazioni è una voce in cima alle Impostazioni, con il numero. La barra
+    resta perché più avanti arriveranno le schede **Piano pasti** e **Spesa**.
+  - **Schermata di caricamento** a tutto schermo quando si condivide un reel: miniatura e titolo del post appena
+    disponibili, tappe che si accendono una dopo l'altra, e alla fine la ricetta aperta da sola.
+    - Se fallisce mostra l'errore con le azioni (Riprova, Sola didascalia, Aggiungi il video…).
+    - "Continua in background" la chiude, e l'importazione prosegue.
+- **Alternative scartate:** nessuna barra (icona ingranaggio nella home), perché servirà per le schede future;
+  schermata che resta su "Ricetta pronta"; riquadro di avanzamento nella home.
+- **Deciso da:** utente (2026-10-06).
+
+## D-51 — F2 chiusa senza la prova completa dal vivo (2026-10-06) — Attiva, da riprendere prima della F6
+- **Decisione:** la prova completa della F2 con link reali non si fa ora ("la prova non riesco a farla, andiamo
+  avanti"). Restano da provare dal vivo, insieme a quelle di D-44:
+  - un reel parlato trascritto con Whisper;
+  - un TikTok da link breve;
+  - un video dalla galleria;
+  - l'apertura del post dal dettaglio;
+  - "Aggiungi il video" con un file vero;
+  - "Elimina dati" su dati reali.
+- **Rischio accettato:** questi percorsi sono coperti solo da test automatici con dati finti; un difetto legato a
+  file o pagine reali emergerebbe solo con l'uso.
+- **Quando riprenderla:** alla prima occasione con i contenuti adatti, e comunque nella F6 (prova su 30 link reali).
+- **Deciso da:** utente (2026-10-06).
+
 ## D-50 — Primo avvio, elimina dati e versione (2026-10-06) — Attiva
 - **Decisione:**
   - **Primo avvio:** benvenuto in 3 passi saltabili (come condividere, chiave Gemini, modello di trascrizione), con
@@ -20,6 +47,9 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
   - **Elimina dati:** cancella ricette, tag e importazioni con le loro cartelle; chiave e modello di trascrizione
     solo con le due caselle. Tema, flag del primo avvio e modello Gemini scelto restano. Il pulsante è disattivato
     finché c'è un'importazione non conclusa (Whisper non si può interrompere e lascerebbe file orfani).
+  - **Controllo nella transazione:** "Elimina dati" controlla le importazioni non concluse anche dentro la
+    transazione di cancellazione; se ce n'è una rifiuta con il codice `importsInProgress` e non cancella nulla
+    (aggiunto dopo la revisione del codice).
   - **Versione** in Informazioni letta con `package_info_plus` (nuova dipendenza).
   - **Licenze:** font, whisper.cpp (MIT), modello Whisper (MIT, OpenAI), FFmpeg (LGPL), più quelle dei pacchetti.
 - **Alternative scartate:** benvenuto mostrato una volta anche all'utente esistente; cancellare anche con

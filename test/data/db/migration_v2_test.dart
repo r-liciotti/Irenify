@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:irenefy/data/db/app_database.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/recipes/domain/recipe.dart';
+import 'package:sqlite3/common.dart' show CommonDatabase;
 
 import '../../drift/irenefy/generated/schema.dart';
 import 'test_database.dart';
@@ -53,6 +54,25 @@ Future<AppDatabase> _migratedFromV1(SchemaVerifier verifier) async {
   await verifier.migrateAndValidate(db, 2);
   return db;
 }
+
+/// Simula l'app chiusa subito dopo la migrazione, prima che drift salvi la
+/// versione: `beforeOpen` fallisce dopo `onUpgrade`.
+class _ClosedAfterUpgrade extends AppDatabase {
+  _ClosedAfterUpgrade(super.executor);
+
+  @override
+  MigrationStrategy get migration {
+    final base = super.migration;
+    return MigrationStrategy(
+      onCreate: base.onCreate,
+      onUpgrade: base.onUpgrade,
+      beforeOpen: (_) => throw StateError('app chiusa'),
+    );
+  }
+}
+
+int _userVersion(CommonDatabase raw) =>
+    raw.select('PRAGMA user_version').single.values.single! as int;
 
 Future<List<String>> _match(AppDatabase db, String fts) async {
   final rows = await db
@@ -164,6 +184,71 @@ void main() {
         .watchSummaries(const RecipeFilter(query: 'zucca'))
         .first;
     expect(found.single.authorName, 'Nonna Pùa');
+  });
+
+  test(
+    'v1 → v2: la versione si salva nella transazione della migrazione',
+    () async {
+      final schema = await verifier.schemaAt(1);
+      for (final sql in _seedV1) {
+        schema.rawDatabase.execute(sql);
+      }
+      final crashed = _ClosedAfterUpgrade(schema.newConnection());
+      await expectLater(
+        crashed.customSelect('SELECT 1').get(),
+        throwsA(isA<StateError>()),
+      );
+      await crashed.close();
+      expect(_userVersion(schema.rawDatabase), 2);
+
+      db = AppDatabase(schema.newConnection());
+      expect((await RecipeRepository(db).getById('caffe'))!.tags, ['bevanda']);
+    },
+  );
+
+  test('v1 → v2 ripetuta (versione rimasta 1): il database si apre e '
+      'indice e tag restano corretti', () async {
+    final schema = await verifier.schemaAt(1);
+    for (final sql in _seedV1) {
+      schema.rawDatabase.execute(sql);
+    }
+    final first = AppDatabase(schema.newConnection());
+    await verifier.migrateAndValidate(first, 2);
+    await first.close();
+    // Come se drift non avesse fatto in tempo a salvare la versione.
+    schema.rawDatabase.execute('PRAGMA user_version = 1');
+
+    db = AppDatabase(schema.newConnection());
+    await verifier.migrateAndValidate(db, 2);
+    final repo = RecipeRepository(db);
+
+    final count = await db
+        .customSelect('SELECT count(*) AS c FROM recipe_search')
+        .getSingle();
+    expect(count.read<int>('c'), 4);
+    expect(await _match(db, 'caffe'), ['caffe']);
+    expect(await _match(db, 'tags:vegetariana'), ['pane', 'zucca']);
+    expect((await repo.getById('pane'))!.tags, [
+      'pane e pizza',
+      'senza glutine',
+      'vegetariana',
+    ]);
+    expect((await repo.getById('zucca'))!.tags, [
+      'contorno',
+      'dolce',
+      'primo',
+      'vegetariana',
+      'veloce',
+    ]);
+    final tags = await db
+        .customSelect('SELECT count(*) AS c FROM tags')
+        .getSingle();
+    expect(tags.read<int>('c'), 8);
+    final triggers = await db
+        .customSelect("SELECT name FROM sqlite_master WHERE type = 'trigger'")
+        .get();
+    expect(triggers, hasLength(1));
+    expect(_userVersion(schema.rawDatabase), 2);
   });
 
   test('database nuovo: indice e trigger creati da createAll', () async {

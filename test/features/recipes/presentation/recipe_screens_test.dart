@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:irenefy/app/theme_mode.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ import 'package:irenefy/data/db/app_database.dart';
 import 'package:irenefy/data/db/database_provider.dart';
 import 'package:irenefy/features/onboarding/data/onboarding_store.dart';
 import 'package:irenefy/features/recipes/data/recipe_files.dart';
+import 'package:irenefy/features/recipes/data/recipe_remover.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/recipes/domain/recipe.dart';
 import 'package:irenefy/features/recipes/domain/recipe_enums.dart';
@@ -37,6 +39,7 @@ void recipesTest(
   String description,
   Future<void> Function(WidgetTester tester, RecipesEnv env) body, {
   Future<void> Function(RecipesEnv env)? seed,
+  List<Override> Function(RecipesEnv env)? overrides,
 }) {
   testWidgets(description, (tester) async {
     tester.view.physicalSize = const Size(800, 3000);
@@ -70,6 +73,7 @@ void recipesTest(
               () async => modelDir,
             ),
             llmSettingsProvider.overrideWithValue(FakeLlmSettings()),
+            ...?overrides?.call(env),
           ],
           child: const IrenefyApp(),
         ),
@@ -555,6 +559,80 @@ void main() {
     );
 
     recipesTest(
+      'preferito: se il salvataggio fallisce lo dice',
+      seed: (env) => insert(env, sampleRecipe()),
+      overrides: (env) => [
+        recipeRepositoryProvider.overrideWithValue(
+          _GatedFavoriteRepository(
+            env.db,
+            () async => throw StateError('disco pieno'),
+          ),
+        ),
+      ],
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        await tester.tap(find.byTooltip('Aggiungi ai preferiti'));
+        await settle(tester);
+
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text('Si è verificato un errore imprevisto.'),
+          findsOneWidget,
+        );
+        expect(find.byTooltip('Aggiungi ai preferiti'), findsOneWidget);
+      },
+    );
+
+    final favoriteSaved = <Completer<void>>[];
+    recipesTest(
+      'preferito: tornare indietro prima del salvataggio non dà errori',
+      seed: (env) => insert(env, sampleRecipe()),
+      overrides: (env) => [
+        recipeRepositoryProvider.overrideWithValue(
+          _GatedFavoriteRepository(env.db, () {
+            final saved = Completer<void>();
+            favoriteSaved.add(saved);
+            return saved.future;
+          }),
+        ),
+      ],
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        await tester.tap(find.byTooltip('Aggiungi ai preferiti'));
+        await tester.pump();
+        GoRouter.of(tester.element(find.byType(Scaffold).last)).pop();
+        await settle(tester);
+        expect(find.text('Torta di mele'), findsOneWidget);
+
+        favoriteSaved.single.complete();
+        await settle(tester);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    recipesTest(
+      'eliminazione: se fallisce lo dice e resta sulla ricetta',
+      seed: (env) => insert(env, sampleRecipe()),
+      overrides: (env) => [
+        recipeRemoverProvider.overrideWithValue(_FailingRemover(env)),
+      ],
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        await tester.tap(find.byTooltip('Elimina'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(FilledButton, 'Elimina'));
+        await settle(tester);
+
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text('Si è verificato un errore imprevisto.'),
+          findsOneWidget,
+        );
+        expect(servings('8 fette'), findsOneWidget);
+      },
+    );
+
+    recipesTest(
       'eliminazione (con foto): annulla non elimina, conferma elimina anche '
       'i file',
       seed: (env) async {
@@ -735,3 +813,30 @@ IconButton lessButton(WidgetTester tester) => tester.widget<IconButton>(
     matching: find.byType(IconButton),
   ),
 );
+
+/// Repository vero, ma `setFavorite` esegue solo [beforeSave] (che può
+/// fallire o farsi attendere) e poi salva.
+class _GatedFavoriteRepository extends RecipeRepository {
+  _GatedFavoriteRepository(super.db, this.beforeSave);
+
+  final Future<void> Function() beforeSave;
+
+  @override
+  Future<void> setFavorite(String id, {required bool favorite}) async {
+    await beforeSave();
+    await super.setFavorite(id, favorite: favorite);
+  }
+}
+
+/// Eliminazione che fallisce sempre.
+class _FailingRemover extends RecipeRemover {
+  _FailingRemover(RecipesEnv env)
+    : super(
+        recipes: RecipeRepository(env.db),
+        files: RecipeFiles(() async => env.support),
+      );
+
+  @override
+  Future<void> delete(String recipeId) async =>
+      throw StateError('database bloccato');
+}

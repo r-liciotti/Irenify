@@ -49,9 +49,9 @@ Future<void> main() async {
       .read(shareIntakeProvider)
       .start(
         ready: engine.start(),
-        onJobCreated: (_) {
+        onJobCreated: (job) {
           unawaited(engine.wake());
-          openImportsAfterShare(container);
+          openImportAfterShare(container, job.id);
         },
       );
   runApp(

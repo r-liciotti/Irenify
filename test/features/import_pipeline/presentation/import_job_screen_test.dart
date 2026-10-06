@@ -81,23 +81,13 @@ Future<_Harness> _pumpDetail(
   ThemeData? theme,
   double textScale = 1,
   FakeImportActions? fakeActions,
+  Stream<ImportJob?>? jobStream,
 }) async {
   final actions = fakeActions ?? FakeImportActions();
   final picks = <void>[];
   final router = GoRouter(
     initialLocation: Routes.imports,
     routes: [
-      GoRoute(
-        path: Routes.imports,
-        builder: (context, state) => const ImportsScreen(),
-        routes: [
-          GoRoute(
-            path: ':id',
-            builder: (context, state) =>
-                ImportJobScreen(jobId: state.pathParameters['id']!),
-          ),
-        ],
-      ),
       GoRoute(
         path: '${Routes.recipes}/:id',
         builder: (context, state) =>
@@ -106,6 +96,20 @@ Future<_Harness> _pumpDetail(
       GoRoute(
         path: Routes.settings,
         builder: (context, state) => const Text('Pagina impostazioni'),
+        // Come nel router vero: l'elenco è una sotto-rotta delle Impostazioni.
+        routes: [
+          GoRoute(
+            path: 'importazioni',
+            builder: (context, state) => const ImportsScreen(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (context, state) =>
+                    ImportJobScreen(jobId: state.pathParameters['id']!),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );
@@ -114,7 +118,9 @@ Future<_Harness> _pumpDetail(
     ProviderScope(
       retry: noAutomaticRetry,
       overrides: [
-        importJobDetailProvider.overrideWith((ref, id) => Stream.value(job)),
+        importJobDetailProvider.overrideWith(
+          (ref, id) => jobStream ?? Stream.value(job),
+        ),
         // L'elenco (sotto il dettaglio nel router) senza database.
         recentImportJobsProvider.overrideWith((ref) => Stream.value([?job])),
         importActionsProvider.overrideWithValue(actions),
@@ -479,6 +485,60 @@ void main() {
     expect(find.byType(ImportsScreen), findsOneWidget);
   });
 
+  testWidgets(
+    "eliminazione: la riga sparisce prima della cartella, si torna all'elenco",
+    (tester) async {
+      // Come nel motore: la riga del job si cancella prima della cartella,
+      // quindi lo stream emette `null` mentre l'eliminazione è in corso e i
+      // pulsanti spariscono prima che finisca.
+      final rows = StreamController<ImportJob?>();
+      addTearDown(rows.close);
+      final folderDeleted = Completer<void>();
+      final actions = _DeletingActions(rows, folderDeleted.future);
+      await _pumpDetail(
+        tester,
+        _job(),
+        fakeActions: actions,
+        jobStream: (() async* {
+          yield _job();
+          yield* rows.stream;
+        })(),
+      );
+      await _scrollTo(tester, find.text('Elimina'));
+
+      await tester.tap(find.text('Elimina'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Elimina'));
+      await tester.pumpAndSettle();
+      expect(actions.calls, ['delete j1']);
+      expect(find.text('Questa importazione non esiste più.'), findsOneWidget);
+
+      folderDeleted.complete();
+      await tester.pumpAndSettle();
+      expect(find.byType(ImportJobScreen), findsNothing);
+      expect(find.byType(ImportsScreen), findsOneWidget);
+    },
+  );
+
+  test(
+    'il job letto dal dettaglio si libera quando la schermata si chiude',
+    () async {
+      var disposed = false;
+      final container = ProviderContainer.test(
+        retry: noAutomaticRetry,
+        overrides: [
+          importJobDetailProvider.overrideWith((ref, id) {
+            ref.onDispose(() => disposed = true);
+            return Stream.value(null);
+          }),
+        ],
+      );
+      container.listen(importJobDetailProvider('j1'), (_, _) {}).close();
+      await container.pump();
+      expect(disposed, isTrue);
+    },
+  );
+
   testWidgets('job che non esiste più', (tester) async {
     await _pumpDetail(tester, null);
     expect(find.text('Questa importazione non esiste più.'), findsOneWidget);
@@ -510,5 +570,21 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text('1 h 2 min'), findsOneWidget);
     });
+  }
+}
+
+/// Eliminazione come nel motore: prima la riga (lo stream emette `null`),
+/// poi la cartella, che finisce quando si completa [folderDeleted].
+class _DeletingActions extends FakeImportActions {
+  _DeletingActions(this.rows, this.folderDeleted);
+
+  final StreamController<ImportJob?> rows;
+  final Future<void> folderDeleted;
+
+  @override
+  Future<void> delete(String jobId) async {
+    await super.delete(jobId);
+    rows.add(null);
+    await folderDeleted;
   }
 }

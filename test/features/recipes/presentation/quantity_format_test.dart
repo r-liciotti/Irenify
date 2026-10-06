@@ -135,6 +135,61 @@ void main() {
     });
   });
 
+  group('mai "0" per una quantità positiva', () {
+    test('grammi e millilitri sotto 0,1: due decimali, minimo 0,01', () {
+      expect(amount(0.05, IngredientUnit.gram), '0,05 g');
+      expect(amount(0.04, IngredientUnit.gram), '0,04 g');
+      expect(amount(0.0125, IngredientUnit.gram), '0,01 g');
+      expect(amount(0.001, IngredientUnit.milliliter), '0,01 ml');
+      expect(amount(0.25, IngredientUnit.gram), '0,3 g');
+    });
+
+    test('chili e litri: minimo 0,01', () {
+      expect(amount(0.004, IngredientUnit.kilogram), '0,01 kg');
+      expect(amount(0.0001, IngredientUnit.liter), '0,01 l');
+    });
+
+    test('unità a pezzi: minimo 0,01', () {
+      expect(amount(0.004, IngredientUnit.teaspoon), '0,01 cucchiaino');
+      expect(amount(0.0125, IngredientUnit.pinch), '0,01 pizzico');
+      expect(amount(0.004, IngredientUnit.none), '0,01');
+    });
+  });
+
+  group('frazioni solo se vicine', () {
+    test('0,29 → "0,3" e non "¼"', () {
+      expect(amount(0.29, IngredientUnit.tablespoon), '0,3 cucchiaio');
+      expect(amount(0.3, IngredientUnit.cup), '0,3 tazza');
+      expect(amount(2.3, IngredientUnit.piece), '2,3 pezzi');
+      expect(amount(0.7, IngredientUnit.cup), '0,7 tazza');
+    });
+
+    test('ancora frazioni quando lo scarto è piccolo', () {
+      expect(amount(0.26, IngredientUnit.tablespoon), '¼ cucchiaio');
+      expect(amount(0.34, IngredientUnit.cup), '⅓ tazza');
+      expect(amount(1.51, IngredientUnit.teaspoon), '1½ cucchiaini');
+    });
+
+    test('singolare o plurale secondo il numero mostrato', () {
+      expect(amount(1.03, IngredientUnit.tablespoon), '1 cucchiaio');
+      expect(amount(1.06, IngredientUnit.tablespoon), '1,1 cucchiai');
+    });
+  });
+
+  group('porzioni: frazioni solo per i quarti', () {
+    test('porzioni originali non a quarti: decimale esatto', () {
+      expect(formatServings(1.2), '1,2');
+      expect(formatServings(2.3), '2,3');
+      expect(formatServings(1 / 3), '0,33');
+      expect(formatServings(0.26), '0,26');
+    });
+
+    test('quarti e mezzi come frazioni', () {
+      expect(formatServings(0.25), '¼');
+      expect(formatServings(2.75), '2¾');
+    });
+  });
+
   group('porzioni (D-48)', () {
     test('frazioni come per le unità a pezzi', () {
       expect(formatServings(0.5), '½');

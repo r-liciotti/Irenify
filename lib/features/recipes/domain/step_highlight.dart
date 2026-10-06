@@ -33,6 +33,14 @@ const _stopWords = <String>{
   'abbondante',
 };
 
+/// Forme generate che sono altre parole comuni nei passi: "agli" (aglio,
+/// preposizione), "oli" (olio), "latta" (latte), "sala" (sale), "pana"
+/// (pane), "mente" (menta), "dadi" (dado: "a dadi"). Valgono solo se sono la
+/// parola stessa.
+const _forbiddenForms = <String>{
+  'agli', 'oli', 'latta', 'sala', 'pana', 'mente', 'dadi', //
+};
+
 /// Testo in minuscolo e senza accenti, della stessa lunghezza di [text]
 /// (le posizioni restano valide).
 String normalizeForMatch(String text) {
@@ -67,7 +75,15 @@ List<MatchWord> matchWords(String text) {
 /// Forme singolari e plurali italiane comuni di [word] (già normalizzata),
 /// compresa la parola stessa: o↔i, a↔e, e↔i, uovo↔uova, -co/-chi, -go/-ghi,
 /// -ca/-che, -ga/-ghe, -cia/-ce, -gia/-ge, -io/-i.
-Set<String> italianWordForms(String word) {
+///
+/// Delle forme ricavate restano fuori le parole vuote e le forme che sono
+/// altre parole ([_forbiddenForms]): "aglio" non genera "agli".
+Set<String> italianWordForms(String word) => _generatedForms(word)
+  ..removeWhere(
+    (f) => f != word && (_stopWords.contains(f) || _forbiddenForms.contains(f)),
+  );
+
+Set<String> _generatedForms(String word) {
   final forms = {word};
   if (word == 'uovo' || word == 'uova') return forms..addAll(['uovo', 'uova']);
   if (word.length < 3) return forms;
@@ -115,7 +131,8 @@ List<List<String>> ingredientNameAlternatives(String name) {
 }
 
 /// Misure e contenitori che precedono il vero ingrediente ("un bicchiere di
-/// vino", "uno spicchio d'aglio"): saltati se dopo c'è un'altra parola.
+/// vino", "uno spicchio d'aglio", "foglie di menta"): saltati se dopo c'è
+/// un'altra parola.
 const _measureWords = <String>{
   'bicchiere', 'bicchierino', 'tazza', 'tazzina', 'cucchiaio', 'cucchiaino', //
   'pizzico',
@@ -126,7 +143,12 @@ const _measureWords = <String>{
   'mazzetto',
   'manciata', //
   'bustina', 'goccio', 'filo', 'scatola', 'barattolo', 'confezione', 'vasetto',
+  'foglia', 'fetta', 'fettina', 'cubetto', 'pezzo', 'pezzetto',
 };
+
+/// Vero se [word] (anche al plurale: "spicchi", "foglie") è una misura.
+bool _isMeasure(String word) =>
+    _generatedForms(word).any(_measureWords.contains);
 
 /// Posizione della parola principale in [words] (la prima che non è una
 /// parola vuota, un numero o una misura), `null` se non c'è.
@@ -137,7 +159,7 @@ int? mainWordIndex(List<String> words) {
     if (w.length < 2 || _stopWords.contains(w) || int.tryParse(w) != null) {
       continue;
     }
-    if (_measureWords.contains(w)) {
+    if (_isMeasure(w)) {
       measure ??= i;
       continue;
     }
@@ -149,14 +171,38 @@ int? mainWordIndex(List<String> words) {
 /// Una sequenza di parole da trovare: per ogni posizione le forme ammesse.
 typedef _Pattern = List<Set<String>>;
 
+/// [words] divise sulle congiunzioni "e"/"ed": "sale e pepe" → sale, pepe.
+/// Senza congiunzioni, una parte sola.
+List<List<String>> _splitOnAnd(List<String> words) {
+  final parts = <List<String>>[[]];
+  for (final w in words) {
+    if (w == 'e' || w == 'ed') {
+      parts.add([]);
+    } else {
+      parts.last.add(w);
+    }
+  }
+  return parts.where((p) => p.isNotEmpty).toList();
+}
+
 List<_Pattern> _patternsFor(String ingredientName) {
   final patterns = <_Pattern>[];
-  for (final words in ingredientNameAlternatives(ingredientName)) {
+  for (final words in [
+    for (final alternative in ingredientNameAlternatives(ingredientName)) ...[
+      alternative,
+      // "Sale e pepe": anche sale e pepe da soli.
+      if (_splitOnAnd(alternative).length > 1) ..._splitOnAnd(alternative),
+    ],
+  ]) {
     final main = mainWordIndex(words);
     if (main == null) continue;
     final forms = italianWordForms(words[main]);
     patterns.add([forms]);
+    // Senza parole vuote in fondo: "sale e pepe q.b." → "sale e pepe".
     final phrase = words.sublist(main);
+    while (phrase.length > 1 && _stopWords.contains(phrase.last)) {
+      phrase.removeLast();
+    }
     // Il nome intero, se compare tale e quale (accordato nel numero).
     if (phrase.length > 1) {
       patterns.add([
@@ -176,7 +222,8 @@ List<_Pattern> _patternsFor(String ingredientName) {
 /// "olio extravergine d'oliva" → olio) a parole intere, senza badare a
 /// maiuscole e accenti, al singolare e al plurale ("sale" non si accende in
 /// "salsa"); se il nome intero compare tale e quale vince il pezzo più lungo
-/// ("farina di mandorle").
+/// ("farina di mandorle"). Un nome con "e" ("sale e pepe", "olio e aceto")
+/// accende anche ciascuna delle due parti.
 List<StepSegment> highlightIngredients(
   String text,
   List<String> ingredientNames,

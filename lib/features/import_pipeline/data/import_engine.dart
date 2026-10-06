@@ -211,87 +211,131 @@ class ImportEngine {
 
   /// Aggancia al job fermo [jobId] il video [videoPath] scelto dall'utente e
   /// lo fa ripartire dalla tappa video (D-49). Il file viene spostato (o, se
-  /// non si può, copiato) nella cartella del job.
+  /// non si può, copiato) nella cartella del job. Se la miniatura non c'è più
+  /// (cartella ripulita dopo 7 giorni, D-22) riparte invece dalla tappa
+  /// didascalia, che la riscarica dalla pagina del post.
   ///
-  /// Se il job non esiste più o non è nella condizione di [canAddVideo] non
-  /// fa nulla. Se il video non esiste o non si riesce a portarlo nella
-  /// cartella del job lancia un [UnexpectedFailure] e il job resta com'era.
+  /// Se il job non esiste più, non è (o non è più, dopo la copia) nella
+  /// condizione di [canAddVideo], il video non esiste o non si riesce a
+  /// portarlo nella cartella del job, lancia un [UnexpectedFailure] e il job
+  /// resta com'era. Un video scelto e non usato si cancella se è una copia
+  /// nella cache dell'app.
   Future<void> addVideo(String jobId, String videoPath) async {
+    final source = File(videoPath);
+    final cache = await _cacheDirectory?.call();
     final job = await _repo.getById(jobId);
     if (job == null || !canAddVideo(job)) {
-      _log.warning('Video aggiunto ignorato: job $jobId non adatto');
-      return;
+      _log.warning('Video aggiunto rifiutato: job $jobId non adatto');
+      await discardIfInCache(source, cache: cache);
+      throw UnexpectedFailure(cause: 'Job $jobId non adatto al video');
     }
-    final source = File(videoPath);
     if (!await source.exists()) {
       throw const UnexpectedFailure(cause: 'Il video scelto non esiste');
     }
 
     final files = await _storage.filesFor(job.id);
+    final extension = fileExtension(videoPath) ?? 'mp4';
+    final target = files.file('${MediaStep.addedVideoName}.$extension');
     final File added;
     try {
-      // File di un tentativo precedente: l'audio estratto da un altro video
-      // verrebbe riusato dalla tappa audio.
-      for (final path in {
-        files.file(MediaStep.videoName).path,
-        files.file(MediaStep.subtitlesName).path,
-        files.file(AudioStep.audioName).path,
-        ?job.data.addedVideoPath,
-      }) {
-        final old = File(path);
-        if (await old.exists()) await old.delete();
-      }
-      final extension = fileExtension(videoPath) ?? 'mp4';
-      added = await takeFile(
-        source,
-        files.file('${MediaStep.addedVideoName}.$extension'),
-        cache: await _cacheDirectory?.call(),
-      );
+      added = await takeFile(source, target, cache: cache);
     } on FileSystemException catch (e, st) {
+      await discardIfInCache(source, cache: cache);
+      await _deleteQuietly(File('${target.path}.part'));
       throw UnexpectedFailure(cause: e, stackTrace: st);
     }
 
-    final media = ImportFlow.steps.indexOf(ImportStatus.media);
-    bool beforeMedia(ImportStatus s) => ImportFlow.steps.indexOf(s) < media;
-    final data = job.data;
-    // Salvato direttamente e non con _save: qui captionOnly torna false
-    // apposta, _save lo rimetterebbe a true.
-    await _repo.save(
-      job.copyWith(
-        status: ImportFlow.statusBefore(ImportStatus.media),
-        attempts: 0,
-        failedStep: null,
-        errorCode: null,
-        errorDetail: null,
-        data: data.copyWith(
-          addedVideoPath: added.path,
-          captionOnly: false,
-          skippedSteps: {
-            for (final e in data.skippedSteps.entries)
-              if (!ImportFlow.captionOnlySkips.contains(e.key)) e.key: e.value,
-          },
-          // Le tappe da rifare non hanno ancora tempi.
-          stepStartedAt: {
-            for (final e in data.stepStartedAt.entries)
-              if (beforeMedia(e.key)) e.key: e.value,
-          },
-          stepEndedAt: {
-            for (final e in data.stepEndedAt.entries)
-              if (beforeMedia(e.key)) e.key: e.value,
-          },
-          videoPath: null,
-          audioPath: null,
-          subtitlesPath: null,
-          transcript: null,
-          transcriptQuality: null,
-          transcriptSource: null,
-          extraction: null,
-          extractionModel: null,
-        ),
-      ),
-    );
+    // Il job si rilegge e si salva in una transazione: nel frattempo può
+    // essere ripartito, stato eliminato o aver ricevuto un altro video.
+    final ImportJob? saved;
+    try {
+      saved = await _repo.transaction(() async {
+        final fresh = await _repo.getById(jobId);
+        if (fresh == null || !canAddVideo(fresh)) return null;
+        // File di un tentativo precedente: l'audio estratto da un altro
+        // video verrebbe riusato dalla tappa audio.
+        for (final path in {
+          files.file(MediaStep.videoName).path,
+          files.file(MediaStep.subtitlesName).path,
+          files.file(AudioStep.audioName).path,
+          ?fresh.data.addedVideoPath,
+        }) {
+          final old = File(path);
+          if (path != added.path && await old.exists()) await old.delete();
+        }
+        return _repo.save(await _withAddedVideo(fresh, added.path));
+      });
+    } on FileSystemException catch (e, st) {
+      await _deleteQuietly(added);
+      throw UnexpectedFailure(cause: e, stackTrace: st);
+    }
+    if (saved == null) {
+      await _deleteQuietly(added);
+      _log.warning(
+        'Video aggiunto rifiutato: job $jobId cambiato nel frattempo',
+      );
+      throw UnexpectedFailure(cause: 'Job $jobId cambiato durante la copia');
+    }
     _log.info('${_tag(job)} riparte con il video aggiunto');
     unawaited(wake());
+  }
+
+  /// [job] pronto a ripartire con il video [addedPath]: dalla tappa video, o
+  /// dalla tappa didascalia se la miniatura non è più su disco. Le tappe da
+  /// rifare perdono tempi, salti e risultati.
+  Future<ImportJob> _withAddedVideo(ImportJob job, String addedPath) async {
+    final data = job.data;
+    final thumbnail = data.thumbnailPath;
+    final thumbnailLost = thumbnail != null && !await File(thumbnail).exists();
+    final from = thumbnailLost ? ImportStatus.metadata : ImportStatus.media;
+    final fromIndex = ImportFlow.steps.indexOf(from);
+    bool before(ImportStatus s) => ImportFlow.steps.indexOf(s) < fromIndex;
+    // Salvato direttamente e non con _save: qui captionOnly torna false
+    // apposta, _save lo rimetterebbe a true.
+    return job.copyWith(
+      status: ImportFlow.statusBefore(from),
+      attempts: 0,
+      failedStep: null,
+      errorCode: null,
+      errorDetail: null,
+      data: data.copyWith(
+        addedVideoPath: addedPath,
+        captionOnly: false,
+        skippedSteps: {
+          for (final e in data.skippedSteps.entries)
+            if (before(e.key) && !ImportFlow.captionOnlySkips.contains(e.key))
+              e.key: e.value,
+        },
+        // Le tappe da rifare non hanno ancora tempi.
+        stepStartedAt: {
+          for (final e in data.stepStartedAt.entries)
+            if (before(e.key)) e.key: e.value,
+        },
+        stepEndedAt: {
+          for (final e in data.stepEndedAt.entries)
+            if (before(e.key)) e.key: e.value,
+        },
+        // La tappa didascalia riscrive didascalia, autore e durata; la
+        // miniatura la riscarica solo se manca.
+        thumbnailPath: thumbnailLost ? null : thumbnail,
+        videoPath: null,
+        audioPath: null,
+        subtitlesPath: null,
+        transcript: null,
+        transcriptQuality: null,
+        transcriptSource: null,
+        extraction: null,
+        extractionModel: null,
+      ),
+    );
+  }
+
+  Future<void> _deleteQuietly(File file) async {
+    try {
+      if (await file.exists()) await file.delete();
+    } on FileSystemException catch (e, st) {
+      _log.error('File non eliminato: ${file.path}', e, st);
+    }
   }
 
   /// Salta video, audio e trascrizione del job [jobId]: da ora in poi la

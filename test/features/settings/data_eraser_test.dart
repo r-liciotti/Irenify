@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:irenefy/app/providers.dart';
+import 'package:irenefy/core/errors/failure.dart';
 import 'package:irenefy/core/logging/app_log.dart';
 import 'package:irenefy/data/db/app_database.dart';
 import 'package:irenefy/data/db/database_provider.dart';
 import 'package:irenefy/features/import_pipeline/data/import_engine.dart';
 import 'package:irenefy/features/import_pipeline/data/import_job_repository.dart';
 import 'package:irenefy/features/import_pipeline/data/job_storage.dart';
+import 'package:irenefy/features/import_pipeline/domain/import_job.dart';
 import 'package:irenefy/features/recipes/data/recipe_files.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/settings/data/data_eraser.dart';
@@ -84,11 +86,18 @@ class _RecordingLlmSettings extends FakeLlmSettings {
 }
 
 /// Controller del modello con stato fisso; le azioni finiscono in [calls].
+/// Con [deleteFails] l'eliminazione finisce in errore, come quella vera
+/// (che non lancia ma passa a [SpeechModelFailed]).
 class _FakeSpeechModelController extends SpeechModelController {
-  _FakeSpeechModelController(this.initial, this.calls);
+  _FakeSpeechModelController(
+    this.initial,
+    this.calls, {
+    this.deleteFails = false,
+  });
 
   final SpeechModelState initial;
   final Calls calls;
+  final bool deleteFails;
 
   @override
   SpeechModelState build() => initial;
@@ -102,7 +111,11 @@ class _FakeSpeechModelController extends SpeechModelController {
   @override
   Future<void> delete() async {
     calls.add('modello');
-    state = const SpeechModelMissing();
+    state = deleteFails
+        ? SpeechModelFailed(
+            UnexpectedFailure(cause: const FileSystemException('occupato')),
+          )
+        : const SpeechModelMissing();
   }
 }
 
@@ -127,6 +140,7 @@ void main() {
 
   ProviderContainer container({
     SpeechModelState speech = const SpeechModelReady(100),
+    bool modelDeleteFails = false,
   }) => ProviderContainer.test(
     retry: noAutomaticRetry,
     overrides: [
@@ -142,7 +156,11 @@ void main() {
       ),
       llmSettingsProvider.overrideWithValue(settings),
       speechModelControllerProvider.overrideWith(
-        () => _FakeSpeechModelController(speech, calls),
+        () => _FakeSpeechModelController(
+          speech,
+          calls,
+          deleteFails: modelDeleteFails,
+        ),
       ),
     ],
   );
@@ -152,6 +170,8 @@ void main() {
     await RecipeRepository(db).insert(sampleRecipe());
     final jobs = ImportJobRepository(db);
     final job = await jobs.create(sharedText: 'https://vm.tiktok.com/a');
+    // Concluso: con un job in corso l'eliminazione si rifiuta.
+    await jobs.save(job.copyWith(status: ImportStatus.failed));
     File('${jobsDir().path}/${job.id}/video.mp4')
       ..createSync(recursive: true)
       ..writeAsStringSync('video');
@@ -225,6 +245,33 @@ void main() {
       expect(calls.skip(4), ['annulla download', 'attesa download', 'modello']);
     },
   );
+
+  test('importazione in corso: si rifiuta senza eliminare nulla', () async {
+    await seed();
+    await ImportJobRepository(db).create(sharedText: 'https://vm.tiktok.com/b');
+    final c = container();
+
+    await expectLater(
+      c.read(dataEraserProvider).eraseAll(apiKey: true, speechModel: true),
+      throwsA(isA<ImportsInProgressFailure>()),
+    );
+
+    expect(calls, isEmpty);
+    expect(await db.select(db.importJobs).get(), hasLength(2));
+    expect(await db.select(db.recipes).get(), hasLength(1));
+    expect(jobsDir().existsSync(), isTrue);
+    expect(settings.apiKey, isNotNull);
+  });
+
+  test('eliminazione del modello non riuscita: l\'errore si propaga', () async {
+    final c = container(modelDeleteFails: true);
+
+    await expectLater(
+      c.read(dataEraserProvider).eraseAll(apiKey: false, speechModel: true),
+      throwsA(isA<UnexpectedFailure>()),
+    );
+    expect(calls.last, 'modello');
+  });
 
   test('niente da eliminare: nessun errore', () async {
     final c = container(speech: const SpeechModelMissing());

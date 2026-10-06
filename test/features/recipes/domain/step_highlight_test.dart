@@ -135,6 +135,69 @@ void main() {
     expect(bold('Cuocete per 10 minuti', ['00', 'di', '']), isEmpty);
   });
 
+  group('forme generate che sono altre parole', () {
+    test(
+      '"agli", "oli", "latta", "sala", "mente", "dadi" non si accendono',
+      () {
+        expect(bold('Unite il sugo agli spaghetti', ['aglio']), isEmpty);
+        expect(
+          bold('Profumate con gli oli essenziali', ['olio di semi']),
+          isEmpty,
+        );
+        expect(bold('Aprite la latta di pelati', ['latte intero']), isEmpty);
+        expect(bold('Servite in sala', ['sale fino']), isEmpty);
+        expect(bold('Pane caldo', ['pane']), ['Pane']);
+        expect(bold('Si rompe la pana', ['pane']), isEmpty);
+        expect(bold('Tenete a mente i tempi', ['menta']), isEmpty);
+        expect(bold('Tagliate la zucca a dadi', ['dado vegetale']), isEmpty);
+      },
+    );
+
+    test('aglio, olio e latte restano accesi nelle forme giuste', () {
+      expect(bold("Rosolate l'aglio", ['aglio']), ['aglio']);
+      expect(bold("Schiacciate gli spicchi d'aglio", ['aglio']), ['aglio']);
+      expect(bold("Versate un filo dell'olio", ['olio']), ['olio']);
+      expect(bold('Scaldate il latte', ['latte intero']), ['latte']);
+      expect(bold('Unite il sale', ['sale grosso']), ['sale']);
+      expect(bold('Tritate la menta', ['foglie di menta']), ['menta']);
+    });
+
+    test('la forma vietata vale se è il nome stesso', () {
+      expect(bold('Mescolate gli oli', ['oli essenziali']), ['oli']);
+      expect(italianWordForms('oli'), contains('oli'));
+      expect(italianWordForms('aglio'), isNot(contains('agli')));
+      expect(italianWordForms('latte'), isNot(contains('latta')));
+    });
+  });
+
+  group('"e" fra due ingredienti', () {
+    test('"Sale e pepe" accende sale e pepe anche separati', () {
+      expect(bold('Aggiungete il sale, poi il pepe', ['Sale e pepe']), [
+        'sale',
+        'pepe',
+      ]);
+      expect(bold('Condite con olio, poi con aceto', ['olio e aceto']), [
+        'olio',
+        'aceto',
+      ]);
+      expect(bold('Spolverate di pepe', ['sale ed pepe']), ['pepe']);
+    });
+
+    test('il nome intero, se compare tale e quale, resta un pezzo solo', () {
+      expect(bold('Aggiustate di sale e pepe', ['Sale e pepe q.b.']), [
+        'sale e pepe',
+      ]);
+      expect(bold('Pepe a piacere', ['sale e pepe q.b.']), ['Pepe']);
+    });
+
+    test('"farina di mandorle" non cambia', () {
+      expect(
+        bold('Unite la farina di mandorle e la farina', ['farina di mandorle']),
+        ['farina di mandorle', 'farina'],
+      );
+    });
+  });
+
   group('forme italiane', () {
     test('uovo e uova', () {
       expect(italianWordForms('uovo'), containsAll(['uovo', 'uova']));

@@ -242,6 +242,44 @@ void main() {
     expect(kindOf('xyz', en: 'green beans'), IngredientKind.peas);
   });
 
+  test('eccezioni: polpa, colla di pesce, paste dolci e salate', () {
+    expectKinds({
+      'polpa di zucca': IngredientKind.pumpkin,
+      'colla di pesce': IngredientKind.custard,
+      'fogli di gelatina': IngredientKind.custard,
+      'gelatina in fogli': IngredientKind.custard,
+      'pasta di zucchero': IngredientKind.sugar,
+      'pasta di mandorle': IngredientKind.peanut,
+      'pasta di pistacchio': IngredientKind.peanut,
+      'pasta di acciughe': IngredientKind.fish,
+      "pasta d'acciughe": IngredientKind.fish,
+      // Pezzi tagliati: conta quello che segue.
+      'dadi di zucca': IngredientKind.pumpkin,
+      'dadini di prosciutto cotto': IngredientKind.bacon,
+      'cubetti di pancetta': IngredientKind.bacon,
+      // Il dado da brodo resta tale.
+      'dado vegetale': IngredientKind.broth,
+      'dado di carne': IngredientKind.broth,
+    });
+  });
+
+  test('plurali in -s di parole straniere', () {
+    expectKinds({
+      'tortillas': IngredientKind.flatbread,
+      'crackers': IngredientKind.bread,
+      'nachos': IngredientKind.flatbread,
+    });
+  });
+
+  test('cavolini, patatine e fichi', () {
+    expectKinds({
+      'cavolini di Bruxelles': IngredientKind.broccoli,
+      'patatine': IngredientKind.potato,
+      'fichi secchi': IngredientKind.generic,
+      'fico': IngredientKind.generic,
+    });
+  });
+
   test('ogni categoria ha la sua emoji, diversa dalle altre', () {
     final emojis = {
       for (final kind in IngredientKind.values) kind: ingredientEmoji(kind),

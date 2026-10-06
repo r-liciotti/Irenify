@@ -24,15 +24,17 @@ ${where.isEmpty ? '' : 'WHERE $where'}
 ''';
 
 /// Trigger di `search.drift`: gli schemi versionati di drift_dev 2.34.0 non
-/// contengono i trigger, quindi la migrazione lo crea con questo SQL.
+/// contengono i trigger, quindi la migrazione lo crea con questo SQL
+/// (`IF NOT EXISTS`: la migrazione deve poter ripartire).
 const recipeSearchDeleteTriggerSql =
-    'CREATE TRIGGER recipe_search_delete AFTER DELETE ON recipes BEGIN '
+    'CREATE TRIGGER IF NOT EXISTS recipe_search_delete AFTER DELETE ON recipes BEGIN '
     'DELETE FROM recipe_search WHERE recipe_id = old.id; END';
 
 /// Riconduce i tag salvati all'elenco guidato (D-46, migrazione v2): alias
 /// convertiti, tag senza corrispondenza scartati, al massimo 5 per ricetta
 /// nell'ordine in cui erano stati salvati; i tag rimasti senza ricette
-/// spariscono. SQL diretto: non dipende dalle classi generate.
+/// spariscono. SQL diretto: non dipende dalle classi generate. Ripetibile:
+/// su tag già convertiti non cambia nulla.
 Future<void> convertTagsToGuidedList(DatabaseConnectionUser db) async {
   final rows = await db
       .customSelect(

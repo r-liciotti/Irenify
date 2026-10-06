@@ -56,11 +56,7 @@ class JobStorage {
 /// La copia passa per `target.part`: un file copiato a metà non sembra mai
 /// completo.
 Future<File> takeFile(File source, File target, {Directory? cache}) async {
-  final cachePath = cache?.absolute.path;
-  final inCache =
-      cachePath != null &&
-      source.absolute.path.startsWith('$cachePath${Platform.pathSeparator}');
-  if (inCache) {
+  if (_isInCache(source, cache)) {
     try {
       return await source.rename(target.path);
     } on FileSystemException {
@@ -70,6 +66,25 @@ Future<File> takeFile(File source, File target, {Directory? cache}) async {
     }
   }
   return _copyAtomically(source, target);
+}
+
+/// Cancella [source] se è una copia nella cache dell'app ([cache], stesso
+/// criterio di [takeFile]): serve quando il file scelto non verrà usato,
+/// perché non resti lì fino alla pulizia di sistema. Un file fuori dalla
+/// cache è l'originale dell'utente e non si tocca. Un errore si ignora.
+Future<void> discardIfInCache(File source, {Directory? cache}) async {
+  if (!_isInCache(source, cache)) return;
+  try {
+    if (await source.exists()) await source.delete();
+  } on FileSystemException {
+    // Resta alla pulizia della cache di sistema.
+  }
+}
+
+bool _isInCache(File source, Directory? cache) {
+  final cachePath = cache?.absolute.path;
+  return cachePath != null &&
+      source.absolute.path.startsWith('$cachePath${Platform.pathSeparator}');
 }
 
 Future<File> _copyAtomically(File source, File target) async {

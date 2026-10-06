@@ -7,6 +7,7 @@ import '../../../app/providers.dart';
 import '../../../app/router.dart';
 import '../../../app/theme_mode.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../import_pipeline/presentation/imports_screen.dart';
 import 'erase_data_tile.dart';
 import 'gemini_settings_tile.dart';
 import 'settings_providers.dart';
@@ -22,6 +23,8 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.navSettings)),
       body: ListView(
         children: [
+          const _ImportsTile(),
+          const Divider(height: 1),
           _SectionHeader(l10n.geminiSection),
           const GeminiKeyTile(),
           const GeminiModelTile(),
@@ -60,6 +63,28 @@ class SettingsScreen extends ConsumerWidget {
       SnackBar(
         content: Text(AppLocalizations.of(context).settingsLogCopied(count)),
       ),
+    );
+  }
+}
+
+/// Voce delle importazioni in cima (D-52), con lo stesso numero del badge
+/// sulla scheda. `go` e non `push`: l'elenco è una sotto-rotta del ramo, la
+/// freccia indietro torna qui e la barra resta visibile.
+class _ImportsTile extends ConsumerWidget {
+  const _ImportsTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final pending = ref.watch(importsNeedingAttentionCountProvider).value ?? 0;
+    return ListTile(
+      leading: const Icon(Icons.downloading),
+      title: Text(l10n.settingsImports),
+      subtitle: Text(l10n.settingsImportsSubtitle(pending)),
+      trailing: pending > 0
+          ? Badge.count(count: pending)
+          : const Icon(Icons.chevron_right),
+      onTap: () => context.go(Routes.imports),
     );
   }
 }

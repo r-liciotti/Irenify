@@ -11,7 +11,9 @@ import 'package:irenefy/app/router.dart';
 import 'package:irenefy/app/theme.dart';
 import 'package:irenefy/app/theme_mode.dart';
 import 'package:irenefy/core/logging/app_log.dart';
+import 'package:irenefy/features/import_pipeline/presentation/imports_screen.dart';
 import 'package:irenefy/features/import_pipeline/domain/llm_provider.dart';
+import 'package:irenefy/core/errors/failure.dart';
 import 'package:irenefy/features/settings/data/data_eraser.dart';
 import 'package:irenefy/features/settings/presentation/gemini_key_controller.dart';
 import 'package:irenefy/features/settings/presentation/settings_providers.dart';
@@ -23,43 +25,68 @@ import '../../app/fake_theme_mode_store.dart';
 import 'gemini_settings_tile_test.dart' show FakeGeminiKeyController;
 import 'speech_model_tile_test.dart' show FakeSpeechModelController;
 
-/// Servizio finto: registra le scelte, non tocca nulla.
+/// Servizio finto: registra le scelte, non tocca nulla; con [error] fallisce
+/// come quello vero.
 class _FakeEraser extends DataEraser {
-  _FakeEraser(super.ref, this.erased);
+  _FakeEraser(super.ref, this.erased, {this.error});
 
   final List<({bool apiKey, bool speechModel})> erased;
+  final Object? error;
 
   @override
   Future<void> eraseAll({
     required bool apiKey,
     required bool speechModel,
-  }) async => erased.add((apiKey: apiKey, speechModel: speechModel));
+  }) async {
+    if (error case final error?) throw error;
+    erased.add((apiKey: apiKey, speechModel: speechModel));
+  }
 }
 
 void main() {
   late FakeThemeModeStore themeStore;
   late List<({bool apiKey, bool speechModel})> erased;
   late StreamController<int> unfinished;
+  late StreamController<int> needingAttention;
 
   setUp(() {
     themeStore = FakeThemeModeStore();
     unfinished = StreamController<int>();
+    needingAttention = StreamController<int>();
     erased = [];
   });
+  tearDown(() => unawaited(needingAttention.close()));
   // Senza ascoltatori `close` non si completa mai: non lo si attende.
   tearDown(() => unawaited(unfinished.close()));
 
-  /// Impostazioni dentro un router finto con `/benvenuto`; restituisce il
+  /// Impostazioni dentro un router finto con `/benvenuto` e l'elenco delle
+  /// importazioni come sotto-rotta (come nel router vero); restituisce il
   /// container per leggere i provider.
   Future<ProviderContainer> pumpSettings(
     WidgetTester tester, {
     int unfinishedJobs = 0,
+    int importsNeedingAttention = 0,
     double textScale = 1,
+    Object? eraseError,
   }) async {
     unfinished.add(unfinishedJobs);
+    needingAttention.add(importsNeedingAttention);
     final router = GoRouter(
+      initialLocation: Routes.settings,
       routes: [
-        GoRoute(path: '/', builder: (_, _) => const SettingsScreen()),
+        GoRoute(
+          path: Routes.settings,
+          builder: (_, _) => const SettingsScreen(),
+          routes: [
+            GoRoute(
+              path: 'importazioni',
+              builder: (_, _) => Scaffold(
+                appBar: AppBar(),
+                body: const Text('importazioni finte'),
+              ),
+            ),
+          ],
+        ),
         GoRoute(
           path: Routes.welcome,
           builder: (_, _) => const Scaffold(body: Text('benvenuto finto')),
@@ -88,7 +115,12 @@ void main() {
           unfinishedImportsCountProvider.overrideWith(
             (ref) => unfinished.stream,
           ),
-          dataEraserProvider.overrideWith((ref) => _FakeEraser(ref, erased)),
+          importsNeedingAttentionCountProvider.overrideWith(
+            (ref) => needingAttention.stream,
+          ),
+          dataEraserProvider.overrideWith(
+            (ref) => _FakeEraser(ref, erased, error: eraseError),
+          ),
         ],
         child: MaterialApp.router(
           theme: lightTheme,
@@ -132,6 +164,8 @@ void main() {
 
     double top(String text) => tester.getTopLeft(find.text(text).first).dy;
     final order = [
+      'Importazioni',
+      'Estrazione delle ricette',
       'Trascrizione',
       'Aspetto',
       'Come il telefono',
@@ -148,6 +182,38 @@ void main() {
     for (final (i, text) in order.indexed.skip(1)) {
       expect(top(order[i - 1]), lessThan(top(text)), reason: text);
     }
+  });
+
+  testWidgets(
+    'Importazioni in cima: conteggio, badge e apertura dell\'elenco',
+    (tester) async {
+      await pumpSettings(tester, importsNeedingAttention: 2);
+
+      expect(find.text('Importazioni'), findsOne);
+      expect(find.text('2 da seguire'), findsOne);
+      final tile = find.ancestor(
+        of: find.text('Importazioni'),
+        matching: find.byType(ListTile),
+      );
+      expect(find.descendant(of: tile, matching: find.byType(Badge)), findsOne);
+
+      await tester.tap(find.text('Importazioni'));
+      await tester.pumpAndSettle();
+      expect(find.text('importazioni finte'), findsOne);
+
+      // Sotto-rotta delle Impostazioni: la freccia indietro ci riporta.
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.byType(SettingsScreen), findsOne);
+    },
+  );
+
+  testWidgets('Importazioni senza niente da seguire: niente badge', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+    expect(find.text('Nessuna da seguire'), findsOne);
+    expect(find.byType(Badge), findsNothing);
   });
 
   testWidgets('la scelta del tema cambia themeModeProvider e si salva', (
@@ -236,6 +302,25 @@ void main() {
 
     expect(erased, [(apiKey: false, speechModel: true)]);
     expect(find.text('Dati eliminati'), findsOne);
+  });
+
+  testWidgets('Elimina dati rifiutato (importazione appena arrivata): '
+      'il motivo in una snackbar', (tester) async {
+    await pumpSettings(tester, eraseError: const ImportsInProgressFailure());
+    await scrollTo(tester, 'Elimina dati');
+    await tester.tap(find.text('Elimina dati'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Elimina'));
+    await tester.pumpAndSettle();
+
+    expect(erased, isEmpty);
+    expect(
+      find.text(
+        "C'è un'importazione in corso: aspetta che finisca, poi elimina i dati.",
+      ),
+      findsOne,
+    );
+    expect(find.text('Dati eliminati'), findsNothing);
   });
 
   testWidgets('Rivedi la guida apre /benvenuto', (tester) async {

@@ -769,6 +769,9 @@ void main() {
         sharedText: sharedFilePath == null ? 'A' : null,
         sharedFilePath: sharedFilePath,
       );
+      // Miniatura ancora su disco: senza, si riparte dalla tappa didascalia.
+      final thumbnail = (await storage.filesFor(job.id)).file('miniatura.jpg');
+      await thumbnail.writeAsString('jpg');
       return repo.save(
         job.copyWith(
           status: status,
@@ -781,7 +784,7 @@ void main() {
               ImportJobData(
                 caption: 'Didascalia',
                 authorName: 'autore',
-                thumbnailPath: 'miniatura.jpg',
+                thumbnailPath: thumbnail.path,
                 skippedSteps: {
                   ImportStatus.media: const SkippedStep(
                     reason: SkipReason.videoBlocked,
@@ -914,14 +917,120 @@ void main() {
         final picked = await pickedVideo();
 
         final engine = newEngine();
-        await engine.addVideo(job.id, picked.path);
+        await expectLater(
+          engine.addVideo(job.id, picked.path),
+          throwsA(isA<UnexpectedFailure>()),
+        );
         await engine.wake();
 
-        expect(await picked.exists(), isTrue, reason: 'file non toccato');
+        expect(
+          await picked.exists(),
+          isFalse,
+          reason: 'copia del selettore nella cache: non deve restare lì',
+        );
         expect(await repo.getById(job.id), job);
         expect(calls, isEmpty);
       });
     }
+
+    test('rifiutato: un file fuori dalla cache non si tocca', () async {
+      final elsewhere = await Directory.systemTemp.createTemp('irenefy_dcim_');
+      addTearDown(() => elsewhere.delete(recursive: true));
+      final job = await stoppedJob(status: ImportStatus.completed);
+      final picked = await pickedVideo(elsewhere);
+
+      await expectLater(
+        newEngine().addVideo(job.id, picked.path),
+        throwsA(isA<UnexpectedFailure>()),
+      );
+      expect(await picked.exists(), isTrue);
+    });
+
+    test(
+      'copia non riuscita: errore, job fermo, niente resta nella cache',
+      () async {
+        final job = await stoppedJob();
+        // Al posto del file di destinazione c'è una cartella: né la rinomina
+        // né la copia riescono.
+        await Directory(
+          '${folderOf(job.id).path}/video_aggiunto.mp4',
+        ).create(recursive: true);
+        final picked = await pickedVideo();
+
+        await expectLater(
+          newEngine().addVideo(job.id, picked.path),
+          throwsA(isA<UnexpectedFailure>()),
+        );
+        expect(await picked.exists(), isFalse);
+        expect(
+          await File(
+            '${folderOf(job.id).path}/video_aggiunto.mp4.part',
+          ).exists(),
+          isFalse,
+        );
+        expect(await repo.getById(job.id), job);
+        expect(calls, isEmpty);
+      },
+    );
+
+    test('job ripartito mentre si copiava il video: il job non si tocca e '
+        'il video copiato si cancella', () async {
+      final job = await stoppedJob();
+      final racing = _RacingRepository(db, () => now)
+        // Intanto un'altra azione lo fa ripartire.
+        ..beforeSecondRead = () => repo.save(
+          job.copyWith(
+            status: ImportStatus.metadata,
+            failedStep: null,
+            errorCode: null,
+          ),
+        );
+      final picked = await pickedVideo();
+
+      await expectLater(
+        newEngine(racing).addVideo(job.id, picked.path),
+        throwsA(isA<UnexpectedFailure>()),
+      );
+
+      final current = (await repo.getById(job.id))!;
+      expect(current.status, ImportStatus.metadata);
+      expect(current.data.addedVideoPath, isNull);
+      expect(current.data.transcript, 'vecchia');
+      expect(
+        await File('${folderOf(job.id).path}/video_aggiunto.mp4').exists(),
+        isFalse,
+      );
+      expect(await picked.exists(), isFalse);
+    });
+
+    test('miniatura sparita (pulizia dei 7 giorni): riparte dalla tappa '
+        'didascalia per riscaricarla', () async {
+      final job = await stoppedJob();
+      await File(job.data.thumbnailPath!).delete();
+      final picked = await pickedVideo();
+      ImportJob? atMetadata;
+      steps[ImportStatus.metadata]!.body = (job, _, _) async {
+        atMetadata = job;
+        return StepResult.done(job);
+      };
+
+      final engine = newEngine();
+      await engine.addVideo(job.id, picked.path);
+      await engine.wake();
+
+      final seen = atMetadata!;
+      expect(seen.status, ImportStatus.normalized);
+      expect(seen.data.thumbnailPath, isNull);
+      expect(seen.data.addedVideoPath, isNotNull);
+      expect(seen.data.skippedSteps, isEmpty);
+      expect(seen.data.stepStartedAt.keys, [ImportStatus.metadata]);
+      expect(seen.data.stepEndedAt, isEmpty);
+      expect(seen.data.transcript, isNull);
+      expect(seen.data.extraction, isNull);
+      expect(steps[ImportStatus.metadata]!.runs, 1);
+      expect(steps[ImportStatus.media]!.runs, 1);
+      expect((await repo.getById(job.id))!.status, ImportStatus.completed);
+    });
 
     test("la pulizia all'avvio non cancella il video di un job vecchio "
         'appena ripartito (D-22)', () async {
@@ -955,8 +1064,11 @@ void main() {
 
     test('rifiutato: job inesistente', () async {
       final picked = await pickedVideo();
-      await newEngine().addVideo('nessuno', picked.path);
-      expect(await picked.exists(), isTrue);
+      await expectLater(
+        newEngine().addVideo('nessuno', picked.path),
+        throwsA(isA<UnexpectedFailure>()),
+      );
+      expect(await picked.exists(), isFalse, reason: 'tolto dalla cache');
     });
 
     test('un file inesistente lancia un errore e il job resta fermo', () async {
@@ -971,6 +1083,21 @@ void main() {
       expect(calls, isEmpty);
     });
   });
+}
+
+/// Repository che, alla seconda lettura di un job, prima esegue
+/// [beforeSecondRead]: simula un'altra azione arrivata nel frattempo.
+class _RacingRepository extends ImportJobRepository {
+  _RacingRepository(super.db, DateTime Function() clock) : super(clock: clock);
+
+  Future<void> Function()? beforeSecondRead;
+  var _reads = 0;
+
+  @override
+  Future<ImportJob?> getById(String id) async {
+    if (++_reads == 2) await beforeSecondRead?.call();
+    return super.getById(id);
+  }
 }
 
 class _ReadyModel implements SpeechModelStore {

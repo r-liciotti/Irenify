@@ -1,19 +1,13 @@
 import '../../../l10n/app_localizations.dart';
 import '../domain/recipe_enums.dart';
 import '../domain/scaling.dart';
+import '../domain/unit_conversion.dart';
 
-/// Frazioni mostrate come simbolo per le unità "a pezzi" (cucchiai, tazze,
-/// pezzi, senza unità…).
-const _fractions = <(double, String)>[
-  (1 / 4, '¼'),
-  (1 / 3, '⅓'),
-  (1 / 2, '½'),
-  (2 / 3, '⅔'),
-  (3 / 4, '¾'),
-];
+/// Simboli delle frazioni di [displayFractions], nello stesso ordine.
+const _fractionSymbols = <String>['¼', '⅓', '½', '⅔', '¾'];
 
-/// Scarto massimo perché un decimale diventi frazione (0,26 → ¼).
-const _fractionTolerance = 0.04;
+/// Scarto per gli errori di virgola mobile.
+const _epsilon = 1e-9;
 
 /// Numero all'italiana (virgola decimale), con al più [maxDecimals] decimali
 /// e senza zeri finali: 2,5 · 250 · 0,75.
@@ -27,46 +21,41 @@ String formatDecimal(double value, {int maxDecimals = 2}) {
 }
 
 /// Solo il numero di una quantità nell'unità [unit], arrotondato in modo
-/// pratico:
-///
-/// - g e ml: interi da 10 in su (168, non 167,94), un decimale sotto 10
-///   (2,5), decine da 1000 in su (1250);
-/// - kg e l: al più due decimali (1,25);
-/// - altre unità: intero + frazione comune se vicina (1½, ¾), altrimenti un
-///   decimale (1,4); sotto 0,1 due decimali.
+/// pratico con [roundForDisplay]: 168 g, 2,5 g, 0,05 g, 1,25 kg, 1½, ¾, 1,4.
+/// Mai "0" per una quantità positiva (minimo 0,01).
 String formatQuantityNumber(double value, IngredientUnit unit) {
-  switch (unit) {
-    case IngredientUnit.gram || IngredientUnit.milliliter:
-      if (value >= 1000) return formatDecimal((value / 10).round() * 10.0);
-      if (value >= 10) return formatDecimal(value.roundToDouble());
-      return formatDecimal(value, maxDecimals: 1);
-    case IngredientUnit.kilogram || IngredientUnit.liter:
-      return formatDecimal(value);
-    default:
-      return _withFraction(value);
-  }
+  final shown = roundForDisplay(value, unit);
+  return switch (unit) {
+    IngredientUnit.gram ||
+    IngredientUnit.milliliter ||
+    IngredientUnit.kilogram ||
+    IngredientUnit.liter => formatDecimal(shown),
+    _ => _withFraction(shown),
+  };
 }
 
+/// [value] già arrotondato: frazione comune se lo è esattamente (1½, ¾),
+/// altrimenti decimale all'italiana.
 String _withFraction(double value) {
-  if (value < 0.1) return formatDecimal(value);
   final whole = value.floor();
   final rest = value - whole;
-  if (rest <= _fractionTolerance) return '$whole';
-  if (rest >= 1 - _fractionTolerance) return '${whole + 1}';
-  for (final (fraction, symbol) in _fractions) {
-    if ((rest - fraction).abs() <= _fractionTolerance) {
+  if (rest < _epsilon) return '$whole';
+  if (rest > 1 - _epsilon) return '${whole + 1}';
+  for (var i = 0; i < displayFractions.length; i++) {
+    if ((rest - displayFractions[i]).abs() < _epsilon) {
+      final symbol = _fractionSymbols[i];
       return whole == 0 ? symbol : '$whole$symbol';
     }
   }
-  return formatDecimal(value, maxDecimals: 1);
+  return formatDecimal(value);
 }
 
 /// Nome dell'unità [unit] accordato a [count]; `null` per [IngredientUnit.none].
 ///
-/// Le quantità fino a 1 vogliono il singolare: "½ cucchiaio". Anche quelle
-/// mostrate come "1" dopo l'arrotondamento (1,02 → "1 cucchiaio").
+/// Le quantità fino a 1 vogliono il singolare: "½ cucchiaio". Si decide sul
+/// numero mostrato ([roundForDisplay]): 1,02 → "1 cucchiaio".
 String? unitLabel(AppLocalizations l10n, IngredientUnit unit, double count) {
-  final n = count < 1 + _fractionTolerance + 0.01 ? 1 : count;
+  final n = roundForDisplay(count, unit) <= 1 + _epsilon ? 1 : count;
   return switch (unit) {
     IngredientUnit.gram => 'g',
     IngredientUnit.kilogram => 'kg',
@@ -124,6 +113,11 @@ String formatScaled(
   unit: unit,
 );
 
-/// Numero delle porzioni: "4", "1½", "½", "2½" (D-48), con le stesse
-/// frazioni delle unità a pezzi.
-String formatServings(double servings) => _withFraction(servings);
+/// Numero delle porzioni (D-48): frazione solo per i multipli esatti di ¼
+/// ("1½", "½", "2¾"), altrimenti il decimale esatto ("1,2", "0,33"), così
+/// le porzioni originali non vengono approssimate.
+String formatServings(double servings) {
+  final quarters = (servings * 4).roundToDouble();
+  final isQuarter = (servings * 4 - quarters).abs() < 1e-6;
+  return isQuarter ? _withFraction(quarters / 4) : formatDecimal(servings);
+}

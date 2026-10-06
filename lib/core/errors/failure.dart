@@ -32,7 +32,8 @@ enum FailureCode {
   contentBlocked,
   llmUnavailable,
   speechModelMissing,
-  videoTooLong;
+  videoTooLong,
+  importsInProgress;
 
   /// Codice salvato → [FailureCode]; un nome sconosciuto diventa [unexpected].
   static FailureCode fromName(String? name) =>
@@ -62,7 +63,9 @@ enum FailureCode {
     notARecipe ||
     nothingToExtract ||
     contentBlocked ||
-    videoTooLong => RecoveryAction.none,
+    videoTooLong ||
+    // Si aspetta che finiscano: il pulsante si riattiva da solo.
+    importsInProgress => RecoveryAction.none,
   };
 }
 
@@ -270,4 +273,14 @@ final class VideoTooLongFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.videoTooLong;
+}
+
+/// "Elimina dati" con un'importazione non ancora conclusa (D-50): Whisper non
+/// si può interrompere e lascerebbe file in una cartella appena eliminata.
+/// Non riguarda i job: nessuna importazione salva questo codice.
+final class ImportsInProgressFailure extends Failure {
+  const ImportsInProgressFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.importsInProgress;
 }

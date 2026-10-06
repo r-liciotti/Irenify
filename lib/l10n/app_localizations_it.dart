@@ -172,6 +172,65 @@ class AppLocalizationsIt extends AppLocalizations {
   String get importCaptionOnlyChosen => 'Solo didascalia';
 
   @override
+  String get importProgressTitle => 'Importo la ricetta';
+
+  @override
+  String get importProgressQueued =>
+      'In coda: parte appena finisce l\'importazione precedente.';
+
+  @override
+  String get importProgressNormalized => 'Leggo il link…';
+
+  @override
+  String get importProgressMetadata => 'Leggo la didascalia…';
+
+  @override
+  String get importProgressMedia => 'Scarico il video…';
+
+  @override
+  String get importProgressAudio => 'Estraggo l\'audio…';
+
+  @override
+  String get importProgressTranscribed => 'Trascrivo il parlato…';
+
+  @override
+  String get importProgressExtracted => 'Scrivo la ricetta…';
+
+  @override
+  String get importProgressNutrition => 'Calcolo i valori nutrizionali…';
+
+  @override
+  String get importProgressCompleted => 'Salvo la ricetta…';
+
+  @override
+  String get importProgressDone => 'Ricetta pronta!';
+
+  @override
+  String get importProgressFailed => 'Importazione non riuscita';
+
+  @override
+  String get importProgressKeepOpen =>
+      'Tieni l\'app aperta: la trascrizione si ferma se la chiudi.';
+
+  @override
+  String get importProgressBackground => 'Continua in background';
+
+  @override
+  String get settingsImports => 'Importazioni';
+
+  @override
+  String settingsImportsSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count da seguire',
+      one: '1 da seguire',
+      zero: 'Nessuna da seguire',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get importAddVideo => 'Aggiungi il video';
 
   @override
@@ -913,6 +972,10 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get failureVideoTooLong =>
       'Il video dura più di 3 minuti e non ha una didascalia da usare.';
+
+  @override
+  String get failureImportsInProgress =>
+      'C\'è un\'importazione in corso: aspetta che finisca, poi elimina i dati.';
 
   @override
   String get actionRetry => 'Riprova';

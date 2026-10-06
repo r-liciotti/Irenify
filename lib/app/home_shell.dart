@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../features/import_pipeline/presentation/imports_screen.dart';
 import '../l10n/app_localizations.dart';
 
-/// Contenitore delle tre sezioni principali con la barra in basso.
-/// Ogni sezione mantiene la propria cronologia di navigazione.
+/// Contenitore delle sezioni principali con la barra in basso (D-52: Ricette
+/// e Impostazioni; più avanti Piano pasti e Spesa). Ogni sezione mantiene la
+/// propria cronologia di navigazione.
 class HomeShell extends ConsumerWidget {
   const HomeShell({required this.navigationShell, super.key});
 
@@ -17,6 +18,22 @@ class HomeShell extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     // Senza numero (caricamento o errore) il badge semplicemente non c'è.
     final pending = ref.watch(importsNeedingAttentionCountProvider).value ?? 0;
+    // Una voce per ramo del router, nello stesso ordine: una scheda nuova è
+    // una riga qui e un ramo in `router.dart`.
+    final sections = [
+      _Section(
+        icon: Icons.menu_book_outlined,
+        selectedIcon: Icons.menu_book,
+        label: l10n.navRecipes,
+      ),
+      // Le importazioni stanno nelle Impostazioni: il badge va su questa.
+      _Section(
+        icon: Icons.settings_outlined,
+        selectedIcon: Icons.settings,
+        label: l10n.navSettings,
+        badge: pending,
+      ),
+    ];
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
@@ -27,32 +44,42 @@ class HomeShell extends ConsumerWidget {
           initialLocation: index == navigationShell.currentIndex,
         ),
         destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.menu_book_outlined),
-            selectedIcon: const Icon(Icons.menu_book),
-            label: l10n.navRecipes,
-          ),
-          NavigationDestination(
-            icon: _ImportsBadge(
-              count: pending,
-              child: const Icon(Icons.downloading_outlined),
+          for (final section in sections)
+            NavigationDestination(
+              icon: _ImportsBadge(
+                count: section.badge,
+                child: Icon(section.icon),
+              ),
+              selectedIcon: _ImportsBadge(
+                count: section.badge,
+                child: Icon(section.selectedIcon),
+              ),
+              label: section.label,
+              tooltip: section.badge > 0
+                  ? l10n.navImportsBadge(section.badge)
+                  : null,
             ),
-            selectedIcon: _ImportsBadge(
-              count: pending,
-              child: const Icon(Icons.downloading),
-            ),
-            label: l10n.navImports,
-            tooltip: pending > 0 ? l10n.navImportsBadge(pending) : null,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            label: l10n.navSettings,
-          ),
         ],
       ),
     );
   }
+}
+
+/// Una scheda della barra in basso.
+class _Section {
+  const _Section({
+    required this.icon,
+    required this.selectedIcon,
+    required this.label,
+    this.badge = 0,
+  });
+
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
+
+  /// Importazioni da seguire mostrate sull'icona (0 = nessun badge).
+  final int badge;
 }
 
 class _ImportsBadge extends StatelessWidget {

@@ -89,15 +89,13 @@ void main() {
     },
   );
 
-  appTest('si apre sulle Ricette e passa tra le tre sezioni', (
+  appTest('si apre sulle Ricette e passa tra le due sezioni', (
     tester,
     _,
   ) async {
     expect(find.text('Nessuna ricetta'), findsOneWidget);
-
-    await tester.tap(find.text('Importazioni'));
-    await tester.pumpAndSettle();
-    expect(find.text('Nessuna importazione'), findsOneWidget);
+    // Due schede (D-52): le Importazioni stanno nelle Impostazioni.
+    expect(find.byType(NavigationDestination), findsNWidgets(2));
 
     await tester.tap(find.text('Impostazioni'));
     await tester.pumpAndSettle();
@@ -113,6 +111,30 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Nessuna ricetta'), findsOneWidget);
   });
+
+  appTest(
+    'Importazioni dalle Impostazioni: barra visibile e freccia indietro',
+    (tester, _) async {
+      await tester.tap(find.text('Impostazioni'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Importazioni'));
+      await tester.pumpAndSettle();
+      expect(find.text('Nessuna importazione'), findsOneWidget);
+      expect(find.byType(NavigationBar), findsOneWidget);
+
+      // Cambiando scheda e tornando, l'elenco resta aperto.
+      await tester.tap(find.text('Ricette'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Impostazioni'));
+      await tester.pumpAndSettle();
+      expect(find.text('Nessuna importazione'), findsOneWidget);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.text('Nessuna importazione'), findsNothing);
+      expect(find.text('Nessuna da seguire'), findsOneWidget);
+    },
+  );
 
   appTest('copia il registro negli appunti', (tester, log) async {
     String? copied;

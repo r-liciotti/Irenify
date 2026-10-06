@@ -60,7 +60,7 @@ class ShareIntake {
   /// completato, cioè a pulizia delle cartelle finita (`ImportEngine.start`):
   /// altrimenti la pulizia potrebbe cancellare un video appena spostato.
   /// [onJobCreated] riceve ogni job nuovo (per svegliare il motore e aprire
-  /// la schermata Importazioni).
+  /// la sua schermata di caricamento, D-52).
   void start({
     required Future<void> ready,
     required void Function(ImportJob job) onJobCreated,

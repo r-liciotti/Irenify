@@ -9,6 +9,9 @@ void main() {
   appTest(
     "l'elenco delle importazioni mostra tappa, errori e doppioni",
     (tester, _) async {
+      // L'elenco sta nelle Impostazioni (D-52).
+      await tester.tap(find.text('Impostazioni'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Importazioni'));
       await tester.pumpAndSettle();
 

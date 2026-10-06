@@ -90,12 +90,17 @@ class OnboardingNotifier extends Notifier<bool> {
   }
 }
 
-/// Una condivisione è diventata un job: si va alle Importazioni, anche dal
-/// benvenuto (niente redirect globale, D-50). Chi condivide durante il
-/// benvenuto ha già capito come si fa: il benvenuto è concluso.
-void openImportsAfterShare(ProviderContainer container) {
+/// Una condivisione è diventata un job: si apre la sua schermata di
+/// caricamento (D-52), anche dal benvenuto (niente redirect globale, D-50).
+/// Chi condivide durante il benvenuto ha già capito come si fa: il benvenuto
+/// è concluso.
+///
+/// `go` e non `push`: una nuova condivisione sostituisce la schermata della
+/// precedente invece di impilarle; l'altra importazione prosegue comunque in
+/// background ed è nell'elenco delle Importazioni.
+void openImportAfterShare(ProviderContainer container, String jobId) {
   if (!container.read(onboardingProvider)) {
     unawaited(container.read(onboardingProvider.notifier).markDone());
   }
-  container.read(routerProvider).go(Routes.imports);
+  container.read(routerProvider).go(Routes.importProgress(jobId));
 }

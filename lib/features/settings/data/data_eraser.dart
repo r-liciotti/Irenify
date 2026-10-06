@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../core/errors/failure.dart';
 import '../../import_pipeline/data/import_engine.dart';
 import '../../import_pipeline/data/import_job_repository.dart';
 import '../../recipes/data/recipe_files.dart';
@@ -16,8 +17,10 @@ final dataEraserProvider = Provider<DataEraser>(DataEraser.new);
 /// le loro cartelle; chiave Gemini e modello di trascrizione solo se chiesto.
 /// Tema, flag del primo avvio e modello Gemini scelto restano.
 ///
-/// L'interfaccia lo offre solo senza importazioni in corso: Whisper non si
-/// può interrompere e lascerebbe file in una cartella appena eliminata.
+/// Solo senza importazioni in corso: Whisper non si può interrompere e
+/// lascerebbe file in una cartella appena eliminata. L'interfaccia spegne il
+/// pulsante, ma tra la conferma e l'eliminazione può arrivare una
+/// condivisione: [eraseAll] lo ricontrolla.
 class DataEraser {
   DataEraser(this._ref);
 
@@ -27,7 +30,9 @@ class DataEraser {
   /// una ricetta), poi le ricette, poi i file (una chiusura a metà lascia al
   /// più cartelle orfane, mai righe che puntano a file spariti), infine
   /// chiave e modello se richiesti. Un errore si propaga: chi chiama lo
-  /// mostra e si può ripetere.
+  /// mostra e si può ripetere. Con un'importazione non conclusa lancia
+  /// [ImportsInProgressFailure] senza eliminare nulla; un'eliminazione del
+  /// modello non riuscita si propaga come il suo [Failure].
   Future<void> eraseAll({
     required bool apiKey,
     required bool speechModel,
@@ -37,7 +42,16 @@ class DataEraser {
         'Elimina dati: inizio (chiave: ${apiKey ? 'sì' : 'no'}, '
         'modello: ${speechModel ? 'sì' : 'no'})',
       );
-    await _ref.read(importJobRepositoryProvider).deleteAll();
+    final jobs = _ref.read(importJobRepositoryProvider);
+    // Controllo ed eliminazione nella stessa transazione: un job creato nel
+    // frattempo non viene cancellato senza essere visto.
+    await jobs.transaction(() async {
+      if ((await jobs.unfinished()).isNotEmpty) {
+        log.info('Elimina dati: rifiutato, importazione in corso');
+        throw const ImportsInProgressFailure();
+      }
+      await jobs.deleteAll();
+    });
     await _ref.read(recipeRepositoryProvider).deleteAll();
     await _ref.read(jobStorageProvider).deleteAll();
     await _ref.read(recipeFilesProvider).deleteAll();
@@ -63,5 +77,11 @@ class DataEraser {
       await controller.whenIdle();
     }
     await controller.delete();
+    // `delete()` non lancia: un errore lo lascia nello stato.
+    if (_ref.read(speechModelControllerProvider) case SpeechModelFailed(
+      :final failure,
+    )) {
+      throw failure;
+    }
   }
 }

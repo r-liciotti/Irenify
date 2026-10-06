@@ -54,6 +54,9 @@ class AppDatabase extends _$AppDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
+    // `runMigrationSteps` salva `user_version` dopo ogni passo, dentro questa
+    // transazione: passi e versione si salvano insieme (test in
+    // `migration_v2_test.dart`). I passi restano comunque ripetibili.
     onUpgrade: (m, from, to) => transaction(
       () => m.runMigrationSteps(from: from, to: to, steps: _steps),
     ),
@@ -66,12 +69,22 @@ class AppDatabase extends _$AppDatabase {
 
   static final _steps = migrationSteps(
     // v2: ricerca full-text (D-47) e tag dall'elenco guidato (D-46).
+    // Ripetibile: se la versione non fosse stata salvata, al riavvio
+    // ripartirebbe su un database già convertito (IF NOT EXISTS, indice
+    // svuotato prima di riempirlo, conversione dei tag stabile).
     from1To2: (m, schema) async {
-      await m.create(schema.recipeSearch);
-      await m.database.customStatement(recipeSearchDeleteTriggerSql);
+      final db = m.database;
+      final exists = await db
+          .customSelect(
+            "SELECT 1 FROM sqlite_master WHERE name = 'recipe_search'",
+          )
+          .get();
+      if (exists.isEmpty) await m.create(schema.recipeSearch);
+      await db.customStatement(recipeSearchDeleteTriggerSql);
       // Prima i tag, così l'indice nasce con quelli già convertiti.
-      await convertTagsToGuidedList(m.database);
-      await m.database.customStatement(recipeSearchInsertSql());
+      await convertTagsToGuidedList(db);
+      await db.customStatement('DELETE FROM recipe_search');
+      await db.customStatement(recipeSearchInsertSql());
     },
   );
 }

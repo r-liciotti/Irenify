@@ -24,6 +24,21 @@ void main() {
     },
     (tester, _) async {
       expect(find.byKey(badge), findsOneWidget);
+      // Sulla scheda Impostazioni, dove sta l'elenco (D-52).
+      expect(
+        find.descendant(
+          of: find.widgetWithText(NavigationDestination, 'Impostazioni'),
+          matching: find.byKey(badge),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.widgetWithText(NavigationDestination, 'Ricette'),
+          matching: find.byKey(badge),
+        ),
+        findsNothing,
+      );
       expect(
         find.descendant(of: find.byKey(badge), matching: find.text('2')),
         findsOneWidget,
