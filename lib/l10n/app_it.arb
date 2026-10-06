@@ -211,6 +211,65 @@
   "recipeServingsLess": "Meno porzioni",
   "recipeServingsMore": "Più porzioni",
   "recipeServingsReset": "Porzioni originali",
+  "recipeNutrition": "Nutrienti",
+  "nutritionPerServing": "Per porzione",
+  "nutritionWholeRecipe": "Ricetta intera",
+  "nutritionPer100g": "Per 100 g",
+  "nutritionServingOf": "1 di {count} {unit}",
+  "@nutritionServingOf": {
+    "placeholders": {
+      "count": { "type": "String" },
+      "unit": { "type": "String" }
+    }
+  },
+  "nutritionEnergy": "Energia",
+  "nutritionKcalValue": "{value} kcal",
+  "@nutritionKcalValue": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "nutritionGramsValue": "{value} g",
+  "@nutritionGramsValue": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "nutritionProtein": "Proteine",
+  "nutritionCarbs": "Carboidrati",
+  "nutritionSugars": "di cui zuccheri",
+  "nutritionFat": "Grassi",
+  "nutritionSaturatedFat": "di cui saturi",
+  "nutritionFiber": "Fibre",
+  "nutritionSalt": "Sale",
+  "nutritionEstimated": "Valori stimati dagli ingredienti: possono cambiare con marca, varietà e cottura.",
+  "nutritionCoverage": "Calcolato sul {percent}% del peso degli ingredienti.",
+  "@nutritionCoverage": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "nutritionToTaste": "Esclusi i q.b.: {names}.",
+  "@nutritionToTaste": {
+    "placeholders": {
+      "names": { "type": "String" }
+    }
+  },
+  "nutritionFryingOil": "{names}: per la frittura è contata solo la parte assorbita (circa il 15%).",
+  "@nutritionFryingOil": {
+    "placeholders": {
+      "names": { "type": "String" }
+    }
+  },
+  "nutritionUnmatched": "Non trovati nel database degli alimenti: {names}.",
+  "@nutritionUnmatched": {
+    "placeholders": {
+      "names": { "type": "String" }
+    }
+  },
+  "nutritionSources": "Fonti: USDA FoodData Central, ANSES-CIQUAL, Open Food Facts.",
+  "nutritionUnavailable": "Valori non disponibili: nessun ingrediente trovato nel database degli alimenti.",
+  "nutritionError": "Non riesco a calcolare i valori nutrizionali.",
   "recipeIngredients": "Ingredienti",
   "recipeSteps": "Procedimento",
   "recipeToTaste": "q.b.",

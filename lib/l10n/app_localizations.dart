@@ -736,6 +736,144 @@ abstract class AppLocalizations {
   /// **'Porzioni originali'**
   String get recipeServingsReset;
 
+  /// No description provided for @recipeNutrition.
+  ///
+  /// In it, this message translates to:
+  /// **'Nutrienti'**
+  String get recipeNutrition;
+
+  /// No description provided for @nutritionPerServing.
+  ///
+  /// In it, this message translates to:
+  /// **'Per porzione'**
+  String get nutritionPerServing;
+
+  /// No description provided for @nutritionWholeRecipe.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricetta intera'**
+  String get nutritionWholeRecipe;
+
+  /// No description provided for @nutritionPer100g.
+  ///
+  /// In it, this message translates to:
+  /// **'Per 100 g'**
+  String get nutritionPer100g;
+
+  /// No description provided for @nutritionServingOf.
+  ///
+  /// In it, this message translates to:
+  /// **'1 di {count} {unit}'**
+  String nutritionServingOf(String count, String unit);
+
+  /// No description provided for @nutritionEnergy.
+  ///
+  /// In it, this message translates to:
+  /// **'Energia'**
+  String get nutritionEnergy;
+
+  /// No description provided for @nutritionKcalValue.
+  ///
+  /// In it, this message translates to:
+  /// **'{value} kcal'**
+  String nutritionKcalValue(String value);
+
+  /// No description provided for @nutritionGramsValue.
+  ///
+  /// In it, this message translates to:
+  /// **'{value} g'**
+  String nutritionGramsValue(String value);
+
+  /// No description provided for @nutritionProtein.
+  ///
+  /// In it, this message translates to:
+  /// **'Proteine'**
+  String get nutritionProtein;
+
+  /// No description provided for @nutritionCarbs.
+  ///
+  /// In it, this message translates to:
+  /// **'Carboidrati'**
+  String get nutritionCarbs;
+
+  /// No description provided for @nutritionSugars.
+  ///
+  /// In it, this message translates to:
+  /// **'di cui zuccheri'**
+  String get nutritionSugars;
+
+  /// No description provided for @nutritionFat.
+  ///
+  /// In it, this message translates to:
+  /// **'Grassi'**
+  String get nutritionFat;
+
+  /// No description provided for @nutritionSaturatedFat.
+  ///
+  /// In it, this message translates to:
+  /// **'di cui saturi'**
+  String get nutritionSaturatedFat;
+
+  /// No description provided for @nutritionFiber.
+  ///
+  /// In it, this message translates to:
+  /// **'Fibre'**
+  String get nutritionFiber;
+
+  /// No description provided for @nutritionSalt.
+  ///
+  /// In it, this message translates to:
+  /// **'Sale'**
+  String get nutritionSalt;
+
+  /// No description provided for @nutritionEstimated.
+  ///
+  /// In it, this message translates to:
+  /// **'Valori stimati dagli ingredienti: possono cambiare con marca, varietà e cottura.'**
+  String get nutritionEstimated;
+
+  /// No description provided for @nutritionCoverage.
+  ///
+  /// In it, this message translates to:
+  /// **'Calcolato sul {percent}% del peso degli ingredienti.'**
+  String nutritionCoverage(String percent);
+
+  /// No description provided for @nutritionToTaste.
+  ///
+  /// In it, this message translates to:
+  /// **'Esclusi i q.b.: {names}.'**
+  String nutritionToTaste(String names);
+
+  /// No description provided for @nutritionFryingOil.
+  ///
+  /// In it, this message translates to:
+  /// **'{names}: per la frittura è contata solo la parte assorbita (circa il 15%).'**
+  String nutritionFryingOil(String names);
+
+  /// No description provided for @nutritionUnmatched.
+  ///
+  /// In it, this message translates to:
+  /// **'Non trovati nel database degli alimenti: {names}.'**
+  String nutritionUnmatched(String names);
+
+  /// No description provided for @nutritionSources.
+  ///
+  /// In it, this message translates to:
+  /// **'Fonti: USDA FoodData Central, ANSES-CIQUAL, Open Food Facts.'**
+  String get nutritionSources;
+
+  /// No description provided for @nutritionUnavailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Valori non disponibili: nessun ingrediente trovato nel database degli alimenti.'**
+  String get nutritionUnavailable;
+
+  /// No description provided for @nutritionError.
+  ///
+  /// In it, this message translates to:
+  /// **'Non riesco a calcolare i valori nutrizionali.'**
+  String get nutritionError;
+
   /// No description provided for @recipeIngredients.
   ///
   /// In it, this message translates to:

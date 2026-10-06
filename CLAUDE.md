@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F4 fase 3)
+## Stato (aggiornato al 2026-10-06, F4 conclusa)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -58,8 +58,10 @@ curata `tool/nutrition/curated_foods.csv`, contratto in `lib/features/nutrition/
 `data/food_db.dart` (`foodLookupProvider`), valori manuali in `tool/nutrition/manual_foods.csv` (Open Food Facts), 21 ricette di
 prova in `test/fixtures/nutrition/` (copertura 100%). Fase 3 (2026-10-06): tappa `NutritionStep` (risultato in `ImportJobData.nutrition`),
 salvataggio con la ricetta (`RecipeRepository.insert(…, nutrition:)`, `saveNutrition`, `watchNutrition`), ricalcolo all'avvio
-`nutrition/data/nutrition_refresher.dart` (versione in `nutrition.foodDbVersion`), olio per friggere al 15% (D-57). Prossima:
-fase 4 (scheda Nutrienti e prova). Prove dal vivo D-44 ancora aperte.
+`nutrition/data/nutrition_refresher.dart` (versione in `nutrition.foodDbVersion`), olio per friggere al 15% (D-57). Fase 4 (2026-10-06): scheda
+Nutrienti nel dettaglio (`nutrition/presentation/recipe_nutrition_tab.dart`, D-58; valori ricalcolati all'apertura con
+`recipeNutritionProvider`). **F4 conclusa.** Nei widget test il database degli alimenti si apre dall'asset con
+`assetFoodLookupOverride()` (`test/app/test_food_lookup.dart`). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

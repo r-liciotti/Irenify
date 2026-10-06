@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,7 @@ import '../../../app/router.dart';
 import '../../../app/theme.dart';
 import '../../../app/widgets/empty_state.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../nutrition/presentation/recipe_nutrition_tab.dart';
 import '../data/recipe_remover.dart';
 import '../data/recipe_repository.dart';
 import '../domain/recipe.dart';
@@ -19,9 +21,9 @@ import 'detail/recipe_steps.dart';
 import 'detail/servings_bar.dart';
 import 'recipe_providers.dart';
 
-/// Dettaglio di una ricetta (D-43, D-45, D-48): foto a tutta larghezza con
-/// foglio arrotondato, schede Ingredienti / Procedimento con la barra delle
-/// schede fissata in alto, barra delle porzioni fissa in basso.
+/// Dettaglio di una ricetta (D-43, D-45, D-48, D-58): foto a tutta larghezza
+/// con foglio arrotondato, schede Ingredienti / Procedimento / Nutrienti con
+/// la barra delle schede fissata in alto, barra delle porzioni fissa in basso.
 ///
 /// Tutto scorre in un'unica `CustomScrollView`: la scheda scelta decide
 /// quali contenuti seguono la barra delle schede.
@@ -44,10 +46,14 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
   // già smontata.
   late final TabController _tabs;
 
+  static const _tabCount = 3;
+  static const _nutritionTab = 2;
+
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 2, vsync: this)..addListener(_onTabChanged);
+    _tabs = TabController(length: _tabCount, vsync: this)
+      ..addListener(_onTabChanged);
   }
 
   void _onTabChanged() => setState(() {});
@@ -119,16 +125,18 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
             pinned: true,
             delegate: _TabBarDelegate(
               color: colors.sheet,
-              tabBar: TabBar(
-                controller: _tabs,
-                tabs: [
-                  Tab(text: l10n.recipeIngredients),
-                  Tab(text: l10n.recipeSteps),
-                ],
-              ),
+              controller: _tabs,
+              labels: [
+                l10n.recipeIngredients,
+                l10n.recipeSteps,
+                l10n.recipeNutrition,
+              ],
             ),
           ),
-          if (changed)
+          // L'avviso parla di tempi di cottura e teglia: nella scheda
+          // Nutrienti non c'entra (lì il selettore dice già a cosa si
+          // riferiscono i valori).
+          if (changed && _tabs.index != _nutritionTab)
             const SliverToBoxAdapter(child: ServingsChangedWarning()),
           SliverToBoxAdapter(
             child: switch (_tabs.index) {
@@ -137,7 +145,8 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
                 factor: factor,
                 servingsChanged: changed,
               ),
-              _ => RecipeSteps(recipe: recipe, onOpenPost: _openPost),
+              1 => RecipeSteps(recipe: recipe, onOpenPost: _openPost),
+              _ => RecipeNutritionTab(recipe: recipe, servings: servings),
             },
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -227,26 +236,83 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
 }
 
 /// Barra delle schede fissata sotto la foto mentre si scorre.
+///
+/// Di norma le schede si dividono la larghezza in parti uguali. Se
+/// un'etichetta non ci sta (schermi stretti, testo grande) si riducono i
+/// margini; se non basta ancora la barra diventa scorrevole, così nessuna
+/// etichetta viene troncata.
 class _TabBarDelegate extends SliverPersistentHeaderDelegate {
-  _TabBarDelegate({required this.tabBar, required this.color});
+  _TabBarDelegate({
+    required this.controller,
+    required this.labels,
+    required this.color,
+  });
 
-  final TabBar tabBar;
+  final TabController controller;
+  final List<String> labels;
   final Color color;
 
-  @override
-  double get minExtent => tabBar.preferredSize.height;
+  /// Margini ridotti per gli schermi stretti.
+  static const _compactPadding = EdgeInsets.symmetric(horizontal: 6);
+
+  TabBar _tabBar({bool scrollable = false, EdgeInsets? labelPadding}) => TabBar(
+    controller: controller,
+    isScrollable: scrollable,
+    tabAlignment: scrollable ? TabAlignment.start : null,
+    labelPadding: labelPadding,
+    tabs: [for (final label in labels) Tab(text: label)],
+  );
 
   @override
-  double get maxExtent => tabBar.preferredSize.height;
+  double get minExtent => _tabBar().preferredSize.height;
+
+  @override
+  double get maxExtent => minExtent;
 
   @override
   Widget build(
     BuildContext context,
     double shrinkOffset,
     bool overlapsContent,
-  ) => ColoredBox(color: color, child: tabBar);
+  ) => ColoredBox(
+    color: color,
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        final widest = _widestLabel(context);
+        final slot = constraints.maxWidth / labels.length;
+        if (widest + kTabLabelPadding.horizontal <= slot) return _tabBar();
+        if (widest + _compactPadding.horizontal <= slot) {
+          return _tabBar(labelPadding: _compactPadding);
+        }
+        return _tabBar(scrollable: true);
+      },
+    ),
+  );
+
+  /// Larghezza dell'etichetta più lunga, con il testo come lo disegna la
+  /// barra.
+  double _widestLabel(BuildContext context) {
+    final style =
+        TabBarTheme.of(context).labelStyle ??
+        Theme.of(context).textTheme.titleSmall;
+    final scaler = MediaQuery.textScalerOf(context);
+    var widest = 0.0;
+    for (final label in labels) {
+      final painter = TextPainter(
+        text: TextSpan(text: label, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: scaler,
+        maxLines: 1,
+      )..layout();
+      if (painter.width > widest) widest = painter.width;
+      painter.dispose();
+    }
+    return widest;
+  }
 
   @override
   bool shouldRebuild(_TabBarDelegate oldDelegate) =>
-      oldDelegate.tabBar != tabBar || oldDelegate.color != color;
+      oldDelegate.controller != controller ||
+      oldDelegate.color != color ||
+      !listEquals(oldDelegate.labels, labels);
 }

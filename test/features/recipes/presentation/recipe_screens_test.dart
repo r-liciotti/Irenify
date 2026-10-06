@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -28,6 +29,7 @@ import '../../settings/fake_llm_settings.dart';
 import '../data/recipe_repository_test.dart' show sampleRecipe;
 import '../../../app/fake_onboarding_store.dart';
 import '../../../app/fake_theme_mode_store.dart';
+import '../../../app/test_food_lookup.dart';
 
 /// Ambiente di una prova: database in memoria e cartella dei file.
 typedef RecipesEnv = ({AppDatabase db, Directory support});
@@ -73,6 +75,8 @@ void recipesTest(
               () async => modelDir,
             ),
             llmSettingsProvider.overrideWithValue(FakeLlmSettings()),
+            // Alimenti letti dall'asset, mai tramite path_provider.
+            assetFoodLookupOverride(),
             ...?overrides?.call(env),
           ],
           child: const IrenefyApp(),
@@ -725,6 +729,82 @@ void main() {
       },
     );
 
+    recipesTest(
+      'tre schede; Nutrienti: per porzione fissa, ricetta intera segue le '
+      'porzioni, niente avviso su cottura e teglia',
+      seed: (env) => insert(env, _pastaRecipe()),
+      (tester, _) async {
+        await openRecipe(tester, 'Spaghetti in bianco');
+        final tabs = find.descendant(
+          of: find.byType(TabBar),
+          matching: find.byType(Tab),
+        );
+        expect(tabs, findsNWidgets(3));
+        expect(
+          [for (final t in tester.widgetList<Tab>(tabs)) t.text],
+          ['Ingredienti', 'Procedimento', 'Nutrienti'],
+        );
+        // A larghezza normale le schede si dividono la barra.
+        expect(tester.widget<TabBar>(find.byType(TabBar)).isScrollable, false);
+        expect(find.text('Energia'), findsNothing);
+
+        await showNutrition(tester);
+        expect(find.text('Energia'), findsOneWidget);
+        expect(ingredient('spaghetti', '200 g'), findsNothing);
+        // 200 g di pasta secca (371 kcal/100 g) per 2 persone.
+        expect(find.text('371 kcal'), findsOneWidget);
+        expect(
+          find.text('Calcolato sul 100% del peso degli ingredienti.'),
+          findsOneWidget,
+        );
+
+        // Per porzione non dipende dalla barra delle porzioni.
+        await tester.tap(find.byTooltip('Più porzioni'));
+        await tester.pump();
+        expect(servings('3 persone'), findsOneWidget);
+        expect(find.text('371 kcal'), findsOneWidget);
+        // L'avviso su cottura e teglia qui non compare.
+        expect(find.text(servingsWarning), findsNothing);
+
+        // Ricetta intera: 3 persone = 300 g.
+        await tester.tap(find.text('Ricetta intera'));
+        await tester.pumpAndSettle();
+        expect(find.text('1113 kcal'), findsOneWidget);
+        await tester.tap(find.byTooltip('Meno porzioni'));
+        await tester.pump();
+        expect(find.text('742 kcal'), findsOneWidget);
+        expect(servings('2 persone'), findsOneWidget);
+        await tester.tap(find.byTooltip('Più porzioni'));
+        await tester.pump();
+        expect(find.text('1113 kcal'), findsOneWidget);
+
+        // Le altre schede funzionano ancora; l'avviso torna dove serve.
+        await showIngredients(tester);
+        expect(ingredient('spaghetti', '300 g'), findsOneWidget);
+        expect(find.text(servingsWarning), findsOneWidget);
+        expect(find.text('Energia'), findsNothing);
+      },
+    );
+
+    recipesTest(
+      'barra delle schede: margini ridotti prima di diventare scorrevole',
+      seed: (env) => insert(env, sampleRecipe()),
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        TabBar bar() => tester.widget<TabBar>(find.byType(TabBar));
+        expect(bar().labelPadding, isNull);
+
+        // Nei test ogni carattere è largo quanto il corpo del testo:
+        // "Procedimento" (12 × 14 px) non sta in 190 px con i margini
+        // normali (32), ci sta con quelli ridotti.
+        tester.view.physicalSize = const Size(570, 3000);
+        await tester.pumpAndSettle();
+        expect(bar().isScrollable, isFalse);
+        expect(bar().labelPadding, isNotNull);
+        expect(fadedTabLabels(tester), isEmpty);
+      },
+    );
+
     for (final dark in [false, true]) {
       recipesTest(
         'nessun overflow a 360×640 con testo al 130% '
@@ -768,13 +848,29 @@ void main() {
           }
           expect(tester.takeException(), isNull);
 
-          await tester.tap(find.text('Procedimento'));
-          await tester.pumpAndSettle();
-          for (var i = 0; i < 4; i++) {
-            await tester.drag(list, const Offset(0, -300));
+          // Le etichette delle schede non vengono troncate (barra
+          // scorrevole se non stanno in parti uguali).
+          expect(fadedTabLabels(tester), isEmpty);
+
+          // Qui le etichette non stanno in parti uguali: la barra scorre.
+          expect(
+            tester.widget<TabBar>(find.byType(TabBar)).isScrollable,
+            isTrue,
+          );
+          for (final tab in ['Procedimento', 'Nutrienti']) {
+            await tester.ensureVisible(find.text(tab));
             await tester.pumpAndSettle();
+            await tester.tap(find.text(tab));
+            await settle(tester);
+            for (var i = 0; i < 4; i++) {
+              await tester.drag(list, const Offset(0, -300));
+              await tester.pumpAndSettle();
+            }
+            expect(tester.takeException(), isNull);
           }
-          expect(tester.takeException(), isNull);
+          // Il calcolo è andato a buon fine (farina e zucchero si trovano).
+          expect(find.text('Energia'), findsOneWidget);
+          expect(fadedTabLabels(tester), isEmpty);
         },
       );
     }
@@ -801,6 +897,44 @@ Future<void> showSteps(WidgetTester tester) async {
   await tester.tap(find.text('Procedimento'));
   await tester.pumpAndSettle();
 }
+
+Future<void> showNutrition(WidgetTester tester) async {
+  await tester.tap(find.text('Nutrienti'));
+  await settle(tester);
+}
+
+/// Etichette della barra delle schede troncate con la sfumatura.
+List<String> fadedTabLabels(WidgetTester tester) => [
+  for (final element
+      in find
+          .descendant(of: find.byType(TabBar), matching: find.byType(RichText))
+          .evaluate())
+    if ((element.renderObject! as RenderParagraph).debugHasOverflowShader)
+      (element.renderObject! as RenderParagraph).text.toPlainText(),
+];
+
+/// Ricetta per 2 persone con un solo ingrediente del database degli
+/// alimenti.
+Recipe _pastaRecipe() => sampleRecipe().copyWith(
+  title: 'Spaghetti in bianco',
+  baseServings: 2,
+  servingsUnit: 'persone',
+  ingredientGroups: const [
+    IngredientGroup(
+      id: 'g1',
+      ingredients: [
+        Ingredient(
+          id: 'i1',
+          name: 'spaghetti',
+          quantity: 200,
+          unit: IngredientUnit.gram,
+          gramsEstimate: 200,
+          canonicalNameEn: 'spaghetti',
+        ),
+      ],
+    ),
+  ],
+);
 
 Future<void> showIngredients(WidgetTester tester) async {
   await tester.tap(find.text('Ingredienti'));

@@ -11,6 +11,26 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-58 — Scheda Nutrienti: contenuti e comportamento (2026-10-06) — Attiva
+- **Decisione:**
+  - **Contenuto della scheda:** è la terza del dettaglio. Mostra solo i totali: kcal, proteine, carboidrati (di cui
+    zuccheri), grassi (di cui saturi), fibre, sale. Niente dettaglio per ingrediente e niente percentuali sul
+    fabbisogno giornaliero.
+  - **Calcolo:** si rifà all'apertura con `NutritionService`, che è istantaneo e resta coerente con il database
+    degli alimenti. I totali salvati servono alle funzioni future.
+  - **Selettore** per porzione / ricetta intera / per 100 g:
+    - "per porzione" non dipende dalla barra delle porzioni; "ricetta intera" la segue (lineare);
+    - le ricette senza porzioni ("1 ricetta") nascondono "per porzione" e partono da ricetta intera;
+    - le unità diverse da "persone" mostrano "1 di N <unità>".
+  - **Sempre visibili:** "valori stimati", copertura del peso, q.b. esclusi con i nomi, nota sull'olio per friggere
+    (15%), ingredienti non abbinati, fonti (USDA, CIQUAL, Open Food Facts).
+- **Alternative scartate:**
+  - dettaglio per ingrediente richiudibile;
+  - percentuali sui riferimenti UE;
+  - lettura dei soli totali salvati: non bastano per q.b., olio e non abbinati.
+- **Deciso da:** utente (dettaglio: "No, solo i totali"; percentuale: "No"); il resto è proposto da Claude nel
+  resoconto della fase 4.
+
 ## D-57 — Calcolo nutrizionale: abbinamento, grammi e valori manuali (2026-10-06) — Attiva
 - **Decisione:**
   - **Abbinamento** (`NutritionService`), primo che trova:

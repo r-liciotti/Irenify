@@ -24,6 +24,7 @@ import '../features/recipes/data/recipe_repository_test.dart' show sampleRecipe;
 import '../features/settings/fake_llm_settings.dart';
 import 'fake_onboarding_store.dart';
 import 'fake_theme_mode_store.dart';
+import 'test_food_lookup.dart';
 
 /// Widget test sull'app intera, con database in memoria.
 ///
@@ -62,6 +63,8 @@ void appTest(
             onboardingStoreProvider.overrideWithValue(
               FakeOnboardingStore.done(),
             ),
+            // Alimenti letti dall'asset, mai tramite path_provider.
+            assetFoodLookupOverride(),
           ],
           child: const IrenefyApp(),
         ),

@@ -78,12 +78,20 @@ ricette già salvate (versione del database degli alimenti); eventuale migrazion
 - **Per la fase 4:** le ricette senza porzioni ("1 ricetta") mostrano "per porzione" uguale al totale (Lingue di
   pizza: 4.210 kcal).
 
-## Fase 4 — Scheda Nutrienti e prova (≈ 0,5 gg)
+## Fase 4 — Scheda Nutrienti e prova (≈ 0,5 gg) — ✅ completata il 2026-10-06
 
 Terza scheda nel dettaglio: valori con il selettore, copertura, ingredienti non abbinati o esclusi, nota "valori
 stimati". Prova sul Pixel con le ricette reali.
 
-**Uscita della F4:** ogni ricetta mostra valori nutrizionali plausibili, con la copertura dichiarata.
+**Come è stata fatta:**
+- **Sviluppo:** contratto `nutrition/presentation/nutrition_providers.dart` e 24 testi nell'ARB, poi 2 subagent:
+  - la scheda `recipe_nutrition_tab.dart`, con selettore a chip;
+  - la terza scheda nel dettaglio, con la barra che stringe i margini o scorre a 360 px e testo al 130%.
+- **Prova sul Pixel:** Polpette di zucca mostra 46 kcal "1 di 12 polpette" e 558 kcal per la ricetta intera, copertura
+  100%, q.b. elencati.
+
+**Uscita della F4:** ogni ricetta mostra valori nutrizionali plausibili, con la copertura dichiarata. ✅ F4 conclusa il
+2026-10-06.
 
 ## Riepilogo
 

@@ -409,6 +409,92 @@ class AppLocalizationsIt extends AppLocalizations {
   String get recipeServingsReset => 'Porzioni originali';
 
   @override
+  String get recipeNutrition => 'Nutrienti';
+
+  @override
+  String get nutritionPerServing => 'Per porzione';
+
+  @override
+  String get nutritionWholeRecipe => 'Ricetta intera';
+
+  @override
+  String get nutritionPer100g => 'Per 100 g';
+
+  @override
+  String nutritionServingOf(String count, String unit) {
+    return '1 di $count $unit';
+  }
+
+  @override
+  String get nutritionEnergy => 'Energia';
+
+  @override
+  String nutritionKcalValue(String value) {
+    return '$value kcal';
+  }
+
+  @override
+  String nutritionGramsValue(String value) {
+    return '$value g';
+  }
+
+  @override
+  String get nutritionProtein => 'Proteine';
+
+  @override
+  String get nutritionCarbs => 'Carboidrati';
+
+  @override
+  String get nutritionSugars => 'di cui zuccheri';
+
+  @override
+  String get nutritionFat => 'Grassi';
+
+  @override
+  String get nutritionSaturatedFat => 'di cui saturi';
+
+  @override
+  String get nutritionFiber => 'Fibre';
+
+  @override
+  String get nutritionSalt => 'Sale';
+
+  @override
+  String get nutritionEstimated =>
+      'Valori stimati dagli ingredienti: possono cambiare con marca, varietà e cottura.';
+
+  @override
+  String nutritionCoverage(String percent) {
+    return 'Calcolato sul $percent% del peso degli ingredienti.';
+  }
+
+  @override
+  String nutritionToTaste(String names) {
+    return 'Esclusi i q.b.: $names.';
+  }
+
+  @override
+  String nutritionFryingOil(String names) {
+    return '$names: per la frittura è contata solo la parte assorbita (circa il 15%).';
+  }
+
+  @override
+  String nutritionUnmatched(String names) {
+    return 'Non trovati nel database degli alimenti: $names.';
+  }
+
+  @override
+  String get nutritionSources =>
+      'Fonti: USDA FoodData Central, ANSES-CIQUAL, Open Food Facts.';
+
+  @override
+  String get nutritionUnavailable =>
+      'Valori non disponibili: nessun ingrediente trovato nel database degli alimenti.';
+
+  @override
+  String get nutritionError => 'Non riesco a calcolare i valori nutrizionali.';
+
+  @override
   String get recipeIngredients => 'Ingredienti';
 
   @override
