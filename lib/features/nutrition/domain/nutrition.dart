@@ -180,6 +180,7 @@ class IngredientNutrition {
     required this.gramsMethod,
     required this.isToTaste,
     required this.facts,
+    this.isFryingOil = false,
   });
 
   final String ingredientId;
@@ -200,6 +201,10 @@ class IngredientNutrition {
 
   /// Valori di questo ingrediente; `null` se manca l'alimento o il peso.
   final NutritionFacts? facts;
+
+  /// Olio o grasso per friggere (D-57): [grams] e [facts] sono già ridotti
+  /// alla quota assorbita dal cibo, non alla quantità messa in padella.
+  final bool isFryingOil;
 
   /// Affidabilità dell'abbinamento per `ingredients.match_confidence`.
   double? get matchConfidence => switch (matchMethod) {

@@ -33,8 +33,9 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
     citato nelle Licenze. Sostituiscono le approssimazioni della tabella curata.
   - **Database nell'app:** copiato da asset in `Application Support/nutrition/foods-<versione>.sqlite`, solo quando
     cambia `assets/nutrition/foods.version`; aperto in sola lettura.
-- **Aperto:** l'olio per friggere viene contato tutto (500 ml ≈ 4.000 kcal nella parmigiana di prova). Da decidere
-  con l'utente nella fase 3 o 4: escluderlo, contarne una quota assorbita, o chiederlo a Gemini.
+- **Olio per friggere** (deciso dall'utente il 2026-10-06, "Quota assorbita"): un ingrediente con nome o nota "per
+  friggere", "frittura", "for frying" (o simili) conta solo il 15% del suo peso, come stima assorbita (500 ml ≈ 70 g).
+  Si applica nella fase 3.
 - **Perché:** sulle 21 ricette di prova (6 dell'utente e 15 inventate) la copertura del peso è del 100%. Il taglio
   libero delle parole avrebbe dato abbinamenti sbagliati con affidabilità piena.
 - **Deciso da:** utente (via alla fase 2 e ricerca dei valori manuali); regole di dettaglio proposte da Claude.

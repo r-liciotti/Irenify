@@ -82,6 +82,7 @@ _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>
       ),
       extraction: json['extraction'] as Map<String, dynamic>?,
       extractionModel: json['extractionModel'] as String?,
+      nutrition: json['nutrition'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$ImportJobDataToJson(
@@ -114,6 +115,7 @@ Map<String, dynamic> _$ImportJobDataToJson(
   'transcriptSource': _$TranscriptSourceEnumMap[instance.transcriptSource],
   'extraction': instance.extraction,
   'extractionModel': instance.extractionModel,
+  'nutrition': instance.nutrition,
 };
 
 const _$ImportStatusEnumMap = {

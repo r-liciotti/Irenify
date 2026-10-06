@@ -20,6 +20,23 @@ final _waterLike = RegExp(r'\b(water|broth|stock)\b');
 /// calda", "zucca Delica, già pulita".
 final _alternative = RegExp(r' o |,');
 
+/// Quota dell'olio (o grasso) per friggere che resta nel cibo (D-57): conta
+/// solo questa parte del peso indicato, il resto rimane in padella.
+const _fryingOilAbsorbedShare = 0.15;
+
+/// Indicazioni di frittura nel nome, nella nota o nel nome inglese
+/// ("olio per friggere", "per la frittura", "oil for deep frying",
+/// "deep-fry"). I confini di parola escludono "soffriggere" (soffritto).
+final _fryingMarker = RegExp(
+  r'\b(friggere|frittura|frying|deep[- ]fry|to fry)\b',
+);
+
+/// Nomi inglesi (Gemini o alimento abbinato) di oli e grassi da frittura.
+final _fatEn = RegExp(r'\b(oils?|lard|shortening)\b');
+
+/// Nomi italiani di oli e grassi da frittura.
+final _fatIt = RegExp(r'\b(olio|oli|strutto)\b');
+
 class NutritionService {
   NutritionService(this._lookup);
 
@@ -61,9 +78,11 @@ class NutritionService {
     final isToTaste =
         ingredient.quantity == null ||
         ingredient.scalingRule == ScalingRule.toTaste;
-    final (grams, gramsMethod) = isToTaste
+    var (grams, gramsMethod) = isToTaste
         ? (null, GramsMethod.none)
         : _grams(ingredient, food);
+    final isFryingOil = _isFryingOil(ingredient, food);
+    if (isFryingOil && grams != null) grams *= _fryingOilAbsorbedShare;
     return IngredientNutrition(
       ingredientId: ingredient.id,
       name: ingredient.name,
@@ -75,7 +94,23 @@ class NutritionService {
       facts: food != null && grams != null
           ? food.per100g.scale(grams / 100)
           : null,
+      isFryingOil: isFryingOil,
     );
+  }
+
+  /// Olio o grasso per friggere (D-57): un'indicazione di frittura nel nome,
+  /// nella nota o nel nome inglese, e un olio o grasso nel nome inglese, in
+  /// quello dell'alimento abbinato o nel nome italiano.
+  bool _isFryingOil(Ingredient ingredient, FoodInfo? food) {
+    final italian = normalizeFoodName(ingredient.name);
+    final english = normalizeFoodName(ingredient.canonicalNameEn ?? '');
+    final note = normalizeFoodName(ingredient.note ?? '');
+    final forFrying = [italian, note, english].any(_fryingMarker.hasMatch);
+    if (!forFrying) return false;
+    final foodName = normalizeFoodName(food?.nameEn ?? '');
+    return _fatEn.hasMatch(english) ||
+        _fatEn.hasMatch(foodName) ||
+        _fatIt.hasMatch(italian);
   }
 
   /// Abbinamento, vince il primo che trova un alimento:

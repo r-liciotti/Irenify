@@ -12,7 +12,7 @@ import 'package:irenefy/features/import_pipeline/data/steps/audio_step.dart';
 import 'package:irenefy/features/import_pipeline/data/steps/extract_step.dart';
 import 'package:irenefy/features/import_pipeline/data/steps/media_step.dart';
 import 'package:irenefy/features/import_pipeline/data/steps/transcribe_step.dart';
-import 'package:irenefy/features/import_pipeline/data/steps/pass_through_nutrition_step.dart';
+import 'package:irenefy/features/import_pipeline/data/steps/nutrition_step.dart';
 import 'package:irenefy/features/import_pipeline/data/steps/save_recipe_step.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_job.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_step.dart';
@@ -26,6 +26,7 @@ import '../../../data/db/test_database.dart';
 import 'fake_http.dart';
 import 'steps/fake_llm_provider.dart';
 import 'steps/fake_platform_client.dart';
+import 'steps/nutrition_step_test.dart' show FakeFoodLookup;
 import 'steps/transcription_steps_test.dart'
     show FakeAwake, FakeCpu, FakeExtractor, FakeModels, FakeTranscriber;
 
@@ -104,7 +105,7 @@ void main() {
         ])
           _Step(s, (job, _) async => StepResult.notApplicable(job)),
       ExtractStep(llm: llm),
-      const PassThroughNutritionStep(),
+      NutritionStep(lookup: () async => FakeFoodLookup()),
       SaveRecipeStep(recipes: recipes, files: RecipeFiles(() async => support)),
     ],
   );
@@ -124,6 +125,16 @@ void main() {
     expect(recipe.source.authorName, 'autore_prova');
     expect(recipe.extractionModel, FakeLlmProvider.model);
     expect(recipe.ingredientGroups.expand((g) => g.ingredients), isNotEmpty);
+    // Valori nutrizionali calcolati dalla tappa e salvati con la ricetta.
+    expect(done.data.nutrition, isNotNull);
+    expect(await recipes.watchNutrition(job.id).first, isNotNull);
+    expect(
+      recipe.ingredientGroups
+          .expand((g) => g.ingredients)
+          .firstWhere((i) => i.name == 'rigatoni')
+          .foodId,
+      FakeFoodLookup.pasta.id,
+    );
     // La miniatura è sopravvissuta alla pulizia della cartella del job.
     expect(recipe.thumbnailPath, 'recipes/${job.id}/miniatura.jpg');
     expect(

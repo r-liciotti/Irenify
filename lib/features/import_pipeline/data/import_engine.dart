@@ -8,6 +8,7 @@ import '../../../app/providers.dart';
 import '../../../core/errors/failure.dart';
 import '../../../core/logging/app_log.dart';
 import '../../../core/network/http_client.dart';
+import '../../nutrition/data/food_db.dart';
 import '../../recipes/data/recipe_files.dart';
 import '../../recipes/data/recipe_repository.dart';
 import '../../recipes/domain/recipe_enums.dart';
@@ -33,8 +34,8 @@ import 'steps/extract_step.dart';
 import 'steps/media_step.dart';
 import 'steps/metadata_step.dart';
 import 'steps/normalize_link_step.dart';
+import 'steps/nutrition_step.dart';
 import 'steps/transcribe_step.dart';
-import 'steps/pass_through_nutrition_step.dart';
 import 'steps/save_recipe_step.dart';
 
 final jobStorageProvider = Provider<JobStorage>(
@@ -82,7 +83,7 @@ final importStepsProvider = Provider<List<ImportStep>>((ref) {
       screenAwake: ref.watch(screenAwakeProvider),
     ),
     ExtractStep(llm: ref.watch(llmProviderProvider)),
-    const PassThroughNutritionStep(),
+    NutritionStep(lookup: () => ref.read(foodLookupProvider.future)),
     SaveRecipeStep(
       recipes: ref.watch(recipeRepositoryProvider),
       files: ref.watch(recipeFilesProvider),

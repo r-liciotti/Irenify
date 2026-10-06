@@ -86,6 +86,7 @@ Ingredient _ing(
   double? estimate,
   ScalingRule rule = ScalingRule.linear,
   String? id,
+  String? note,
 }) => Ingredient(
   id: id ?? name,
   name: name,
@@ -95,6 +96,7 @@ Ingredient _ing(
   unit: unit,
   gramsEstimate: estimate,
   scalingRule: rule,
+  note: note,
 );
 
 Recipe _recipe(List<List<Ingredient>> groups, {double servings = 4}) => Recipe(
@@ -491,6 +493,149 @@ void main() {
           rule: ScalingRule.toTaste,
         ),
       );
+      expect(item.isToTaste, isTrue);
+      expect(item.grams, isNull);
+    });
+  });
+
+  group('olio per friggere (D-57)', () {
+    final peanutOil = _food(11, 'Oil, peanut, salad or cooking', kcal: 880);
+    final lard = _food(12, 'Lard', kcal: 900);
+    final eggplant = _food(13, 'Eggplant, raw', kcal: 25);
+
+    test('con la nota "per friggere" conta solo il 15%', () async {
+      final item = await _one(
+        _FakeFoodLookup(en: {'peanut oil': peanutOil}),
+        _ing(
+          'olio di semi di arachide',
+          en: 'peanut oil',
+          q: 500,
+          unit: IngredientUnit.gram,
+          note: 'per friggere',
+        ),
+      );
+      expect(item.isFryingOil, isTrue);
+      expect(item.grams, closeTo(75, 1e-9));
+      expect(item.gramsMethod, GramsMethod.weight);
+      expect(item.facts!.kcal, closeTo(880 * 0.75, 1e-9));
+    });
+
+    test('indicazione nel nome italiano o inglese', () async {
+      final lookup = _FakeFoodLookup(
+        en: {'lard': lard, 'peanut oil': peanutOil},
+      );
+      final byName = await _one(
+        lookup,
+        _ing('olio per la frittura', q: 1, unit: IngredientUnit.liter),
+      );
+      expect(byName.isFryingOil, isTrue);
+      expect(byName.food, isNull);
+
+      final byEnglish = await _one(
+        lookup,
+        _ing(
+          'strutto',
+          en: 'lard for deep frying',
+          q: 200,
+          unit: IngredientUnit.gram,
+        ),
+      );
+      expect(byEnglish.isFryingOil, isTrue);
+      expect(byEnglish.grams, closeTo(30, 1e-9));
+
+      final deepFry = await _one(
+        lookup,
+        _ing(
+          'olio di arachide',
+          en: 'peanut oil',
+          q: 100,
+          unit: IngredientUnit.gram,
+          note: 'to deep-fry',
+        ),
+      );
+      expect(deepFry.isFryingOil, isTrue);
+    });
+
+    test('vale anche col nome dell\'alimento abbinato', () async {
+      final item = await _one(
+        _FakeFoodLookup(it: {'olio di semi': peanutOil}),
+        _ing(
+          'olio di semi',
+          q: 100,
+          unit: IngredientUnit.gram,
+          note: 'frittura',
+        ),
+      );
+      expect(item.isFryingOil, isTrue);
+      expect(item.grams, closeTo(15, 1e-9));
+    });
+
+    test('olio senza frittura, o frittura senza olio: peso intero', () async {
+      final lookup = _FakeFoodLookup(
+        en: {'olive oil': _oil, 'eggplant': eggplant},
+      );
+      final sauteed = await _one(
+        lookup,
+        _ing(
+          'olio extravergine',
+          en: 'olive oil',
+          q: 30,
+          unit: IngredientUnit.gram,
+          note: 'per soffriggere',
+        ),
+      );
+      expect(sauteed.isFryingOil, isFalse);
+      expect(sauteed.grams, 30);
+
+      final fried = await _one(
+        lookup,
+        _ing(
+          'melanzane',
+          en: 'eggplant',
+          q: 900,
+          unit: IngredientUnit.gram,
+          note: 'da friggere',
+        ),
+      );
+      expect(fried.isFryingOil, isFalse);
+      expect(fried.grams, 900);
+    });
+
+    test('totali, peso e copertura con la quota assorbita', () async {
+      final lookup = _FakeFoodLookup(
+        en: {'peanut oil': peanutOil, 'eggplant': eggplant},
+      );
+      final result = await NutritionService(lookup).compute(
+        _recipe([
+          [
+            _ing(
+              'melanzane',
+              en: 'eggplant',
+              q: 900,
+              unit: IngredientUnit.gram,
+            ),
+            _ing(
+              'olio di semi',
+              en: 'peanut oil',
+              q: 500,
+              unit: IngredientUnit.gram,
+              note: 'per friggere',
+            ),
+            _ing('misterioso', q: 25, unit: IngredientUnit.gram),
+          ],
+        ]),
+      );
+      expect(result.weighedGrams, closeTo(1000, 1e-9));
+      expect(result.matchedGrams, closeTo(975, 1e-9));
+      expect(result.total.kcal, closeTo(25 * 9 + 880 * 0.75, 1e-9));
+    });
+
+    test('olio per friggere q.b.: nessun peso', () async {
+      final item = await _one(
+        _FakeFoodLookup(en: {'peanut oil': peanutOil}),
+        _ing('olio di semi', en: 'peanut oil', note: 'per friggere'),
+      );
+      expect(item.isFryingOil, isTrue);
       expect(item.isToTaste, isTrue);
       expect(item.grams, isNull);
     });

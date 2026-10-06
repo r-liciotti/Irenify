@@ -10,6 +10,7 @@ import 'app/providers.dart';
 import 'app/theme_mode.dart';
 import 'core/logging/app_log.dart';
 import 'features/import_pipeline/data/import_engine.dart';
+import 'features/nutrition/data/nutrition_refresher.dart';
 import 'features/onboarding/presentation/onboarding_controller.dart';
 import 'features/share_intake/data/share_intake.dart';
 
@@ -45,15 +46,30 @@ Future<void> main() async {
   // widget test montano IrenefyApp senza avviarli. Prima la pulizia delle
   // cartelle, poi le condivisioni, poi la ripresa dei job (ImportEngine.start).
   final engine = container.read(importEngineProvider);
+  final engineReady = engine.start();
   container
       .read(shareIntakeProvider)
       .start(
-        ready: engine.start(),
+        ready: engineReady,
         onJobCreated: (job) {
           unawaited(engine.wake());
           openImportAfterShare(container, job.id);
         },
       );
+  // Valori nutrizionali mancanti o calcolati con un database degli alimenti
+  // precedente (D-57): in background, dopo l'avvio del motore, senza mai
+  // bloccare l'app. Gli errori di avvio del motore li gestisce già la
+  // ricezione delle condivisioni.
+  unawaited(
+    engineReady
+        .then<void>((_) {}, onError: (Object _) {})
+        .then((_) => container.read(nutritionRefresherProvider).run())
+        .then<void>(
+          (_) {},
+          onError: (Object e, StackTrace s) =>
+              log.error('Valori nutrizionali: ricalcolo non riuscito', e, s),
+        ),
+  );
   runApp(
     UncontrolledProviderScope(container: container, child: const IrenefyApp()),
   );

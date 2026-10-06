@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/db/database_provider.dart';
 import '../../../data/db/search_index.dart';
+import '../../nutrition/domain/nutrition.dart';
+import '../../nutrition/domain/nutrition_snapshot.dart';
 import '../domain/recipe.dart';
 import '../domain/recipe_enums.dart';
 import 'recipe_search_query.dart';
@@ -29,11 +31,13 @@ class RecipeRepository {
 
   final AppDatabase _db;
 
-  /// Salva una ricetta nuova con fonte, ingredienti, passi e tag.
+  /// Salva una ricetta nuova con fonte, ingredienti, passi e tag; con
+  /// [nutrition] anche i valori nutrizionali (gli abbinamenti degli
+  /// ingredienti arrivano già su [recipe], da [NutritionSnapshot.applyTo]).
   ///
   /// Lancia [DuplicateSourceKeyException] se la `sourceKey` esiste già:
   /// in quel caso non viene scritto nulla.
-  Future<void> insert(Recipe recipe) async {
+  Future<void> insert(Recipe recipe, {NutritionSnapshot? nutrition}) async {
     await _db.transaction(() async {
       final key = recipe.source.sourceKey;
       if (key != null && await findIdBySourceKey(key) != null) {
@@ -94,9 +98,82 @@ class RecipeRepository {
               RecipeTagsCompanion.insert(recipeId: recipe.id, tagId: tagId),
             );
       }
+      if (nutrition != null) {
+        await _db
+            .into(_db.nutritionSnapshots)
+            .insert(_snapshotCompanion(recipe.id, nutrition));
+      }
       await _index(recipe.id);
     });
   }
+
+  /// Salva i valori nutrizionali ricalcolati della ricetta [recipeId] (F4,
+  /// D-57) in un'unica transazione: sostituisce i totali e riscrive
+  /// l'alimento abbinato di **tutti** i suoi ingredienti da
+  /// [NutritionSnapshot.matches] (`null` per quelli senza abbinamento). Se la
+  /// ricetta non esiste più (eliminata nel frattempo) non fa nulla.
+  Future<void> saveNutrition(
+    String recipeId,
+    NutritionSnapshot snapshot,
+  ) => _db.transaction(() async {
+    final exists = await (_db.select(
+      _db.recipes,
+    )..where((r) => r.id.equals(recipeId))).getSingleOrNull();
+    if (exists == null) return;
+    await _db
+        .into(_db.nutritionSnapshots)
+        .insertOnConflictUpdate(_snapshotCompanion(recipeId, snapshot));
+    final ingredientIds =
+        await (_db.selectOnly(_db.ingredients)
+              ..addColumns([_db.ingredients.id])
+              ..join([
+                innerJoin(
+                  _db.ingredientGroups,
+                  _db.ingredientGroups.id.equalsExp(_db.ingredients.groupId),
+                ),
+              ])
+              ..where(_db.ingredientGroups.recipeId.equals(recipeId)))
+            .map((row) => row.read(_db.ingredients.id)!)
+            .get();
+    for (final id in ingredientIds) {
+      final match = snapshot.matches[id];
+      await (_db.update(_db.ingredients)..where((i) => i.id.equals(id))).write(
+        IngredientsCompanion(
+          foodId: Value(match?.foodId),
+          matchConfidence: Value(match?.confidence),
+        ),
+      );
+    }
+  });
+
+  /// Valori nutrizionali salvati della ricetta [recipeId], `null` se non
+  /// ancora calcolati; si aggiorna da solo. [NutritionSnapshot.matches] è
+  /// vuota: gli abbinamenti stanno sugli ingredienti.
+  Stream<NutritionSnapshot?> watchNutrition(String recipeId) =>
+      (_db.select(_db.nutritionSnapshots)
+            ..where((n) => n.recipeId.equals(recipeId)))
+          .map(_snapshotFromRow)
+          .watchSingleOrNull();
+
+  /// Id delle ricette senza valori nutrizionali salvati.
+  Future<List<String>> recipeIdsWithoutNutrition() => _db
+      .customSelect(
+        'SELECT r.id FROM recipes r '
+        'WHERE NOT EXISTS (SELECT 1 FROM nutrition_snapshots n '
+        'WHERE n.recipe_id = r.id) ORDER BY r.created_at, r.id',
+        readsFrom: {_db.recipes, _db.nutritionSnapshots},
+      )
+      .map((row) => row.read<String>('id'))
+      .get();
+
+  /// Id di tutte le ricette, dalla meno recente.
+  Future<List<String>> allRecipeIds() =>
+      (_db.select(_db.recipes)..orderBy([
+            (r) => OrderingTerm(expression: r.createdAt),
+            (r) => OrderingTerm(expression: r.id),
+          ]))
+          .map((r) => r.id)
+          .get();
 
   /// Riscrive la riga della ricetta [recipeId] nell'indice di ricerca; va
   /// chiamato dentro la transazione che salva o modifica la ricetta.
@@ -329,6 +406,8 @@ class RecipeRepository {
   /// `DataEraser`.
   Future<void> deleteAll() => _db.transaction(() async {
     await _db.delete(_db.recipes).go();
+    // Già a cascata con le ricette; esplicito per non lasciare valori orfani.
+    await _db.delete(_db.nutritionSnapshots).go();
     await _db.delete(_db.tags).go();
     // Il trigger toglie dall'indice una ricetta alla volta: qui lo si svuota
     // comunque, così non resta nulla anche se una riga fosse rimasta orfana.
@@ -369,6 +448,39 @@ class RecipeRepository {
     createdAt: r.createdAt,
     updatedAt: r.updatedAt,
   );
+
+  NutritionSnapshotsCompanion _snapshotCompanion(
+    String recipeId,
+    NutritionSnapshot s,
+  ) => NutritionSnapshotsCompanion.insert(
+    recipeId: recipeId,
+    kcal: s.total.kcal,
+    proteinG: s.total.proteinG,
+    carbsG: s.total.carbsG,
+    sugarsG: s.total.sugarsG,
+    fatG: s.total.fatG,
+    saturatedFatG: s.total.saturatedFatG,
+    fiberG: s.total.fiberG,
+    saltG: s.total.saltG,
+    coverage: s.coverage,
+    computedAt: s.computedAt,
+  );
+
+  NutritionSnapshot _snapshotFromRow(NutritionSnapshotRow n) =>
+      NutritionSnapshot(
+        total: NutritionFacts(
+          kcal: n.kcal,
+          proteinG: n.proteinG,
+          carbsG: n.carbsG,
+          sugarsG: n.sugarsG,
+          fatG: n.fatG,
+          saturatedFatG: n.saturatedFatG,
+          fiberG: n.fiberG,
+          saltG: n.saltG,
+        ),
+        coverage: n.coverage,
+        computedAt: n.computedAt,
+      );
 
   IngredientsCompanion _ingredientCompanion(
     Ingredient i,

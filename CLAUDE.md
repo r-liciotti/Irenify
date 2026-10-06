@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F4 fase 2)
+## Stato (aggiornato al 2026-10-06, F4 fase 3)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -56,7 +56,10 @@ codice nativo prima della F5). F4 in corso (piano in `F4_PIANO.md`, D-54): fase 
 curata `tool/nutrition/curated_foods.csv`, contratto in `lib/features/nutrition/data/food_db_schema.dart`). Fase 2 (2026-10-06): calcolo in
 `lib/features/nutrition/domain/nutrition_service.dart` (contratto `nutrition.dart`, regole D-57), lettura e copia del database in
 `data/food_db.dart` (`foodLookupProvider`), valori manuali in `tool/nutrition/manual_foods.csv` (Open Food Facts), 21 ricette di
-prova in `test/fixtures/nutrition/` (copertura 100%). Prossima: fase 3 (tappa reale e salvataggio). Prove dal vivo D-44 ancora aperte.
+prova in `test/fixtures/nutrition/` (copertura 100%). Fase 3 (2026-10-06): tappa `NutritionStep` (risultato in `ImportJobData.nutrition`),
+salvataggio con la ricetta (`RecipeRepository.insert(…, nutrition:)`, `saveNutrition`, `watchNutrition`), ricalcolo all'avvio
+`nutrition/data/nutrition_refresher.dart` (versione in `nutrition.foodDbVersion`), olio per friggere al 15% (D-57). Prossima:
+fase 4 (scheda Nutrienti e prova). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

@@ -11,6 +11,8 @@ import 'package:irenefy/features/import_pipeline/data/import_engine.dart';
 import 'package:irenefy/features/import_pipeline/data/import_job_repository.dart';
 import 'package:irenefy/features/import_pipeline/data/job_storage.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_job.dart';
+import 'package:irenefy/features/nutrition/domain/nutrition.dart';
+import 'package:irenefy/features/nutrition/domain/nutrition_snapshot.dart';
 import 'package:irenefy/features/recipes/data/recipe_files.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/settings/data/data_eraser.dart';
@@ -167,7 +169,14 @@ void main() {
 
   /// Una ricetta con miniatura e un job con la sua cartella.
   Future<void> seed() async {
-    await RecipeRepository(db).insert(sampleRecipe());
+    await RecipeRepository(db).insert(
+      sampleRecipe(),
+      nutrition: NutritionSnapshot(
+        total: NutritionFacts.zero,
+        coverage: 1,
+        computedAt: DateTime(2026, 10, 6),
+      ),
+    );
     final jobs = ImportJobRepository(db);
     final job = await jobs.create(sharedText: 'https://vm.tiktok.com/a');
     // Concluso: con un job in corso l'eliminazione si rifiuta.
@@ -192,6 +201,7 @@ void main() {
     expect(calls, ['job', 'ricette', 'cartelle job', 'cartelle ricette']);
     expect(await db.select(db.importJobs).get(), isEmpty);
     expect(await db.select(db.recipes).get(), isEmpty);
+    expect(await db.select(db.nutritionSnapshots).get(), isEmpty);
     expect(await db.select(db.tags).get(), isEmpty);
     expect(jobsDir().existsSync(), isFalse);
     expect(Directory('${support.path}/recipes').existsSync(), isFalse);

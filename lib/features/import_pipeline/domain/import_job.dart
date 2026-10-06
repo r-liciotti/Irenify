@@ -151,6 +151,11 @@ abstract class ImportJobData with _$ImportJobData {
     /// Risposta dell'LLM già validata, pronta per diventare una ricetta.
     Map<String, Object?>? extraction,
     String? extractionModel,
+
+    /// Valori nutrizionali calcolati dalla tappa "nutrizione"
+    /// (`NutritionSnapshot.toJson`, D-57): li salva la tappa finale insieme
+    /// alla ricetta. Manca se la tappa è stata saltata.
+    Map<String, Object?>? nutrition,
   }) = _ImportJobData;
 
   factory ImportJobData.fromJson(Map<String, Object?> json) =>

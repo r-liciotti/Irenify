@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../../../../core/errors/failure.dart';
+import '../../../nutrition/domain/nutrition_snapshot.dart';
 import '../../../recipes/data/recipe_files.dart';
 import '../../../recipes/data/recipe_repository.dart';
 import '../../domain/import_job.dart';
@@ -49,7 +50,7 @@ class SaveRecipeStep implements ImportStep {
     if (existing != null) return StepResult.alreadyImported(job, existing);
 
     final thumbnail = job.data.thumbnailPath;
-    final recipe = recipeFromExtraction(
+    var recipe = recipeFromExtraction(
       extraction: extraction,
       job: job,
       recipeId: recipeId,
@@ -58,8 +59,24 @@ class SaveRecipeStep implements ImportStep {
           : await _files.storeThumbnail(recipeId, File(thumbnail)),
       now: _clock(),
     );
-    await _recipes.insert(recipe);
+    // Valori della tappa "nutrizione" (D-57): salvati con la ricetta, con
+    // gli abbinamenti sugli ingredienti. Senza, li calcola il ricalcolo
+    // all'avvio.
+    final nutrition = _nutrition(job);
+    if (nutrition != null) recipe = nutrition.applyTo(recipe);
+    await _recipes.insert(recipe, nutrition: nutrition);
     return StepResult.done(job.copyWith(recipeId: recipeId));
+  }
+
+  /// Valori nutrizionali del job; `null` se mancano o non sono leggibili.
+  NutritionSnapshot? _nutrition(ImportJob job) {
+    final json = job.data.nutrition;
+    if (json == null) return null;
+    try {
+      return NutritionSnapshot.fromJson(json);
+    } on FormatException {
+      return null;
+    }
   }
 
   /// Ricetta già nel ricettario per lo stesso post (D-17).

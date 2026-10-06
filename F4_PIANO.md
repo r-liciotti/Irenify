@@ -61,10 +61,22 @@ approssimazioni della tabella curata, con rigenerazione del database.
   - taglio delle parole limitato a quelle descrittive.
 - **Aperto:** l'olio per friggere viene contato tutto.
 
-## Fase 3 — Integrazione (≈ 0,5 gg)
+## Fase 3 — Integrazione (≈ 0,5 gg) — ✅ completata il 2026-10-06
 
 Tappa `nutrition` reale; salvataggio di `nutrition_snapshots`, `foodId` e `matchConfidence`; ricalcolo all'avvio delle
 ricette già salvate (versione del database degli alimenti); eventuale migrazione v3 (ripetibile, come da `CLAUDE.md`).
+
+**Come è stata fatta:**
+- **Sviluppo:** contratto `domain/nutrition_snapshot.dart`, poi 2 subagent in parallelo.
+- **Tappa `NutritionStep`:** calcola sulla ricetta convertita in memoria e mette il risultato in `ImportJobData.nutrition`.
+- **Salvataggio:** `SaveRecipeStep` salva ricetta, abbinamenti e valori nella stessa transazione.
+- **Ricalcolo all'avvio:** `NutritionRefresher`, avviato da `main.dart`, calcola le ricette senza valori e le ricalcola
+  tutte quando cambia la versione. La versione sta nella preferenza `nutrition.foodDbVersion`.
+- **Nessuna migrazione.**
+- **Olio per friggere:** conta il 15% (D-57); la parmigiana di prova scende da 1.041 a 470 kcal per porzione.
+- **Prova sul Pixel:** 6 ricette su 6 calcolate all'avvio, copertura 100%, 48 ingredienti su 48 abbinati.
+- **Per la fase 4:** le ricette senza porzioni ("1 ricetta") mostrano "per porzione" uguale al totale (Lingue di
+  pizza: 4.210 kcal).
 
 ## Fase 4 — Scheda Nutrienti e prova (≈ 0,5 gg)
 
