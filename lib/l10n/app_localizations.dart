@@ -358,6 +358,204 @@ abstract class AppLocalizations {
   /// **'Solo didascalia'**
   String get importCaptionOnlyChosen;
 
+  /// No description provided for @importAddVideo.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi il video'**
+  String get importAddVideo;
+
+  /// No description provided for @importAddVideoHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Il video del post non si è potuto scaricare. Salvalo nella galleria e aggiungilo qui: la ricetta verrà rifatta anche con il parlato.'**
+  String get importAddVideoHint;
+
+  /// No description provided for @importAddVideoFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile usare questo video.'**
+  String get importAddVideoFailed;
+
+  /// No description provided for @importActionDetails.
+  ///
+  /// In it, this message translates to:
+  /// **'Dettagli'**
+  String get importActionDetails;
+
+  /// No description provided for @importJobTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Importazione'**
+  String get importJobTitle;
+
+  /// No description provided for @importJobNotFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa importazione non esiste più.'**
+  String get importJobNotFound;
+
+  /// No description provided for @importJobPlatformInstagram.
+  ///
+  /// In it, this message translates to:
+  /// **'Instagram'**
+  String get importJobPlatformInstagram;
+
+  /// No description provided for @importJobPlatformTiktok.
+  ///
+  /// In it, this message translates to:
+  /// **'TikTok'**
+  String get importJobPlatformTiktok;
+
+  /// No description provided for @importJobPlatformLink.
+  ///
+  /// In it, this message translates to:
+  /// **'Link'**
+  String get importJobPlatformLink;
+
+  /// No description provided for @importJobStartedAt.
+  ///
+  /// In it, this message translates to:
+  /// **'Iniziata il {date} alle {time}'**
+  String importJobStartedAt(String date, String time);
+
+  /// No description provided for @importJobTotalDuration.
+  ///
+  /// In it, this message translates to:
+  /// **'Durata totale: {duration}'**
+  String importJobTotalDuration(String duration);
+
+  /// No description provided for @importJobSteps.
+  ///
+  /// In it, this message translates to:
+  /// **'Tappe'**
+  String get importJobSteps;
+
+  /// No description provided for @importStepStateDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Fatta'**
+  String get importStepStateDone;
+
+  /// No description provided for @importStepStateSkipped.
+  ///
+  /// In it, this message translates to:
+  /// **'Saltata: {reason}'**
+  String importStepStateSkipped(String reason);
+
+  /// No description provided for @importStepStateStopped.
+  ///
+  /// In it, this message translates to:
+  /// **'Ferma qui: {message}'**
+  String importStepStateStopped(String message);
+
+  /// No description provided for @importStepStateRunning.
+  ///
+  /// In it, this message translates to:
+  /// **'In corso'**
+  String get importStepStateRunning;
+
+  /// No description provided for @importStepStateRunningFor.
+  ///
+  /// In it, this message translates to:
+  /// **'In corso da {duration}'**
+  String importStepStateRunningFor(String duration);
+
+  /// No description provided for @importStepStatePending.
+  ///
+  /// In it, this message translates to:
+  /// **'Da fare'**
+  String get importStepStatePending;
+
+  /// No description provided for @importSkipNotApplicable.
+  ///
+  /// In it, this message translates to:
+  /// **'non serve per questa importazione'**
+  String get importSkipNotApplicable;
+
+  /// No description provided for @importSkipCaptionOnly.
+  ///
+  /// In it, this message translates to:
+  /// **'scelta la sola didascalia'**
+  String get importSkipCaptionOnly;
+
+  /// No description provided for @importSkipFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'non riuscita'**
+  String get importSkipFailed;
+
+  /// No description provided for @importSkipNotAVideo.
+  ///
+  /// In it, this message translates to:
+  /// **'il post non è un video'**
+  String get importSkipNotAVideo;
+
+  /// No description provided for @importSkipVideoBlocked.
+  ///
+  /// In it, this message translates to:
+  /// **'video non scaricabile (spesso per la musica su licenza)'**
+  String get importSkipVideoBlocked;
+
+  /// No description provided for @importSkipVideoTooLong.
+  ///
+  /// In it, this message translates to:
+  /// **'video più lungo di 3 minuti'**
+  String get importSkipVideoTooLong;
+
+  /// No description provided for @importSkipNoAudio.
+  ///
+  /// In it, this message translates to:
+  /// **'il video non ha audio'**
+  String get importSkipNoAudio;
+
+  /// No description provided for @importSkipNoModel.
+  ///
+  /// In it, this message translates to:
+  /// **'modello della trascrizione non scaricato'**
+  String get importSkipNoModel;
+
+  /// No description provided for @importSkipCpuUnsupported.
+  ///
+  /// In it, this message translates to:
+  /// **'trascrizione non supportata da questo telefono'**
+  String get importSkipCpuUnsupported;
+
+  /// No description provided for @importSkipPlatformSubtitles.
+  ///
+  /// In it, this message translates to:
+  /// **'usati i sottotitoli della piattaforma'**
+  String get importSkipPlatformSubtitles;
+
+  /// No description provided for @importDurationUnderSecond.
+  ///
+  /// In it, this message translates to:
+  /// **'meno di 1 s'**
+  String get importDurationUnderSecond;
+
+  /// No description provided for @importDurationSeconds.
+  ///
+  /// In it, this message translates to:
+  /// **'{seconds} s'**
+  String importDurationSeconds(int seconds);
+
+  /// No description provided for @importDurationMinutes.
+  ///
+  /// In it, this message translates to:
+  /// **'{minutes} min'**
+  String importDurationMinutes(int minutes);
+
+  /// No description provided for @importDurationMinutesSeconds.
+  ///
+  /// In it, this message translates to:
+  /// **'{minutes} min {seconds} s'**
+  String importDurationMinutesSeconds(int minutes, int seconds);
+
+  /// No description provided for @importDurationHoursMinutes.
+  ///
+  /// In it, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String importDurationHoursMinutes(int hours, int minutes);
+
   /// No description provided for @recipeNotFound.
   ///
   /// In it, this message translates to:

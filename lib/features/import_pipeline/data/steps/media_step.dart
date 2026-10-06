@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../../../core/errors/failure.dart';
 import '../../../../core/logging/app_log.dart';
 import '../../../recipes/domain/recipe_enums.dart';
@@ -30,6 +32,9 @@ class MediaStep implements ImportStep {
   static const videoName = 'video.mp4';
   static const subtitlesName = 'sottotitoli.vtt';
 
+  /// Nome (senza estensione) del video aggiunto dall'utente (D-49).
+  static const addedVideoName = 'video_aggiunto';
+
   @override
   ImportStatus get step => ImportStatus.media;
 
@@ -40,6 +45,16 @@ class MediaStep implements ImportStep {
     if (shared != null) {
       return StepResult.done(
         job.copyWith(data: job.data.copyWith(videoPath: shared)),
+      );
+    }
+    // Video aggiunto con "Aggiungi il video" (D-49): è già nella cartella
+    // del job e non si rilegge la pagina. Didascalia, autore e miniatura
+    // restano quelli della tappa didascalia. La durata la controlla la
+    // tappa audio dal WAV (D-41).
+    final added = job.data.addedVideoPath;
+    if (added != null && await File(added).exists()) {
+      return StepResult.done(
+        job.copyWith(data: job.data.copyWith(videoPath: added)),
       );
     }
     if (_tooLong(job.data.videoDurationSeconds)) {

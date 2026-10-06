@@ -123,6 +123,15 @@ abstract class ImportJobData with _$ImportJobData {
 
     /// Il post era già nel ricettario: `recipeId` è la ricetta esistente.
     @Default(false) bool alreadyImported,
+
+    /// Inizio e fine di ogni tappa, per il dettaglio del job (D-49). Mancano
+    /// nei job creati prima della F2 fase 5.
+    @Default({}) Map<ImportStatus, DateTime> stepStartedAt,
+    @Default({}) Map<ImportStatus, DateTime> stepEndedAt,
+
+    /// Video scelto dall'utente con "Aggiungi il video" (D-49), nella cartella
+    /// del job: la tappa video lo usa al posto del download.
+    String? addedVideoPath,
     String? caption,
     String? authorName,
     String? thumbnailUrl,

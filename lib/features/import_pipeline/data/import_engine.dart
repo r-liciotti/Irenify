@@ -97,6 +97,7 @@ final importEngineProvider = Provider<ImportEngine>((ref) {
     steps: ref.watch(importStepsProvider),
     log: ref.watch(appLogProvider),
     speechModels: ref.watch(whisperModelManagerProvider),
+    cacheDirectory: getTemporaryDirectory,
   );
   ref.onDispose(engine.dispose);
   return engine;
@@ -117,7 +118,9 @@ class ImportEngine {
     required AppLog log,
     SpeechModelStore? speechModels,
     DateTime Function()? clock,
+    Future<Directory> Function()? cacheDirectory,
   }) : _speechModels = speechModels,
+       _cacheDirectory = cacheDirectory,
        _repo = repository,
        _storage = storage,
        _log = log,
@@ -130,6 +133,10 @@ class ImportEngine {
   final AppLog _log;
   final DateTime Function() _clock;
   final Map<ImportStatus, ImportStep> _steps;
+
+  /// Cache dell'app, dove il selettore dei file copia il video scelto: da lì
+  /// il video si sposta, altrimenti si copia (D-28). Senza, si copia sempre.
+  final Future<Directory> Function()? _cacheDirectory;
 
   bool _running = false;
   bool _pending = false;
@@ -202,6 +209,91 @@ class ImportEngine {
     unawaited(wake());
   }
 
+  /// Aggancia al job fermo [jobId] il video [videoPath] scelto dall'utente e
+  /// lo fa ripartire dalla tappa video (D-49). Il file viene spostato (o, se
+  /// non si può, copiato) nella cartella del job.
+  ///
+  /// Se il job non esiste più o non è nella condizione di [canAddVideo] non
+  /// fa nulla. Se il video non esiste o non si riesce a portarlo nella
+  /// cartella del job lancia un [UnexpectedFailure] e il job resta com'era.
+  Future<void> addVideo(String jobId, String videoPath) async {
+    final job = await _repo.getById(jobId);
+    if (job == null || !canAddVideo(job)) {
+      _log.warning('Video aggiunto ignorato: job $jobId non adatto');
+      return;
+    }
+    final source = File(videoPath);
+    if (!await source.exists()) {
+      throw const UnexpectedFailure(cause: 'Il video scelto non esiste');
+    }
+
+    final files = await _storage.filesFor(job.id);
+    final File added;
+    try {
+      // File di un tentativo precedente: l'audio estratto da un altro video
+      // verrebbe riusato dalla tappa audio.
+      for (final path in {
+        files.file(MediaStep.videoName).path,
+        files.file(MediaStep.subtitlesName).path,
+        files.file(AudioStep.audioName).path,
+        ?job.data.addedVideoPath,
+      }) {
+        final old = File(path);
+        if (await old.exists()) await old.delete();
+      }
+      final extension = fileExtension(videoPath) ?? 'mp4';
+      added = await takeFile(
+        source,
+        files.file('${MediaStep.addedVideoName}.$extension'),
+        cache: await _cacheDirectory?.call(),
+      );
+    } on FileSystemException catch (e, st) {
+      throw UnexpectedFailure(cause: e, stackTrace: st);
+    }
+
+    final media = ImportFlow.steps.indexOf(ImportStatus.media);
+    bool beforeMedia(ImportStatus s) => ImportFlow.steps.indexOf(s) < media;
+    final data = job.data;
+    // Salvato direttamente e non con _save: qui captionOnly torna false
+    // apposta, _save lo rimetterebbe a true.
+    await _repo.save(
+      job.copyWith(
+        status: ImportFlow.statusBefore(ImportStatus.media),
+        attempts: 0,
+        failedStep: null,
+        errorCode: null,
+        errorDetail: null,
+        data: data.copyWith(
+          addedVideoPath: added.path,
+          captionOnly: false,
+          skippedSteps: {
+            for (final e in data.skippedSteps.entries)
+              if (!ImportFlow.captionOnlySkips.contains(e.key)) e.key: e.value,
+          },
+          // Le tappe da rifare non hanno ancora tempi.
+          stepStartedAt: {
+            for (final e in data.stepStartedAt.entries)
+              if (beforeMedia(e.key)) e.key: e.value,
+          },
+          stepEndedAt: {
+            for (final e in data.stepEndedAt.entries)
+              if (beforeMedia(e.key)) e.key: e.value,
+          },
+          videoPath: null,
+          audioPath: null,
+          subtitlesPath: null,
+          transcript: null,
+          transcriptQuality: null,
+          transcriptSource: null,
+          extraction: null,
+          extractionModel: null,
+        ),
+      ),
+    );
+    _log.info('${_tag(job)} riparte con il video aggiunto');
+    unawaited(wake());
+  }
+
   /// Salta video, audio e trascrizione del job [jobId]: da ora in poi la
   /// ricetta si fa con la sola didascalia. Se il job era fermo, riparte.
   /// Una tappa già in corso non viene interrotta.
@@ -253,7 +345,7 @@ class ImportEngine {
     try {
       if (job.data.captionOnly && ImportFlow.captionOnlySkips.contains(step)) {
         await _skip(
-          job,
+          _markStarted(job, step),
           step,
           const SkippedStep(reason: SkipReason.captionOnly),
         );
@@ -268,8 +360,10 @@ class ImportEngine {
       // (es. SIGILL di whisper.cpp) chiude l'app senza passare da nessun
       // catch, e senza questo contatore l'app ripartirebbe da qui a ogni
       // avvio, andando di nuovo in crash (D-21).
+      // Anche l'inizio della tappa si salva prima: l'interfaccia mostra da
+      // quanto è in corso (D-49).
       final started = await _repo.save(
-        job.copyWith(attempts: job.attempts + 1),
+        _markStarted(job.copyWith(attempts: job.attempts + 1), step),
       );
       _log.info('${_tag(job)} ${step.name}, tentativo ${started.attempts}');
 
@@ -311,7 +405,10 @@ class ImportEngine {
 
   /// Salva il risultato della tappa e restituisce lo stato raggiunto.
   Future<ImportStatus> _finish(ImportStatus step, StepResult result) async {
-    final done = result.job.copyWith(status: step, attempts: 0);
+    final done = _markEnded(
+      result.job.copyWith(status: step, attempts: 0),
+      step,
+    );
     switch (result) {
       case StepDone():
         await _save(done);
@@ -348,7 +445,7 @@ class ImportEngine {
       return;
     }
     await _save(
-      job.copyWith(
+      _markEnded(job, step).copyWith(
         status: ImportStatus.failed,
         failedStep: step,
         errorCode: failure.code.name,
@@ -359,16 +456,33 @@ class ImportEngine {
 
   Future<void> _skip(ImportJob job, ImportStatus step, SkippedStep skipped) {
     _log.warning('${_tag(job)} ${step.name} saltata (${skipped.reason.name})');
+    final ended = _markEnded(job, step);
     return _save(
-      job.copyWith(
+      ended.copyWith(
         status: step,
         attempts: 0,
-        data: job.data.copyWith(
+        data: ended.data.copyWith(
           skippedSteps: {...job.data.skippedSteps, step: skipped},
         ),
       ),
     );
   }
+
+  /// Annota l'inizio di [step]: una ripresa o una riprova sovrascrive i tempi
+  /// della tappa e ne toglie la fine, finché non si conclude di nuovo.
+  ImportJob _markStarted(ImportJob job, ImportStatus step) => job.copyWith(
+    data: job.data.copyWith(
+      stepStartedAt: {...job.data.stepStartedAt, step: _clock()},
+      stepEndedAt: {...job.data.stepEndedAt}..remove(step),
+    ),
+  );
+
+  /// Annota la fine di [step]: conclusa, saltata o fallita.
+  ImportJob _markEnded(ImportJob job, ImportStatus step) => job.copyWith(
+    data: job.data.copyWith(
+      stepEndedAt: {...job.data.stepEndedAt, step: _clock()},
+    ),
+  );
 
   /// Salva il risultato di una tappa senza perdere le scelte fatte
   /// dall'utente mentre la tappa girava ("sola didascalia").

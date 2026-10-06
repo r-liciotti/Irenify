@@ -7,17 +7,27 @@ import 'package:irenefy/data/db/app_database.dart';
 import 'package:irenefy/features/import_pipeline/data/import_engine.dart';
 import 'package:irenefy/features/import_pipeline/data/import_job_repository.dart';
 import 'package:irenefy/features/import_pipeline/data/job_storage.dart';
+import 'package:irenefy/features/import_pipeline/data/downloader.dart';
+import 'package:irenefy/features/import_pipeline/data/steps/audio_step.dart';
 import 'package:irenefy/features/import_pipeline/data/steps/extract_step.dart';
+import 'package:irenefy/features/import_pipeline/data/steps/media_step.dart';
+import 'package:irenefy/features/import_pipeline/data/steps/transcribe_step.dart';
 import 'package:irenefy/features/import_pipeline/data/steps/pass_through_nutrition_step.dart';
 import 'package:irenefy/features/import_pipeline/data/steps/save_recipe_step.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_job.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_step.dart';
+import 'package:irenefy/features/import_pipeline/domain/post_page.dart';
+import 'package:irenefy/features/import_pipeline/domain/transcription.dart';
 import 'package:irenefy/features/recipes/data/recipe_files.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/recipes/domain/recipe_enums.dart';
 
 import '../../../data/db/test_database.dart';
+import 'fake_http.dart';
 import 'steps/fake_llm_provider.dart';
+import 'steps/fake_platform_client.dart';
+import 'steps/transcription_steps_test.dart'
+    show FakeAwake, FakeCpu, FakeExtractor, FakeModels, FakeTranscriber;
 
 /// Tappa di contorno: applica [body] al job.
 class _Step implements ImportStep {
@@ -54,10 +64,11 @@ void main() {
     await support.delete(recursive: true);
   });
 
-  ImportEngine newEngine() => ImportEngine(
+  ImportEngine newEngine({List<ImportStep>? videoSteps}) => ImportEngine(
     repository: jobs,
     storage: storage,
     log: AppLog(),
+    cacheDirectory: () async => Directory('${support.path}/cache'),
     steps: [
       _Step(
         ImportStatus.normalized,
@@ -84,12 +95,14 @@ void main() {
           ),
         );
       }),
-      for (final s in [
-        ImportStatus.media,
-        ImportStatus.audio,
-        ImportStatus.transcribed,
-      ])
-        _Step(s, (job, _) async => StepResult.notApplicable(job)),
+      ...?videoSteps,
+      if (videoSteps == null)
+        for (final s in [
+          ImportStatus.media,
+          ImportStatus.audio,
+          ImportStatus.transcribed,
+        ])
+          _Step(s, (job, _) async => StepResult.notApplicable(job)),
       ExtractStep(llm: llm),
       const PassThroughNutritionStep(),
       SaveRecipeStep(recipes: recipes, files: RecipeFiles(() async => support)),
@@ -150,5 +163,69 @@ void main() {
     expect(failed.errorCode, FailureCode.notARecipe.name);
     expect(failed.failedStep, ImportStatus.extracted);
     expect(await recipes.getById(job.id), isNull);
+  });
+
+  test('"Aggiungi il video" (D-49): dal "non è una ricetta" alla ricetta '
+      'con la trascrizione del video aggiunto', () async {
+    // Reel con musica su licenza: il video non si scarica.
+    final client = FakePlatformClient(
+      (_) => const PostPage(
+        caption: 'ignorata',
+        video: VideoAvailability.blockedByCopyright,
+      ),
+    );
+    final extractor = FakeExtractor();
+    final transcriber = FakeTranscriber(
+      'Mettete in padella le melanzane a cubetti con un filo di olio e '
+      'aggiungete poi la passata di pomodoro e il basilico',
+    );
+    final models = FakeModels(File('modello.bin'));
+    final engine = newEngine(
+      videoSteps: [
+        MediaStep(
+          clients: {SourcePlatform.instagram: client},
+          downloader: Downloader(FakeHttp(const {}).dio),
+          log: AppLog(),
+        ),
+        AudioStep(extractor: extractor, models: models, cpu: FakeCpu()),
+        TranscribeStep(
+          transcriber: transcriber,
+          models: models,
+          screenAwake: FakeAwake(),
+        ),
+      ],
+    );
+    llm
+      ..reply(llmFixture('macchina_caffe'))
+      ..reply(llmFixture('pasta_alla_norma'));
+    final job = await jobs.create(sharedText: 'link');
+    await engine.wake();
+
+    final stopped = (await jobs.getById(job.id))!;
+    expect(stopped.errorCode, FailureCode.notARecipe.name);
+    expect(
+      stopped.data.skippedSteps[ImportStatus.media]?.reason,
+      SkipReason.videoBlocked,
+    );
+    expect(llm.inputs.single.transcript, isNull);
+
+    // Il selettore dei file copia il video scelto nella cache dell'app.
+    final picked = File('${support.path}/cache/file_picker/reel.mp4');
+    await picked.create(recursive: true);
+    await picked.writeAsString('mp4');
+    await engine.addVideo(job.id, picked.path);
+    await engine.wake();
+
+    final done = (await jobs.getById(job.id))!;
+    expect(done.status, ImportStatus.completed);
+    expect(await recipes.getById(job.id), isNotNull);
+    expect(await picked.exists(), isFalse);
+    expect(client.fetched, hasLength(1), reason: 'pagina non riletta');
+    expect(extractor.calls, 1);
+    expect(transcriber.calls, hasLength(1));
+    expect(llm.inputs.last.caption, startsWith('Pasta alla Norma'));
+    expect(llm.inputs.last.transcript, contains('melanzane'));
+    expect(done.data.transcriptSource, TranscriptSource.whisper);
+    expect(await Directory('${support.path}/jobs/${job.id}').exists(), isFalse);
   });
 }

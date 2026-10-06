@@ -120,7 +120,7 @@ class ShareIntake {
     }
     final id = ImportJobRepository.newId();
     final files = await _storage.filesFor(id);
-    final extension = _extension(video.path) ?? 'mp4';
+    final extension = fileExtension(video.path) ?? 'mp4';
     final moved = await _take(source, files.file('condiviso.$extension'));
 
     String? thumbnail;
@@ -143,32 +143,10 @@ class ShareIntake {
     return job;
   }
 
-  /// Porta [source] in [target]. Il plugin di solito ha già copiato il file
-  /// nella cache dell'app: allora lo sposta (stessa memoria, rinomina
-  /// istantanea). Ma per un `file://` o un file scelto dall'app File di
-  /// Android passa il percorso **originale**: quello si copia e non si tocca,
-  /// altrimenti sparirebbe dalla galleria dell'utente.
-  Future<File> _take(File source, File target) async {
-    final cache = (await _cacheDirectory()).absolute.path;
-    final inCache = source.absolute.path.startsWith(
-      '$cache${Platform.pathSeparator}',
-    );
-    if (!inCache) return source.copy(target.path);
-    try {
-      return await source.rename(target.path);
-    } on FileSystemException {
-      final copy = await source.copy(target.path);
-      await source.delete();
-      return copy;
-    }
-  }
-
-  static String? _extension(String path) {
-    final name = path.split(Platform.pathSeparator).last;
-    final dot = name.lastIndexOf('.');
-    if (dot <= 0 || dot == name.length - 1) return null;
-    return name.substring(dot + 1).toLowerCase();
-  }
+  /// Porta [source] in [target]: lo sposta solo se sta nella cache dell'app
+  /// (D-28, vedi [takeFile]).
+  Future<File> _take(File source, File target) async =>
+      takeFile(source, target, cache: await _cacheDirectory());
 
   static String _short(String id) => id.split('-').first;
 }

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_flow.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_job.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_step.dart';
+import 'package:irenefy/features/recipes/domain/recipe_enums.dart';
 
 void main() {
   group('ImportFlow', () {
@@ -77,6 +78,71 @@ void main() {
         await partial.writeAsString('completo', mode: FileMode.append);
       });
       expect(await file.readAsString(), 'completo');
+    });
+  });
+
+  group('canAddVideo (D-49)', () {
+    ImportJob job({
+      ImportStatus status = ImportStatus.failed,
+      String? errorCode = 'notARecipe',
+      SkipReason? media,
+      bool captionOnly = false,
+      String? sharedFilePath,
+    }) => ImportJob(
+      id: 'j',
+      status: status,
+      platform: SourcePlatform.instagram,
+      sourceUrl: 'https://www.instagram.com/p/DAbc_12/',
+      sharedFilePath: sharedFilePath,
+      failedStep: ImportStatus.extracted,
+      errorCode: errorCode,
+      createdAt: DateTime(2026, 10, 6),
+      updatedAt: DateTime(2026, 10, 6),
+      data: ImportJobData(
+        captionOnly: captionOnly,
+        skippedSteps: {
+          if (media != null) ImportStatus.media: SkippedStep(reason: media),
+        },
+      ),
+    );
+
+    test('sì: video bloccato, download fallito o sola didascalia', () {
+      expect(canAddVideo(job(media: SkipReason.videoBlocked)), isTrue);
+      expect(canAddVideo(job(media: SkipReason.failed)), isTrue);
+      expect(canAddVideo(job(captionOnly: true)), isTrue);
+      expect(
+        canAddVideo(
+          job(errorCode: 'nothingToExtract', media: SkipReason.videoBlocked),
+        ),
+        isTrue,
+      );
+    });
+
+    test('no: post di foto, video troppo lungo o video già usato', () {
+      expect(canAddVideo(job(media: SkipReason.notAVideo)), isFalse);
+      expect(canAddVideo(job(media: SkipReason.videoTooLong)), isFalse);
+      expect(canAddVideo(job()), isFalse);
+    });
+
+    test('no: job non fermo, video dalla galleria o altro errore', () {
+      expect(
+        canAddVideo(
+          job(status: ImportStatus.completed, media: SkipReason.videoBlocked),
+        ),
+        isFalse,
+      );
+      expect(
+        canAddVideo(
+          job(sharedFilePath: '/x/video.mp4', media: SkipReason.videoBlocked),
+        ),
+        isFalse,
+      );
+      expect(
+        canAddVideo(
+          job(errorCode: 'networkError', media: SkipReason.videoBlocked),
+        ),
+        isFalse,
+      );
     });
   });
 }

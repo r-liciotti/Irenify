@@ -172,6 +172,127 @@ class AppLocalizationsIt extends AppLocalizations {
   String get importCaptionOnlyChosen => 'Solo didascalia';
 
   @override
+  String get importAddVideo => 'Aggiungi il video';
+
+  @override
+  String get importAddVideoHint =>
+      'Il video del post non si è potuto scaricare. Salvalo nella galleria e aggiungilo qui: la ricetta verrà rifatta anche con il parlato.';
+
+  @override
+  String get importAddVideoFailed => 'Impossibile usare questo video.';
+
+  @override
+  String get importActionDetails => 'Dettagli';
+
+  @override
+  String get importJobTitle => 'Importazione';
+
+  @override
+  String get importJobNotFound => 'Questa importazione non esiste più.';
+
+  @override
+  String get importJobPlatformInstagram => 'Instagram';
+
+  @override
+  String get importJobPlatformTiktok => 'TikTok';
+
+  @override
+  String get importJobPlatformLink => 'Link';
+
+  @override
+  String importJobStartedAt(String date, String time) {
+    return 'Iniziata il $date alle $time';
+  }
+
+  @override
+  String importJobTotalDuration(String duration) {
+    return 'Durata totale: $duration';
+  }
+
+  @override
+  String get importJobSteps => 'Tappe';
+
+  @override
+  String get importStepStateDone => 'Fatta';
+
+  @override
+  String importStepStateSkipped(String reason) {
+    return 'Saltata: $reason';
+  }
+
+  @override
+  String importStepStateStopped(String message) {
+    return 'Ferma qui: $message';
+  }
+
+  @override
+  String get importStepStateRunning => 'In corso';
+
+  @override
+  String importStepStateRunningFor(String duration) {
+    return 'In corso da $duration';
+  }
+
+  @override
+  String get importStepStatePending => 'Da fare';
+
+  @override
+  String get importSkipNotApplicable => 'non serve per questa importazione';
+
+  @override
+  String get importSkipCaptionOnly => 'scelta la sola didascalia';
+
+  @override
+  String get importSkipFailed => 'non riuscita';
+
+  @override
+  String get importSkipNotAVideo => 'il post non è un video';
+
+  @override
+  String get importSkipVideoBlocked =>
+      'video non scaricabile (spesso per la musica su licenza)';
+
+  @override
+  String get importSkipVideoTooLong => 'video più lungo di 3 minuti';
+
+  @override
+  String get importSkipNoAudio => 'il video non ha audio';
+
+  @override
+  String get importSkipNoModel => 'modello della trascrizione non scaricato';
+
+  @override
+  String get importSkipCpuUnsupported =>
+      'trascrizione non supportata da questo telefono';
+
+  @override
+  String get importSkipPlatformSubtitles =>
+      'usati i sottotitoli della piattaforma';
+
+  @override
+  String get importDurationUnderSecond => 'meno di 1 s';
+
+  @override
+  String importDurationSeconds(int seconds) {
+    return '$seconds s';
+  }
+
+  @override
+  String importDurationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String importDurationMinutesSeconds(int minutes, int seconds) {
+    return '$minutes min $seconds s';
+  }
+
+  @override
+  String importDurationHoursMinutes(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
   String get recipeNotFound => 'Questa ricetta non esiste più.';
 
   @override

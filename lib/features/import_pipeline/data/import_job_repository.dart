@@ -79,6 +79,11 @@ class ImportJobRepository {
     return row == null ? null : _fromRow(row);
   }
 
+  /// Il job [id], aggiornato a ogni salvataggio; `null` se non esiste (più).
+  Stream<ImportJob?> watchById(String id) => (_db.select(
+    _db.importJobs,
+  )..where((j) => j.id.equals(id))).map(_fromRow).watchSingleOrNull();
+
   /// Job non ancora conclusi, dal più vecchio: da riprendere all'avvio.
   Future<List<ImportJob>> unfinished() async {
     final rows =

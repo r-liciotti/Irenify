@@ -1,3 +1,4 @@
+import '../../../core/errors/failure.dart';
 import 'import_job.dart';
 
 /// Regole della sequenza delle tappe, in Dart puro.
@@ -61,4 +62,26 @@ abstract final class ImportFlow {
   }
 
   static bool isOptional(ImportStatus step) => optionalSteps.contains(step);
+}
+
+/// Se proporre "Aggiungi il video" per [job] (D-49): solo per un link fermo
+/// perché la didascalia da sola non bastava ("nulla da estrarre" o "non è una
+/// ricetta") e il video, che esiste, non è stato usato (bloccato, download
+/// fallito o sola didascalia).
+bool canAddVideo(ImportJob job) {
+  if (job.status != ImportStatus.failed || job.sharedFilePath != null) {
+    return false;
+  }
+  final code = FailureCode.fromName(job.errorCode);
+  if (code != FailureCode.nothingToExtract && code != FailureCode.notARecipe) {
+    return false;
+  }
+  if (job.data.captionOnly) return true;
+  // Solo se un video c'è ma non si è potuto usare: non per i post di foto
+  // (`notAVideo`) né per i video troppo lunghi, che fallirebbero di nuovo.
+  return switch (job.data.skippedSteps[ImportStatus.media]?.reason) {
+    SkipReason.videoBlocked || SkipReason.failed || SkipReason.captionOnly =>
+      true,
+    _ => false,
+  };
 }

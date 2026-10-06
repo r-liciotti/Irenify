@@ -1,13 +1,36 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/import_engine.dart';
 import '../domain/import_flow.dart';
 import '../domain/import_job.dart';
 
+export '../domain/import_flow.dart' show canAddVideo;
+
 /// Azioni dell'utente sulle importazioni. Raccolte qui perché i widget test
 /// possano sostituirle senza avviare il motore vero.
 final importActionsProvider = Provider<ImportActions>(
   (ref) => EngineImportActions(ref.watch(importEngineProvider)),
+);
+
+/// Apre il selettore di sistema dei video e restituisce il percorso del file
+/// scelto; `null` se l'utente annulla. Lancia un errore se il file scelto non
+/// ha un percorso locale.
+typedef VideoPicker = Future<String?> Function();
+
+/// Selettore dei video per "Aggiungi il video" (D-49), sostituibile nei test.
+/// Su Android `file_picker` copia il video in una cartella temporanea: il
+/// motore lo sposta subito nella cartella del job.
+final videoPickerProvider = Provider<VideoPicker>(
+  (ref) => () async {
+    final file = await FilePicker.pickFile(type: FileType.video);
+    if (file == null) return null;
+    final path = file.path;
+    if (path == null) {
+      throw StateError('Il video scelto non ha un percorso locale.');
+    }
+    return path;
+  },
 );
 
 abstract interface class ImportActions {
@@ -16,6 +39,10 @@ abstract interface class ImportActions {
 
   /// Salta video, audio e trascrizione: ricetta dalla sola didascalia.
   Future<void> continueWithCaptionOnly(String jobId);
+
+  /// Aggancia il video [videoPath] scelto dalla galleria e fa ripartire il
+  /// job dalla tappa video (D-49).
+  Future<void> addVideo(String jobId, String videoPath);
 
   /// Elimina il job e i suoi file temporanei.
   Future<void> delete(String jobId);
@@ -33,6 +60,10 @@ class EngineImportActions implements ImportActions {
   @override
   Future<void> continueWithCaptionOnly(String jobId) =>
       _engine.continueWithCaptionOnly(jobId);
+
+  @override
+  Future<void> addVideo(String jobId, String videoPath) =>
+      _engine.addVideo(jobId, videoPath);
 
   @override
   Future<void> delete(String jobId) => _engine.deleteJob(jobId);

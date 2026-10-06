@@ -14,12 +14,21 @@ import 'package:irenefy/l10n/app_localizations.dart';
 class FakeImportActions implements ImportActions {
   final calls = <String>[];
 
+  /// Errore da lanciare in [addVideo], dopo aver registrato la chiamata.
+  Object? addVideoError;
+
   @override
   Future<void> retry(String jobId) async => calls.add('retry $jobId');
 
   @override
   Future<void> continueWithCaptionOnly(String jobId) async =>
       calls.add('captionOnly $jobId');
+
+  @override
+  Future<void> addVideo(String jobId, String videoPath) async {
+    calls.add('addVideo $jobId $videoPath');
+    if (addVideoError case final error?) throw error;
+  }
 
   @override
   Future<void> delete(String jobId) async => calls.add('delete $jobId');
@@ -69,11 +78,13 @@ ImportJob _failed(
 );
 
 /// Mostra la schermata Importazioni con [jobs] dentro un router di prova:
-/// il dettaglio ricetta e le impostazioni sono semplici testi.
+/// il dettaglio ricetta, quello del job e le impostazioni sono semplici
+/// testi. [videoPath] è il video "scelto" nel selettore (`null` = annullato).
 Future<FakeImportActions> _pumpScreen(
   WidgetTester tester,
-  List<ImportJob> jobs,
-) async {
+  List<ImportJob> jobs, {
+  String? videoPath,
+}) async {
   final actions = FakeImportActions();
   final router = GoRouter(
     initialLocation: Routes.imports,
@@ -81,6 +92,13 @@ Future<FakeImportActions> _pumpScreen(
       GoRoute(
         path: Routes.imports,
         builder: (context, state) => const ImportsScreen(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            builder: (context, state) =>
+                Text('Dettaglio importazione ${state.pathParameters['id']}'),
+          ),
+        ],
       ),
       GoRoute(
         path: '${Routes.recipes}/:id',
@@ -100,6 +118,7 @@ Future<FakeImportActions> _pumpScreen(
       overrides: [
         recentImportJobsProvider.overrideWith((ref) => Stream.value(jobs)),
         importActionsProvider.overrideWithValue(actions),
+        videoPickerProvider.overrideWithValue(() async => videoPath),
       ],
       child: MaterialApp.router(
         locale: const Locale('it'),
@@ -245,6 +264,59 @@ void main() {
       _failed('invalidExtraction'),
     ]);
     expect(find.text(_captionOnly), findsNothing);
+  });
+
+  testWidgets('job senza ricetta: tocco sulla riga apre il dettaglio', (
+    tester,
+  ) async {
+    await _pumpScreen(tester, [_failed('network')]);
+    await tester.tap(find.text('https://www.instagram.com/p/DAbc_12/'));
+    await tester.pumpAndSettle();
+    expect(find.text('Dettaglio importazione j1'), findsOneWidget);
+  });
+
+  testWidgets('"Dettagli" nel menu apre il dettaglio anche con la ricetta', (
+    tester,
+  ) async {
+    await _pumpScreen(tester, [
+      _job(status: ImportStatus.completed, recipeId: 'r42'),
+    ]);
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Dettagli'));
+    await tester.pumpAndSettle();
+    expect(find.text('Dettaglio importazione j1'), findsOneWidget);
+  });
+
+  testWidgets('"Aggiungi il video" nella riga solo quando serve', (
+    tester,
+  ) async {
+    final skippedMedia = _failed('nothingToExtract').copyWith(
+      data: const ImportJobData(
+        skippedSteps: {
+          ImportStatus.media: SkippedStep(reason: SkipReason.videoBlocked),
+        },
+      ),
+    );
+    final actions = await _pumpScreen(tester, [
+      skippedMedia,
+    ], videoPath: '/cache/v.mp4');
+    // La spiegazione resta nel dettaglio.
+    expect(find.textContaining('Salvalo nella galleria'), findsNothing);
+
+    await tester.tap(find.text('Aggiungi il video'));
+    await tester.pumpAndSettle();
+    expect(actions.calls, ['addVideo j1 /cache/v.mp4']);
+  });
+
+  testWidgets('"Aggiungi il video" nascosto se il video è stato usato', (
+    tester,
+  ) async {
+    await _pumpScreen(tester, [
+      _failed('nothingToExtract'),
+      _job(id: 'j2', status: ImportStatus.completed, recipeId: 'r1'),
+    ]);
+    expect(find.text('Aggiungi il video'), findsNothing);
   });
 
   testWidgets("l'eliminazione chiede conferma", (tester) async {

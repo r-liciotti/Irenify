@@ -194,6 +194,37 @@ void main() {
       expect(client.fetched, isEmpty);
     });
 
+    test('video aggiunto (D-49): si usa quello, senza rileggere la pagina '
+        'né controllare la durata della pagina', () async {
+      final added = files.file('video_aggiunto.mp4');
+      await added.writeAsString('mp4');
+      final data = ImportJobData(
+        caption: 'Pasta al limone',
+        authorName: 'autore_prova',
+        thumbnailPath: 'miniatura.jpg',
+        videoDurationSeconds: 600,
+        addedVideoPath: added.path,
+      );
+
+      final result = await media.run(_job(data: data), files);
+
+      expect(result, isA<StepDone>());
+      expect(result.job.data, data.copyWith(videoPath: added.path));
+      expect(client.fetched, isEmpty);
+      expect(http.requests, isEmpty);
+    });
+
+    test('video aggiunto sparito: si riprova con la pagina', () async {
+      final result = await media.run(
+        _job(
+          data: ImportJobData(addedVideoPath: files.file('sparito.mp4').path),
+        ),
+        files,
+      );
+      expect(result.job.data.videoPath, files.file('video.mp4').path);
+      expect(client.fetched, hasLength(1));
+    });
+
     test('oltre 3 minuti (D-30) non si scarica', () async {
       final known = await media.run(
         _job(data: const ImportJobData(videoDurationSeconds: 181)),

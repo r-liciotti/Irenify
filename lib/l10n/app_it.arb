@@ -84,6 +84,87 @@
     }
   },
   "importCaptionOnlyChosen": "Solo didascalia",
+  "importAddVideo": "Aggiungi il video",
+  "importAddVideoHint": "Il video del post non si è potuto scaricare. Salvalo nella galleria e aggiungilo qui: la ricetta verrà rifatta anche con il parlato.",
+  "importAddVideoFailed": "Impossibile usare questo video.",
+  "importActionDetails": "Dettagli",
+  "importJobTitle": "Importazione",
+  "importJobNotFound": "Questa importazione non esiste più.",
+  "importJobPlatformInstagram": "Instagram",
+  "importJobPlatformTiktok": "TikTok",
+  "importJobPlatformLink": "Link",
+  "importJobStartedAt": "Iniziata il {date} alle {time}",
+  "@importJobStartedAt": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+  "importJobTotalDuration": "Durata totale: {duration}",
+  "@importJobTotalDuration": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "importJobSteps": "Tappe",
+  "importStepStateDone": "Fatta",
+  "importStepStateSkipped": "Saltata: {reason}",
+  "@importStepStateSkipped": {
+    "placeholders": {
+      "reason": { "type": "String" }
+    }
+  },
+  "importStepStateStopped": "Ferma qui: {message}",
+  "@importStepStateStopped": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "importStepStateRunning": "In corso",
+  "importStepStateRunningFor": "In corso da {duration}",
+  "@importStepStateRunningFor": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "importStepStatePending": "Da fare",
+  "importSkipNotApplicable": "non serve per questa importazione",
+  "importSkipCaptionOnly": "scelta la sola didascalia",
+  "importSkipFailed": "non riuscita",
+  "importSkipNotAVideo": "il post non è un video",
+  "importSkipVideoBlocked": "video non scaricabile (spesso per la musica su licenza)",
+  "importSkipVideoTooLong": "video più lungo di 3 minuti",
+  "importSkipNoAudio": "il video non ha audio",
+  "importSkipNoModel": "modello della trascrizione non scaricato",
+  "importSkipCpuUnsupported": "trascrizione non supportata da questo telefono",
+  "importSkipPlatformSubtitles": "usati i sottotitoli della piattaforma",
+  "importDurationUnderSecond": "meno di 1 s",
+  "importDurationSeconds": "{seconds} s",
+  "@importDurationSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "importDurationMinutes": "{minutes} min",
+  "@importDurationMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "importDurationMinutesSeconds": "{minutes} min {seconds} s",
+  "@importDurationMinutesSeconds": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "seconds": { "type": "int" }
+    }
+  },
+  "importDurationHoursMinutes": "{hours} h {minutes} min",
+  "@importDurationHoursMinutes": {
+    "placeholders": {
+      "hours": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
   "recipeNotFound": "Questa ricetta non esiste più.",
   "recipeNeedsReview": "Controlla la ricetta: alcune quantità sono stimate o mancano le porzioni.",
   "recipeServings": "Porzioni",

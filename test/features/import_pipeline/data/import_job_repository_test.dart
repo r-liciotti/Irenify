@@ -201,4 +201,17 @@ void main() {
     await repo.delete(failed.id);
     expect(await repo.watchNeedingAttentionCount().first, 0);
   });
+
+  test('un job osservato per id si aggiorna e sparisce se eliminato', () async {
+    final job = await repo.create(sharedText: 'https://vm.tiktok.com/a');
+    final seen = <ImportStatus?>[];
+    final sub = repo.watchById(job.id).listen((j) => seen.add(j?.status));
+    await pumpEventQueue();
+    await repo.save(job.copyWith(status: ImportStatus.normalized));
+    await pumpEventQueue();
+    await repo.delete(job.id);
+    await pumpEventQueue();
+    await sub.cancel();
+    expect(seen, [ImportStatus.received, ImportStatus.normalized, null]);
+  });
 }

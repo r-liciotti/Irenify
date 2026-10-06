@@ -42,6 +42,23 @@ _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>
           const {},
       captionOnly: json['captionOnly'] as bool? ?? false,
       alreadyImported: json['alreadyImported'] as bool? ?? false,
+      stepStartedAt:
+          (json['stepStartedAt'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(
+              $enumDecode(_$ImportStatusEnumMap, k),
+              DateTime.parse(e as String),
+            ),
+          ) ??
+          const {},
+      stepEndedAt:
+          (json['stepEndedAt'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(
+              $enumDecode(_$ImportStatusEnumMap, k),
+              DateTime.parse(e as String),
+            ),
+          ) ??
+          const {},
+      addedVideoPath: json['addedVideoPath'] as String?,
       caption: json['caption'] as String?,
       authorName: json['authorName'] as String?,
       thumbnailUrl: json['thumbnailUrl'] as String?,
@@ -75,6 +92,13 @@ Map<String, dynamic> _$ImportJobDataToJson(
   ),
   'captionOnly': instance.captionOnly,
   'alreadyImported': instance.alreadyImported,
+  'stepStartedAt': instance.stepStartedAt.map(
+    (k, e) => MapEntry(_$ImportStatusEnumMap[k]!, e.toIso8601String()),
+  ),
+  'stepEndedAt': instance.stepEndedAt.map(
+    (k, e) => MapEntry(_$ImportStatusEnumMap[k]!, e.toIso8601String()),
+  ),
+  'addedVideoPath': instance.addedVideoPath,
   'caption': instance.caption,
   'authorName': instance.authorName,
   'thumbnailUrl': instance.thumbnailUrl,

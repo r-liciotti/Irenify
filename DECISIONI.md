@@ -11,6 +11,23 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-49 — "Aggiungi il video" solo sulle importazioni ferme; tempi delle tappe (2026-10-06) — Attiva
+- **Decisione:**
+  - **Quando compare "Aggiungi il video":** solo sulle importazioni **ferme** di un link, se il video non è stato
+    usato (tappa saltata o sola didascalia) e l'errore è "nulla da estrarre" o "non è una ricetta". Le ricette già
+    fatte con la sola didascalia non si rifanno.
+  - **Cosa fa:** il video scelto dalla galleria (selettore di sistema, `file_picker`, nessun permesso) viene spostato
+    nella cartella del job come `data.addedVideoPath`. Il job riparte dalla tappa video: `MediaStep` usa il video
+    aggiunto prima di rileggere la pagina; le tappe saltate media/audio/trascrizione si tolgono; trascrizione ed
+    estrazione si azzerano.
+  - **Durata:** nessun controllo anticipato. Un video oltre i 3 minuti si scopre alla tappa audio, come oggi (D-41).
+  - **Tempi delle tappe:** inizio e fine di ogni tappa in `ImportJobData` (`stepStartedAt`, `stepEndedAt`), senza
+    migrazione. I job già esistenti non li hanno.
+- **Alternative scartate:**
+  - "Migliora con il video" anche sulle ricette completate, rifacendo la ricetta al suo posto;
+  - controllo della durata appena si sceglie il file.
+- **Deciso da:** utente ("B" su entrambe, 2026-10-06).
+
 ## D-48 — Dettaglio della ricetta: porzioni, conversioni, grassetto, icone (2026-10-06) — Attiva
 - **Decisione:**
   - **Mezze porzioni:** passo 1 sopra le 2 porzioni, passo ½ da 2 in giù (2 → 1½ → 1 → ½), con minimo ½. Si

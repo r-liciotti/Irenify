@@ -100,12 +100,21 @@ quantità non lineari, conversioni (3 cucchiaini → 1 cucchiaio, 1500 g → 1,5
   per le eccezioni inglesi.
 - **Prove:** 549 test. Sul Pixel ½ ricetta, avviso, "i", grassetto e tag sono corretti.
 
-## Fase 5 — Importazione (≈ 0,75 gg)
+## Fase 5 — Importazione (≈ 0,75 gg) — ✅ completata il 2026-10-06 (prova di "Aggiungi il video" con un file vero da fare)
 
 Dettaglio del job con le tappe e i tempi; **"Aggiungi il video"** dalla galleria per i reel senza video (nuovo metodo del
 motore che aggancia il file e fa ripartire il job).
 
 **Uscita:** un job fermo per un reel con musica su licenza si recupera aggiungendo il video.
+
+**Come è stata fatta:**
+- **D-49:** il pulsante compare solo sulle importazioni ferme per "nulla da estrarre" o "non è una ricetta", con
+  video bloccato, download fallito o sola didascalia; nessun controllo anticipato della durata.
+- **Contratto e subagent:** firme dell'agente principale (tempi delle tappe nel JSON del job, `addVideo`,
+  `canAddVideo`); un subagent sul motore e uno sull'interfaccia (dettaglio con tappe e durate, selettore di sistema).
+- **Correzioni:** regola spostata nel dominio; `watchById`; niente pulsante per i post di foto (trovato sul Pixel).
+- **Prove:** 597 test. Sul Pixel il dettaglio è verificato su job reali. "Aggiungi il video" è coperto da un test
+  dall'inizio alla fine ma non è ancora provato con un file vero.
 
 ## Fase 6 — Primo avvio, impostazioni e prova (≈ 0,75 gg)
 

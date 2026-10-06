@@ -50,12 +50,15 @@ void main() {
   late List<String> calls;
   late Map<ImportStatus, FakeStep> steps;
 
+  late Directory cache;
+
   ImportEngine newEngine([ImportJobRepository? repository]) => ImportEngine(
     repository: repository ?? repo,
     storage: storage,
     steps: steps.values.toList(),
     log: log,
     clock: () => now,
+    cacheDirectory: () async => cache,
   );
 
   Directory folderOf(String jobId) =>
@@ -66,6 +69,7 @@ void main() {
     now = DateTime(2026, 9, 29, 10);
     repo = ImportJobRepository(db, clock: () => now);
     root = await Directory.systemTemp.createTemp('irenefy_jobs_');
+    cache = await Directory.systemTemp.createTemp('irenefy_cache_');
     storage = JobStorage(() async => root);
     log = AppLog();
     calls = [];
@@ -74,6 +78,7 @@ void main() {
   tearDown(() async {
     await db.close();
     await root.delete(recursive: true);
+    await cache.delete(recursive: true);
   });
 
   test(
@@ -617,6 +622,354 @@ void main() {
     expect(failed.failedStep, ImportStatus.extracted);
     expect(failed.errorCode, 'stepNotAvailable');
     expect(failed.errorDetail, contains('non disponibile'));
+  });
+
+  group('tempi delle tappe (D-49)', () {
+    /// Ogni tappa dura un minuto dell'orologio finto.
+    void eachStepTakesAMinute() {
+      for (final step in steps.values) {
+        final previous = step.body;
+        step.body = (job, files, run) async {
+          now = now.add(const Duration(minutes: 1));
+          return previous?.call(job, files, run) ?? StepResult.done(job);
+        };
+      }
+    }
+
+    test('inizio e fine di ogni tappa conclusa', () async {
+      final start = now;
+      final seenWhileRunning = <ImportStatus, ImportJobData>{};
+      steps[ImportStatus.audio]!.body = (job, _, _) async {
+        seenWhileRunning[ImportStatus.audio] = (await repo.getById(
+          job.id,
+        ))!.data;
+        return StepResult.done(job);
+      };
+      eachStepTakesAMinute();
+      final job = await repo.create(sharedText: 'A');
+
+      await newEngine().wake();
+
+      final done = (await repo.getById(job.id))!;
+      for (final (i, s) in ImportFlow.steps.indexed) {
+        expect(
+          done.data.stepStartedAt[s],
+          start.add(Duration(minutes: i)),
+          reason: s.name,
+        );
+        expect(
+          done.data.stepEndedAt[s],
+          start.add(Duration(minutes: i + 1)),
+          reason: s.name,
+        );
+      }
+      // Mentre gira, l'inizio è già salvato e la fine non c'è ancora.
+      final running = seenWhileRunning[ImportStatus.audio]!;
+      expect(running.stepStartedAt[ImportStatus.audio], isNotNull);
+      expect(running.stepEndedAt.containsKey(ImportStatus.audio), isFalse);
+      expect(running.stepEndedAt[ImportStatus.media], isNotNull);
+    });
+
+    test('anche le tappe saltate hanno inizio e fine', () async {
+      steps[ImportStatus.media]!.body = (_, _, _) =>
+          throw const NetworkFailure();
+      steps[ImportStatus.audio]!.body = (job, _, _) async =>
+          StepResult.notApplicable(job, SkipReason.noAudio);
+      eachStepTakesAMinute();
+      final job = await repo.create(sharedText: 'A');
+
+      await newEngine().wake();
+
+      final done = (await repo.getById(job.id))!;
+      for (final s in [ImportStatus.media, ImportStatus.audio]) {
+        expect(done.data.skippedSteps.containsKey(s), isTrue, reason: s.name);
+        expect(
+          done.data.stepEndedAt[s]!.difference(done.data.stepStartedAt[s]!),
+          const Duration(minutes: 1),
+          reason: s.name,
+        );
+      }
+    });
+
+    test('con la sola didascalia le tappe saltate durano zero', () async {
+      final job = await repo.create(sharedText: 'A');
+      final engine = newEngine();
+      await engine.continueWithCaptionOnly(job.id);
+      eachStepTakesAMinute();
+
+      await engine.wake();
+
+      final done = (await repo.getById(job.id))!;
+      for (final s in ImportFlow.captionOnlySkips) {
+        expect(done.data.stepStartedAt[s], isNotNull, reason: s.name);
+        expect(
+          done.data.stepEndedAt[s],
+          done.data.stepStartedAt[s],
+          reason: s.name,
+        );
+      }
+    });
+
+    test('una tappa fallita ha la fine; "Riprova" la sovrascrive', () async {
+      steps[ImportStatus.extracted]!.body = (job, _, run) async {
+        if (run == 1) throw const NotARecipeFailure();
+        return StepResult.done(job);
+      };
+      eachStepTakesAMinute();
+      final job = await repo.create(sharedText: 'A');
+      final engine = newEngine();
+      await engine.wake();
+
+      final failed = (await repo.getById(job.id))!;
+      expect(failed.status, ImportStatus.failed);
+      final firstStart = failed.data.stepStartedAt[ImportStatus.extracted]!;
+      expect(
+        failed.data.stepEndedAt[ImportStatus.extracted],
+        firstStart.add(const Duration(minutes: 1)),
+      );
+      expect(
+        failed.data.stepStartedAt.containsKey(ImportStatus.nutrition),
+        isFalse,
+      );
+
+      now = now.add(const Duration(hours: 1));
+      await engine.retry(job.id);
+      await engine.wake();
+
+      final done = (await repo.getById(job.id))!;
+      final secondStart = done.data.stepStartedAt[ImportStatus.extracted]!;
+      expect(secondStart.isAfter(firstStart), isTrue);
+      expect(
+        done.data.stepEndedAt[ImportStatus.extracted],
+        secondStart.add(const Duration(minutes: 1)),
+      );
+    });
+
+    test('dopo 3 interruzioni la tappa fermata ha la fine', () async {
+      final job = await repo.create(sharedText: 'A');
+      await repo.save(job.copyWith(attempts: ImportFlow.maxInterruptions));
+
+      await newEngine().wake();
+
+      final failed = (await repo.getById(job.id))!;
+      expect(failed.data.stepEndedAt[ImportStatus.normalized], now);
+    });
+  });
+
+  group('aggiungi il video (D-49)', () {
+    /// Job di un link fermo perché la didascalia non bastava, con la tappa
+    /// video saltata e qualche dato dei tentativi precedenti.
+    Future<ImportJob> stoppedJob({
+      String? sharedFilePath,
+      String errorCode = 'notARecipe',
+      ImportStatus status = ImportStatus.failed,
+      ImportJobData? data,
+    }) async {
+      final job = await repo.create(
+        sharedText: sharedFilePath == null ? 'A' : null,
+        sharedFilePath: sharedFilePath,
+      );
+      return repo.save(
+        job.copyWith(
+          status: status,
+          failedStep: ImportStatus.extracted,
+          errorCode: errorCode,
+          errorDetail: 'dettaglio',
+          attempts: 1,
+          data:
+              data ??
+              ImportJobData(
+                caption: 'Didascalia',
+                authorName: 'autore',
+                thumbnailPath: 'miniatura.jpg',
+                skippedSteps: {
+                  ImportStatus.media: const SkippedStep(
+                    reason: SkipReason.videoBlocked,
+                  ),
+                  ImportStatus.audio: const SkippedStep(
+                    reason: SkipReason.notApplicable,
+                  ),
+                  ImportStatus.transcribed: const SkippedStep(
+                    reason: SkipReason.notApplicable,
+                  ),
+                },
+                stepStartedAt: {
+                  ImportStatus.metadata: now,
+                  ImportStatus.extracted: now,
+                },
+                stepEndedAt: {
+                  ImportStatus.metadata: now,
+                  ImportStatus.extracted: now,
+                },
+                transcript: 'vecchia',
+                extraction: const {'vecchia': true},
+                extractionModel: 'vecchio',
+              ),
+        ),
+      );
+    }
+
+    Future<File> pickedVideo([Directory? dir]) async {
+      final picked = File('${(dir ?? cache).path}/file_picker/scelto.MP4');
+      await picked.create(recursive: true);
+      await picked.writeAsString('video');
+      return picked;
+    }
+
+    test(
+      'sposta il video, azzera i dati e riparte dalla tappa video',
+      () async {
+        final job = await stoppedJob();
+        // Audio di un tentativo precedente: non va riusato.
+        final folder = await storage.filesFor(job.id);
+        await folder.file('audio.wav').writeAsString('vecchio');
+        final picked = await pickedVideo();
+        ImportJob? atMedia;
+        var audioLeft = true;
+        steps[ImportStatus.media]!.body = (job, files, _) async {
+          atMedia = job;
+          audioLeft = await files.file('audio.wav').exists();
+          return StepResult.done(job);
+        };
+
+        final engine = newEngine();
+        await engine.addVideo(job.id, picked.path);
+        await engine.wake();
+
+        final seen = atMedia!;
+        final target = '${folderOf(job.id).path}/video_aggiunto.mp4';
+        expect(seen.data.addedVideoPath, target);
+        expect(await picked.exists(), isFalse, reason: 'spostato dalla cache');
+        expect(audioLeft, isFalse);
+        expect(seen.status, ImportStatus.metadata);
+        expect(seen.data.captionOnly, isFalse);
+        expect(seen.data.skippedSteps, isEmpty);
+        expect(seen.data.transcript, isNull);
+        expect(seen.data.extraction, isNull);
+        expect(seen.data.extractionModel, isNull);
+        expect(seen.data.caption, 'Didascalia', reason: 'didascalia tenuta');
+        expect(seen.data.stepStartedAt.keys, [
+          ImportStatus.metadata,
+          ImportStatus.media,
+        ]);
+        expect(seen.data.stepEndedAt.keys, [ImportStatus.metadata]);
+        expect(steps[ImportStatus.metadata]!.runs, 0);
+
+        final done = (await repo.getById(job.id))!;
+        expect(done.status, ImportStatus.completed);
+        expect(done.errorCode, isNull);
+        expect(steps[ImportStatus.extracted]!.runs, 1);
+        expect(await folderOf(job.id).exists(), isFalse, reason: 'ripulita');
+      },
+    );
+
+    test('toglie la sola didascalia e la tiene tolta', () async {
+      final job = await stoppedJob(
+        errorCode: 'nothingToExtract',
+        data: const ImportJobData(captionOnly: true),
+      );
+      final picked = await pickedVideo();
+
+      final engine = newEngine();
+      await engine.addVideo(job.id, picked.path);
+      await engine.wake();
+
+      final done = (await repo.getById(job.id))!;
+      expect(done.status, ImportStatus.completed);
+      expect(done.data.captionOnly, isFalse);
+      for (final s in ImportFlow.captionOnlySkips) {
+        expect(steps[s]!.runs, 1, reason: s.name);
+      }
+    });
+
+    test('un video fuori dalla cache si copia e non si tocca', () async {
+      final elsewhere = await Directory.systemTemp.createTemp('irenefy_dcim_');
+      addTearDown(() => elsewhere.delete(recursive: true));
+      final job = await stoppedJob();
+      final picked = await pickedVideo(elsewhere);
+      final engine = newEngine();
+      steps[ImportStatus.media]!.body = (job, _, _) async {
+        expect(await File(job.data.addedVideoPath!).readAsString(), 'video');
+        return StepResult.done(job);
+      };
+
+      await engine.addVideo(job.id, picked.path);
+      await engine.wake();
+
+      expect(await picked.exists(), isTrue);
+      expect(steps[ImportStatus.media]!.runs, 1);
+    });
+
+    for (final (name, make) in <(String, Future<ImportJob> Function())>[
+      ('job completato', () => stoppedJob(status: ImportStatus.completed)),
+      ('video dalla galleria', () => stoppedJob(sharedFilePath: 'x.mp4')),
+      ('errore diverso', () => stoppedJob(errorCode: 'missingApiKey')),
+      (
+        'video già usato',
+        () => stoppedJob(data: const ImportJobData(caption: 'Didascalia')),
+      ),
+    ]) {
+      test('rifiutato: $name', () async {
+        final job = await make();
+        final picked = await pickedVideo();
+
+        final engine = newEngine();
+        await engine.addVideo(job.id, picked.path);
+        await engine.wake();
+
+        expect(await picked.exists(), isTrue, reason: 'file non toccato');
+        expect(await repo.getById(job.id), job);
+        expect(calls, isEmpty);
+      });
+    }
+
+    test("la pulizia all'avvio non cancella il video di un job vecchio "
+        'appena ripartito (D-22)', () async {
+      final job = await stoppedJob(); // fermo da 8 giorni
+      now = now.add(const Duration(days: 8));
+      final picked = await pickedVideo();
+      final entered = Completer<void>();
+      steps[ImportStatus.media]!.body = (job, _, _) {
+        entered.complete();
+        return Completer<StepResult>().future; // l'app si chiude qui
+      };
+      final engine = newEngine();
+      await engine.addVideo(job.id, picked.path);
+      await entered.future;
+      engine.dispose();
+
+      var videoKept = false;
+      steps[ImportStatus.media]!.body = (job, _, _) async {
+        videoKept = await File(job.data.addedVideoPath!).exists();
+        return StepResult.done(job);
+      };
+      final reopened = newEngine();
+      await reopened.start();
+      await reopened.wake();
+
+      // Ripartito dalla tappa video con il file ancora al suo posto.
+      expect(steps[ImportStatus.media]!.runs, 2);
+      expect(videoKept, isTrue);
+      expect((await repo.getById(job.id))!.status, ImportStatus.completed);
+    });
+
+    test('rifiutato: job inesistente', () async {
+      final picked = await pickedVideo();
+      await newEngine().addVideo('nessuno', picked.path);
+      expect(await picked.exists(), isTrue);
+    });
+
+    test('un file inesistente lancia un errore e il job resta fermo', () async {
+      final job = await stoppedJob();
+
+      await expectLater(
+        newEngine().addVideo(job.id, '${cache.path}/sparito.mp4'),
+        throwsA(isA<UnexpectedFailure>()),
+      );
+
+      expect(await repo.getById(job.id), job);
+      expect(calls, isEmpty);
+    });
   });
 }
 

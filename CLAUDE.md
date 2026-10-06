@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F2 fase 4)
+## Stato (aggiornato al 2026-10-06, F2 fase 5)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -44,7 +44,10 @@ scuro (`lib/app/theme*`, font Gloock + Manrope in `assets/fonts/`), preferenza d
 all'elenco guidato, filtri in `watchSummaries`. Fase 3 (2026-10-06): home a schede (`recipes/presentation/home/`), filtri in
 `recipeFilterProvider`, badge di Importazioni (job non conclusi) in `home_shell.dart`. Fase 4 (2026-10-06): dettaglio a schede
 (`recipes/presentation/detail/`), mezze porzioni, conversioni e grassetto nei passi (D-48; regole in
-`recipes/domain/{servings,unit_conversion,step_highlight,ingredient_kind}.dart`, emoji degli ingredienti in `presentation/ingredient_emoji.dart`). Prossima: fase 5 (importazione). Prove dal vivo D-44 ancora aperte.
+`recipes/domain/{servings,unit_conversion,step_highlight,ingredient_kind}.dart`, emoji degli ingredienti in `presentation/ingredient_emoji.dart`). Fase 5 (2026-10-06): dettaglio
+del job con tappe e tempi (`stepStartedAt`/`stepEndedAt` nel JSON del job), "Aggiungi il video" (D-49: `addVideo` del
+motore, `canAddVideo` in `domain/import_flow.dart`, `takeFile` in `job_storage.dart`). Prossima: fase 6 (primo avvio,
+impostazioni, prova completa). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

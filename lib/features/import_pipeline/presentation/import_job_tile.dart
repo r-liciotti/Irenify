@@ -10,8 +10,10 @@ import '../../recipes/domain/recipe_enums.dart';
 import '../domain/import_flow.dart';
 import '../domain/import_job.dart';
 import 'import_actions.dart';
+import 'job/import_job_commands.dart';
 
 /// Riga dell'elenco delle importazioni: fonte, stato e azioni possibili.
+/// Il tocco apre la ricetta, se c'è, altrimenti il dettaglio del job.
 class ImportJobTile extends ConsumerWidget {
   const ImportJobTile(this.job, {super.key});
 
@@ -40,16 +42,21 @@ class ImportJobTile extends ConsumerWidget {
         ),
       if (failure != null && recoveryLabel != null)
         FilledButton.tonalIcon(
-          onPressed: () => _recover(context, ref, failure.action),
-          icon: Icon(switch (failure.action) {
-            RecoveryAction.openSettings => Icons.settings_outlined,
-            _ => Icons.refresh,
-          }),
+          onPressed: () => recoverImport(context, ref, job.id, failure.action),
+          icon: Icon(recoveryIcon(failure.action)),
           label: Text(recoveryLabel),
+        ),
+      // Azione compatta: la spiegazione (importAddVideoHint) sta nel
+      // dettaglio, qui non ci sarebbe spazio.
+      if (canAddVideo(job))
+        FilledButton.tonalIcon(
+          onPressed: () => addVideoToImport(context, ref, job.id),
+          icon: const Icon(Icons.video_library_outlined),
+          label: Text(l10n.importAddVideo),
         ),
       if (captionOnly)
         TextButton.icon(
-          onPressed: () => _run(
+          onPressed: () => runImportAction(
             context,
             () =>
                 ref.read(importActionsProvider).continueWithCaptionOnly(job.id),
@@ -60,7 +67,9 @@ class ImportJobTile extends ConsumerWidget {
     ];
 
     return InkWell(
-      onTap: recipeId == null ? null : () => _openRecipe(context, recipeId),
+      onTap: () => recipeId == null
+          ? context.push(Routes.importJob(job.id))
+          : _openRecipe(context, recipeId),
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 4, 8),
         child: Row(
@@ -69,7 +78,7 @@ class ImportJobTile extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Icon(
-                _platformIcon(job.platform),
+                importPlatformIcon(job.platform),
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
@@ -87,7 +96,7 @@ class ImportJobTile extends ConsumerWidget {
                       style: theme.textTheme.bodyLarge,
                     ),
                     const SizedBox(height: 4),
-                    _StatusLine(job),
+                    ImportStatusLine(job),
                     if (reason != null && reason.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
@@ -121,9 +130,18 @@ class ImportJobTile extends ConsumerWidget {
             ),
             PopupMenuButton<_MenuItem>(
               onSelected: (item) => switch (item) {
+                _MenuItem.details => context.push(Routes.importJob(job.id)),
                 _MenuItem.delete => _delete(context, ref),
               },
               itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: _MenuItem.details,
+                  child: ListTile(
+                    leading: const Icon(Icons.info_outline),
+                    title: Text(l10n.importActionDetails),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
                 PopupMenuItem(
                   value: _MenuItem.delete,
                   child: ListTile(
@@ -149,70 +167,28 @@ class ImportJobTile extends ConsumerWidget {
   void _openRecipe(BuildContext context, String recipeId) =>
       context.push(Routes.recipe(recipeId));
 
-  void _recover(BuildContext context, WidgetRef ref, RecoveryAction action) {
-    switch (action) {
-      case RecoveryAction.retry:
-        _run(context, () => ref.read(importActionsProvider).retry(job.id));
-      case RecoveryAction.openSettings:
-        context.go(Routes.settings);
-      case RecoveryAction.none:
-        break;
-    }
-  }
-
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.importDeleteTitle),
-        content: Text(l10n.importDeleteBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.actionCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.actionDelete),
-          ),
-        ],
-      ),
+    if (!await confirmImportDelete(context) || !context.mounted) return;
+    await runImportAction(
+      context,
+      () => ref.read(importActionsProvider).delete(job.id),
     );
-    if (confirmed != true || !context.mounted) return;
-    await _run(context, () => ref.read(importActionsProvider).delete(job.id));
   }
-
-  /// Esegue un'azione; se fallisce lo dice con uno SnackBar invece di
-  /// lasciare l'errore senza risposta.
-  Future<void> _run(
-    BuildContext context,
-    Future<void> Function() action,
-  ) async {
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    final l10n = AppLocalizations.of(context);
-    try {
-      await action();
-    } on Object catch (error, stackTrace) {
-      messenger?.showSnackBar(
-        SnackBar(content: Text(Failure.from(error, stackTrace).message(l10n))),
-      );
-    }
-  }
-
-  static IconData _platformIcon(SourcePlatform? platform) => switch (platform) {
-    SourcePlatform.instagram => Icons.camera_alt_outlined,
-    SourcePlatform.tiktok => Icons.music_note_outlined,
-    SourcePlatform.file => Icons.video_file_outlined,
-    SourcePlatform.manual || null => Icons.link,
-  };
 }
 
-enum _MenuItem { delete }
+/// Icona della piattaforma da cui arriva l'importazione.
+IconData importPlatformIcon(SourcePlatform? platform) => switch (platform) {
+  SourcePlatform.instagram => Icons.camera_alt_outlined,
+  SourcePlatform.tiktok => Icons.music_note_outlined,
+  SourcePlatform.file => Icons.video_file_outlined,
+  SourcePlatform.manual || null => Icons.link,
+};
+
+enum _MenuItem { details, delete }
 
 /// Stato del job con un'icona: in corso (con la tappa), concluso o fermo.
-class _StatusLine extends StatelessWidget {
-  const _StatusLine(this.job);
+class ImportStatusLine extends StatelessWidget {
+  const ImportStatusLine(this.job, {super.key});
 
   final ImportJob job;
 
