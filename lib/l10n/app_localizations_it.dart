@@ -21,11 +21,78 @@ class AppLocalizationsIt extends AppLocalizations {
   String get navSettings => 'Impostazioni';
 
   @override
+  String navImportsBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count importazioni da seguire',
+      one: '1 importazione da seguire',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get recipesEmptyTitle => 'Nessuna ricetta';
 
   @override
   String get recipesEmptyBody =>
       'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy.';
+
+  @override
+  String get recipesEmptyStepOpen => 'Apri un reel su Instagram o TikTok';
+
+  @override
+  String get recipesEmptyStepShare => 'Tocca Condividi';
+
+  @override
+  String get recipesEmptyStepChoose => 'Scegli Irenefy';
+
+  @override
+  String recipesSearchHint(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Cerca tra $count ricette',
+      one: 'Cerca tra 1 ricetta',
+      zero: 'Cerca nel ricettario',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recipesSearchClear => 'Cancella la ricerca';
+
+  @override
+  String get recipesFilterFavorites => 'Preferite';
+
+  @override
+  String get recipesFilterInstagram => 'Instagram';
+
+  @override
+  String get recipesFilterTikTok => 'TikTok';
+
+  @override
+  String get recipesNoResultsTitle => 'Nessuna ricetta trovata';
+
+  @override
+  String recipesNoResultsQuery(String query) {
+    return 'Nessuna ricetta per «$query»';
+  }
+
+  @override
+  String get recipesNoResultsBody =>
+      'Prova con un\'altra parola o togli qualche filtro.';
+
+  @override
+  String get recipesClearFilters => 'Togli i filtri';
+
+  @override
+  String recipeCardTotalTime(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get recipeFavorite => 'Preferita';
 
   @override
   String get importsEmptyTitle => 'Nessuna importazione';

@@ -106,7 +106,7 @@ Finder servings(String text) => find.descendant(
 void main() {
   group('elenco', () {
     recipesTest(
-      'righe con tempi, preferito, da controllare e segnaposto',
+      'schede con tempo totale, autore, preferito, da controllare e segnaposto',
       seed: (env) async {
         await insert(env, sampleRecipe().copyWith(isFavorite: true));
         await insert(
@@ -126,11 +126,16 @@ void main() {
       (tester, _) async {
         expect(find.text('Torta di mele'), findsOneWidget);
         expect(find.text('Pasta al pomodoro'), findsOneWidget);
+        // Preparazione + cottura; senza tempi resta solo l'autore.
+        expect(find.text('65 min · cucina_di_prova'), findsOneWidget);
+        expect(find.text('cucina_di_prova'), findsOneWidget);
+        // Una sola ricetta preferita e una sola da controllare.
         expect(
-          find.text('Preparazione 20 min · Cottura 45 min'),
+          find.byWidgetPredicate(
+            (w) => w is Icon && w.semanticLabel == 'Preferita',
+          ),
           findsOneWidget,
         );
-        // Una sola ricetta preferita e una sola da controllare.
         expect(find.byIcon(Icons.favorite), findsOneWidget);
         expect(find.byIcon(Icons.rate_review_outlined), findsOneWidget);
         // Nessuna miniatura salvata: segnaposto.

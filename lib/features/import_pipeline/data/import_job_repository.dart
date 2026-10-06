@@ -148,6 +148,19 @@ class ImportJobRepository {
           .map(_fromRow)
           .watch();
 
+  /// Job da seguire per il badge di Importazioni: in corso o falliti
+  /// (F2, decisione 5), finché non si eliminano o si concludono.
+  Stream<int> watchNeedingAttentionCount() {
+    final count = _db.importJobs.id.count();
+    return (_db.selectOnly(_db.importJobs)
+          ..addColumns([count])
+          ..where(
+            _db.importJobs.status.equalsValue(ImportStatus.completed).not(),
+          ))
+        .map((row) => row.read(count) ?? 0)
+        .watchSingle();
+  }
+
   /// Esegue [action] in un'unica transazione, insieme alle scritture di altri
   /// repository sullo stesso database (es. la ricetta e il job completato).
   Future<T> transaction<T>(Future<T> Function() action) =>

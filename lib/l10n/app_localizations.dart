@@ -118,6 +118,12 @@ abstract class AppLocalizations {
   /// **'Impostazioni'**
   String get navSettings;
 
+  /// No description provided for @navImportsBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{1 importazione da seguire} other{{count} importazioni da seguire}}'**
+  String navImportsBadge(int count);
+
   /// No description provided for @recipesEmptyTitle.
   ///
   /// In it, this message translates to:
@@ -129,6 +135,90 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy.'**
   String get recipesEmptyBody;
+
+  /// No description provided for @recipesEmptyStepOpen.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri un reel su Instagram o TikTok'**
+  String get recipesEmptyStepOpen;
+
+  /// No description provided for @recipesEmptyStepShare.
+  ///
+  /// In it, this message translates to:
+  /// **'Tocca Condividi'**
+  String get recipesEmptyStepShare;
+
+  /// No description provided for @recipesEmptyStepChoose.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli Irenefy'**
+  String get recipesEmptyStepChoose;
+
+  /// No description provided for @recipesSearchHint.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =0{Cerca nel ricettario} =1{Cerca tra 1 ricetta} other{Cerca tra {count} ricette}}'**
+  String recipesSearchHint(int count);
+
+  /// No description provided for @recipesSearchClear.
+  ///
+  /// In it, this message translates to:
+  /// **'Cancella la ricerca'**
+  String get recipesSearchClear;
+
+  /// No description provided for @recipesFilterFavorites.
+  ///
+  /// In it, this message translates to:
+  /// **'Preferite'**
+  String get recipesFilterFavorites;
+
+  /// No description provided for @recipesFilterInstagram.
+  ///
+  /// In it, this message translates to:
+  /// **'Instagram'**
+  String get recipesFilterInstagram;
+
+  /// No description provided for @recipesFilterTikTok.
+  ///
+  /// In it, this message translates to:
+  /// **'TikTok'**
+  String get recipesFilterTikTok;
+
+  /// No description provided for @recipesNoResultsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna ricetta trovata'**
+  String get recipesNoResultsTitle;
+
+  /// No description provided for @recipesNoResultsQuery.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna ricetta per «{query}»'**
+  String recipesNoResultsQuery(String query);
+
+  /// No description provided for @recipesNoResultsBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Prova con un\'altra parola o togli qualche filtro.'**
+  String get recipesNoResultsBody;
+
+  /// No description provided for @recipesClearFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Togli i filtri'**
+  String get recipesClearFilters;
+
+  /// No description provided for @recipeCardTotalTime.
+  ///
+  /// In it, this message translates to:
+  /// **'{minutes} min'**
+  String recipeCardTotalTime(int minutes);
+
+  /// No description provided for @recipeFavorite.
+  ///
+  /// In it, this message translates to:
+  /// **'Preferita'**
+  String get recipeFavorite;
 
   /// No description provided for @importsEmptyTitle.
   ///

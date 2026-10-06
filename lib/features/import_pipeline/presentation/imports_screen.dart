@@ -12,6 +12,11 @@ final recentImportJobsProvider = StreamProvider<List<ImportJob>>(
   (ref) => ref.watch(importJobRepositoryProvider).watchRecent(),
 );
 
+/// Numero del badge sulla scheda Importazioni: job in corso o falliti.
+final importsNeedingAttentionCountProvider = StreamProvider<int>(
+  (ref) => ref.watch(importJobRepositoryProvider).watchNeedingAttentionCount(),
+);
+
 /// Importazioni in corso e recenti, con le azioni possibili su ognuna
 /// (D-43). L'elenco si aggiorna da solo a ogni salvataggio del motore.
 class ImportsScreen extends ConsumerWidget {

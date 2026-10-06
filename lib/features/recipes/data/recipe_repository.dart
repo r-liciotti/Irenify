@@ -277,6 +277,14 @@ class RecipeRepository {
         .watch();
   }
 
+  /// Numero di ricette nel ricettario, senza filtri; si aggiorna da solo.
+  Stream<int> watchCount() {
+    final count = _db.recipes.id.count();
+    return (_db.selectOnly(
+      _db.recipes,
+    )..addColumns([count])).map((row) => row.read(count) ?? 0).watchSingle();
+  }
+
   /// Tag usati nel ricettario con il numero di ricette, dal più usato; per le
   /// chip dei filtri.
   Stream<List<TagCount>> watchTagCounts() => _db

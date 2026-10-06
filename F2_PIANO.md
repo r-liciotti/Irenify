@@ -68,12 +68,21 @@ dall'elenco, alias ricondotti, fuori elenco scartati senza secondo tentativo). S
 con il database v1 ripristinato da una copia la migrazione è poi riuscita al primo colpo (5 ricette, tag convertiti,
 ricerche "zucc", "farin", autore e tag corrette sull'indice del telefono). 471 test.
 
-## Fase 3 — Home ricettario (≈ 0,75 gg)
+## Fase 3 — Home ricettario (≈ 0,75 gg) — ✅ completata il 2026-10-06
 
 Schede a due colonne con foto 3:4, barra di ricerca, chip dei filtri, stato vuoto illustrato con il gesto
 "Condividi → Irenefy", badge sulla scheda Importazioni.
 
 **Uscita:** sul Pixel si cerca e si filtra il ricettario.
+
+**Come è stata fatta:**
+- **Contratto (agente principale):** `recipeFilterProvider` con le azioni; `watchCount` per il totale;
+  `watchNeedingAttentionCount` per il badge (job non conclusi); testi.
+- **Subagent:** la home (`presentation/home/`).
+- **Chip:** ordine scelto dall'utente "A": Preferite, Instagram, TikTok, poi fino a 8 tag dal più usato; una sola
+  piattaforma alla volta.
+- **Correzioni:** "Togli i filtri" annulla anche una ricerca scritta e non ancora partita.
+- **Prove:** 485 test. Sul Pixel ricerca "farin", chip "Primo" e badge sono corretti.
 
 ## Fase 4 — Dettaglio ricetta (≈ 0,75 gg, assorbe la F3)
 

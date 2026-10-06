@@ -187,4 +187,18 @@ void main() {
     expect(row.read<String>('v'), contains('17:00:00.456'));
     expect((await repo.getById(job.id))!.createdAt, now);
   });
+
+  test('badge: conta i job in corso e i falliti, non i conclusi', () async {
+    expect(await repo.watchNeedingAttentionCount().first, 0);
+    final running = await repo.create(sharedText: 'https://vm.tiktok.com/a');
+    final failed = await repo.create(sharedText: 'https://vm.tiktok.com/b');
+    final done = await repo.create(sharedText: 'https://vm.tiktok.com/c');
+    await repo.save(failed.copyWith(status: ImportStatus.failed));
+    await repo.save(done.copyWith(status: ImportStatus.completed));
+    expect(await repo.watchNeedingAttentionCount().first, 2);
+
+    await repo.save(running.copyWith(status: ImportStatus.completed));
+    await repo.delete(failed.id);
+    expect(await repo.watchNeedingAttentionCount().first, 0);
+  });
 }

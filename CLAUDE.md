@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F2 fase 2)
+## Stato (aggiornato al 2026-10-06, F2 fase 3)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -41,7 +41,8 @@ formattazione in `quantity_format.dart`), job in attesa del modello Whisper (D-4
 scuro (`lib/app/theme*`, font Gloock + Manrope in `assets/fonts/`), preferenza del tema, tag guidati
 (`recipes/domain/recipe_tags.dart`), `RecipeFilter`, rotte `/benvenuto` e dettaglio del job (segnaposto). Fase 2
 (2026-10-06): database **v2** con ricerca FTS5 (`lib/data/db/search.drift`, `search_index.dart`), tag convertiti
-all'elenco guidato, filtri in `watchSummaries`. Prossima: fase 3 (home ricettario). Prove dal vivo D-44 ancora aperte.
+all'elenco guidato, filtri in `watchSummaries`. Fase 3 (2026-10-06): home a schede (`recipes/presentation/home/`), filtri in
+`recipeFilterProvider`, badge di Importazioni (job non conclusi) in `home_shell.dart`. Prossima: fase 4 (dettaglio). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

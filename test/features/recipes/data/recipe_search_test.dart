@@ -319,4 +319,14 @@ void main() {
       contains((tag: 'dolce', count: 1)),
     );
   });
+
+  test(
+    'numero di ricette senza filtri, aggiornato a ogni cancellazione',
+    () async {
+      final before = await repo.watchCount().first;
+      expect(before, greaterThan(0));
+      await repo.delete('tiramisu');
+      expect(await repo.watchCount().first, before - 1);
+    },
+  );
 }
