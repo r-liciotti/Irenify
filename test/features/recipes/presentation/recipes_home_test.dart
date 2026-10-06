@@ -322,6 +322,14 @@ void main() {
       expect(chipSelected(tester, label(tags[9])), isTrue);
       expect(find.text(label(tags[8])), findsNothing);
       expect(find.text('Ricetta 0'), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 400));
+      await settle(tester);
+      // La riga è scorsa fino alla chip scelta: è dentro lo schermo.
+      final chipRect = tester.getRect(
+        find.widgetWithText(FilterChip, label(tags[9])),
+      );
+      expect(chipRect.right, lessThanOrEqualTo(400));
+      expect(chipRect.left, greaterThanOrEqualTo(0));
       expect(find.text('Ricetta 1'), findsNothing);
     },
   );

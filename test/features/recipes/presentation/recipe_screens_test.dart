@@ -16,6 +16,7 @@ import 'package:irenefy/features/recipes/data/recipe_files.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/recipes/domain/recipe.dart';
 import 'package:irenefy/features/recipes/domain/recipe_enums.dart';
+import 'package:irenefy/features/recipes/presentation/recipe_providers.dart';
 import 'package:irenefy/features/settings/data/llm_settings_store.dart';
 import 'package:irenefy/features/settings/data/whisper_model_manager.dart';
 
@@ -184,7 +185,8 @@ void main() {
 
   group('dettaglio', () {
     recipesTest(
-      'tocco su una riga → ricetta completa',
+      'tocco su una riga → ricetta completa, ingredienti e passi in schede '
+      'diverse',
       seed: (env) => insert(env, sampleRecipe()),
       (tester, _) async {
         await openRecipe(tester, 'Torta di mele');
@@ -201,19 +203,33 @@ void main() {
           ),
           findsOneWidget,
         );
+        expect(find.text('Dolce'), findsOneWidget);
+        expect(find.text('Forno'), findsOneWidget);
         expect(servings('8 fette'), findsOneWidget);
-        // Gruppi, quantità formattate, note e stime.
+
+        // Scheda Ingredienti: gruppi, quantità formattate, note e stime.
         expect(find.text("Per l'impasto"), findsOneWidget);
         expect(find.text('Per la copertura'), findsOneWidget);
-        expect(richText('250 g farina 00'), findsOneWidget);
-        expect(richText('2–3 pezzi uova'), findsOneWidget);
+        expect(ingredient('farina 00', '250 g'), findsOneWidget);
+        expect(ingredient('uova', '2–3 pezzi'), findsOneWidget);
         expect(find.text('a temperatura ambiente'), findsOneWidget);
-        expect(richText('sale q.b.'), findsOneWidget);
-        expect(richText('1 cucchiaio cannella'), findsNothing);
-        expect(richText('1 cucchiaino cannella'), findsOneWidget);
+        expect(ingredient('sale', 'q.b.'), findsOneWidget);
+        expect(ingredient('cannella', '1 cucchiaino'), findsOneWidget);
         expect(find.text('stimata'), findsOneWidget);
+        // Un'emoji per ingrediente, nascosta allo screen reader.
+        expect(find.text('🌾'), findsOneWidget);
+        expect(find.text('🥚'), findsOneWidget);
+        expect(find.text('🧂'), findsOneWidget);
+        expect(find.text('🫙'), findsOneWidget);
+        expect(find.bySemanticsLabel('🥚'), findsNothing);
+        // I passi e la fonte stanno nell'altra scheda.
+        expect(richText('Sbatti le uova con lo zucchero.'), findsNothing);
+        expect(find.text('Apri il post originale'), findsNothing);
+
+        await showSteps(tester);
+        expect(find.text('farina 00'), findsNothing);
         // Passi numerati con durata e temperatura.
-        expect(find.text('Sbatti le uova con lo zucchero.'), findsOneWidget);
+        expect(richText('Sbatti le uova con lo zucchero.'), findsOneWidget);
         expect(find.text('2'), findsOneWidget);
         expect(find.text('45 min'), findsOneWidget);
         expect(find.text('180 °C'), findsOneWidget);
@@ -228,15 +244,20 @@ void main() {
         await tester.tap(find.text('Trascrizione'));
         await tester.pumpAndSettle();
         expect(find.text('Prendiamo tre uova…'), findsOneWidget);
+
+        // La barra delle porzioni resta anche nella scheda Procedimento.
+        expect(servings('8 fette'), findsOneWidget);
       },
     );
 
     recipesTest(
-      'porzioni + e − ricalcolano le quantità; ritorno alle originali',
+      'porzioni: + ricalcola le quantità, ritorno alle originali, avviso '
+      'solo con porzioni diverse',
       seed: (env) => insert(env, sampleRecipe()),
       (tester, _) async {
         await openRecipe(tester, 'Torta di mele');
         expect(find.text('Porzioni originali'), findsNothing);
+        expect(find.text(servingsWarning), findsNothing);
 
         // Da 8 a 12 fette: fattore 1,5.
         for (var i = 0; i < 4; i++) {
@@ -244,36 +265,64 @@ void main() {
           await tester.pump();
         }
         expect(servings('12 fette'), findsOneWidget);
-        expect(richText('375 g farina 00'), findsOneWidget);
+        expect(find.text(servingsWarning), findsOneWidget);
+        expect(ingredient('farina 00', '375 g'), findsOneWidget);
         // 2–3 uova × 1,5 = 3–4,5 → 3–5 (interi).
-        expect(richText('3–5 pezzi uova'), findsOneWidget);
+        expect(ingredient('uova', '3–5 pezzi'), findsOneWidget);
         // Cannella meno che proporzionale: 1,5^0,8 ≈ 1,38.
-        expect(richText('1,4 cucchiaini cannella'), findsOneWidget);
-        expect(richText('sale q.b.'), findsOneWidget);
+        expect(ingredient('cannella', '1,4 cucchiaini'), findsOneWidget);
+        expect(ingredient('sale', 'q.b.'), findsOneWidget);
+
+        // L'avviso c'è anche nella scheda Procedimento.
+        await showSteps(tester);
+        expect(find.text(servingsWarning), findsOneWidget);
 
         await tester.tap(find.text('Porzioni originali'));
         await tester.pump();
         expect(servings('8 fette'), findsOneWidget);
-        expect(richText('250 g farina 00'), findsOneWidget);
         expect(find.text('Porzioni originali'), findsNothing);
+        expect(find.text(servingsWarning), findsNothing);
+        await showIngredients(tester);
+        expect(ingredient('farina 00', '250 g'), findsOneWidget);
+      },
+    );
 
-        // Fino a 1 fetta, poi il − si disattiva.
-        for (var i = 0; i < 7; i++) {
+    // Dipende da `decreaseServings` e `formatServings` (D-48).
+    recipesTest(
+      'porzioni: − di 1 sopra le 2, poi di ½ fino al minimo ½',
+      seed: (env) => insert(env, sampleRecipe()),
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+
+        // 8 → 2 (6 tocchi), poi 1½ e 1.
+        for (var i = 0; i < 6; i++) {
           await tester.tap(find.byTooltip('Meno porzioni'));
           await tester.pump();
         }
-        expect(servings('1 fette'), findsOneWidget);
-        expect(richText('31 g farina 00'), findsOneWidget);
-        // 2 uova / 8 = 0,25 → minimo 1.
-        expect(richText('1 pezzo uova'), findsOneWidget);
+        expect(servings('2 fette'), findsOneWidget);
         await tester.tap(find.byTooltip('Meno porzioni'));
+        await tester.pump();
+        expect(servings('1½ fette'), findsOneWidget);
+        await tester.tap(find.byTooltip('Meno porzioni'));
+        await tester.pump();
+        expect(servings('1 fette'), findsOneWidget);
+        expect(ingredient('farina 00', '31 g'), findsOneWidget);
+        // 2 uova / 8 = 0,25 → minimo 1.
+        expect(ingredient('uova', '1 pezzo'), findsOneWidget);
+
+        await tester.tap(find.byTooltip('Meno porzioni'));
+        await tester.pump();
+        expect(servings('½ fette'), findsOneWidget);
+        expect(lessButton(tester).onPressed, isNull);
+        await tester.tap(find.byTooltip('Più porzioni'));
         await tester.pump();
         expect(servings('1 fette'), findsOneWidget);
       },
     );
 
+    // Dipende da `increaseServings`, `decreaseServings` e `formatServings`.
     recipesTest(
-      'ricette senza porzioni: 1 ricetta, poi 2 ricette',
+      'ricette senza porzioni: ½ ricetta, 1 ricetta, 1½ ricette, 2 ricette',
       seed: (env) => insert(
         env,
         sampleRecipe().copyWith(baseServings: 1, servingsUnit: 'ricetta'),
@@ -281,10 +330,192 @@ void main() {
       (tester, _) async {
         await openRecipe(tester, 'Torta di mele');
         expect(servings('1 ricetta'), findsOneWidget);
+
+        await tester.tap(find.byTooltip('Meno porzioni'));
+        await tester.pump();
+        expect(servings('½ ricetta'), findsOneWidget);
+        expect(ingredient('farina 00', '125 g'), findsOneWidget);
+        expect(lessButton(tester).onPressed, isNull);
+
+        await tester.tap(find.byTooltip('Più porzioni'));
+        await tester.pump();
+        await tester.tap(find.byTooltip('Più porzioni'));
+        await tester.pump();
+        expect(servings('1½ ricette'), findsOneWidget);
         await tester.tap(find.byTooltip('Più porzioni'));
         await tester.pump();
         expect(servings('2 ricette'), findsOneWidget);
-        expect(richText('500 g farina 00'), findsOneWidget);
+        expect(ingredient('farina 00', '500 g'), findsOneWidget);
+      },
+    );
+
+    // Dipende da `toDisplayUnit` (D-48).
+    recipesTest(
+      'conversioni per la lettura: 1000 g → 1 kg, 3 cucchiaini → 1 cucchiaio',
+      seed: (env) => insert(
+        env,
+        sampleRecipe().copyWith(
+          baseServings: 2,
+          servingsUnit: 'persone',
+          ingredientGroups: const [
+            IngredientGroup(
+              id: 'g1',
+              ingredients: [
+                Ingredient(
+                  id: 'i1',
+                  name: 'farina',
+                  quantity: 500,
+                  unit: IngredientUnit.gram,
+                ),
+                Ingredient(
+                  id: 'i2',
+                  name: 'cannella',
+                  quantity: 1.5,
+                  unit: IngredientUnit.teaspoon,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        await tester.tap(find.byTooltip('Più porzioni'));
+        await tester.pump();
+        await tester.tap(find.byTooltip('Più porzioni'));
+        await tester.pump();
+        expect(servings('4 persone'), findsOneWidget);
+        expect(ingredient('farina', '1 kg'), findsOneWidget);
+        expect(ingredient('cannella', '1 cucchiaio'), findsOneWidget);
+      },
+    );
+
+    recipesTest(
+      '"i" solo sulle quantità non lineari e con porzioni cambiate',
+      seed: (env) => insert(env, sampleRecipe()),
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        expect(find.byTooltip('Perché questa quantità'), findsNothing);
+
+        await tester.tap(find.byTooltip('Più porzioni'));
+        await tester.pump();
+        // Uova (intere) e cannella (meno che proporzionale); non farina né
+        // sale.
+        final info = find.byTooltip('Perché questa quantità');
+        expect(info, findsNWidgets(2));
+
+        await tester.tap(info.first);
+        await tester.pumpAndSettle();
+        expect(
+          find.text(
+            'Arrotondata a un numero intero: non si può usare una frazione '
+            '(es. un uovo).',
+          ),
+          findsOneWidget,
+        );
+        await tester.tapAt(const Offset(10, 10));
+        await tester.pumpAndSettle();
+
+        await tester.tap(info.last);
+        await tester.pumpAndSettle();
+        expect(
+          find.text(
+            'Sale, spezie e lievito non crescono in proporzione alle '
+            'porzioni: la quantità è già corretta.',
+          ),
+          findsOneWidget,
+        );
+        await tester.tapAt(const Offset(10, 10));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Porzioni originali'));
+        await tester.pump();
+        expect(find.byTooltip('Perché questa quantità'), findsNothing);
+      },
+    );
+
+    recipesTest(
+      'quantità fissa: "i" con il suo testo',
+      seed: (env) => insert(
+        env,
+        sampleRecipe().copyWith(
+          ingredientGroups: const [
+            IngredientGroup(
+              id: 'g1',
+              ingredients: [
+                Ingredient(
+                  id: 'i1',
+                  name: 'stampo',
+                  quantity: 1,
+                  scalingRule: ScalingRule.fixed,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        await tester.tap(find.byTooltip('Più porzioni'));
+        await tester.pump();
+        await tester.tap(find.byTooltip('Perché questa quantità'));
+        await tester.pumpAndSettle();
+        expect(
+          find.text('Questa quantità non cambia con le porzioni.'),
+          findsOneWidget,
+        );
+      },
+    );
+
+    // Dipende da `highlightIngredients` (D-48).
+    recipesTest(
+      'ingredienti in grassetto nei passi',
+      seed: (env) => insert(env, sampleRecipe()),
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        await showSteps(tester);
+        final text = tester.widget<Text>(
+          find.byWidgetPredicate(
+            (w) =>
+                w is Text &&
+                w.textSpan?.toPlainText() == 'Sbatti le uova con lo zucchero.',
+          ),
+        );
+        final bold = <String>[];
+        text.textSpan!.visitChildren((span) {
+          if (span is TextSpan &&
+              span.text != null &&
+              span.style?.fontWeight == FontWeight.w800) {
+            bold.add(span.text!);
+          }
+          return true;
+        });
+        expect(bold, ['uova']);
+      },
+    );
+
+    recipesTest(
+      'tocco su un tag: ricettario filtrato solo per quel tag',
+      seed: (env) => insert(env, sampleRecipe()),
+      (tester, _) async {
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(IrenefyApp)),
+        );
+        container
+            .read(recipeFilterProvider.notifier)
+            .togglePlatform(SourcePlatform.instagram);
+        await settle(tester);
+        await openRecipe(tester, 'Torta di mele');
+
+        await tester.tap(find.byKey(const ValueKey('recipe-detail-tag-dolce')));
+        await settle(tester);
+
+        expect(
+          container.read(recipeFilterProvider),
+          const RecipeFilter(tags: {'dolce'}),
+        );
+        expect(find.byKey(const ValueKey('recipe-servings')), findsNothing);
+        expect(find.text('Torta di mele'), findsOneWidget);
       },
     );
 
@@ -318,7 +549,8 @@ void main() {
     );
 
     recipesTest(
-      'eliminazione: annulla non elimina, conferma elimina anche i file',
+      'eliminazione (con foto): annulla non elimina, conferma elimina anche '
+      'i file',
       seed: (env) async {
         final file = File('${env.support.path}/recipes/r1/miniatura.jpg');
         await file.parent.create(recursive: true);
@@ -330,6 +562,8 @@ void main() {
       },
       (tester, env) async {
         await openRecipe(tester, 'Torta di mele');
+        // Con la foto c'è anche il pulsante tondo per tornare indietro.
+        expect(find.byTooltip('Indietro'), findsOneWidget);
 
         await tester.tap(find.byTooltip('Elimina'));
         await tester.pumpAndSettle();
@@ -378,6 +612,7 @@ void main() {
       seed: (env) => insert(env, sampleRecipe()),
       (tester, _) async {
         await openRecipe(tester, 'Torta di mele');
+        await showSteps(tester);
         // Nei test url_launcher non ha la piattaforma: l'apertura fallisce.
         await tester.tap(find.text('Apri il post originale'));
         await settle(tester);
@@ -397,12 +632,100 @@ void main() {
       ),
       (tester, _) async {
         await openRecipe(tester, 'Torta di mele');
+        expect(find.text('Facile'), findsNothing);
+        await showSteps(tester);
         expect(find.text('Apri il post originale'), findsNothing);
         expect(find.text('Didascalia'), findsNothing);
         expect(find.text('Trascrizione'), findsNothing);
         expect(find.textContaining('Estratta con'), findsNothing);
-        expect(find.text('Facile'), findsNothing);
       },
     );
+
+    for (final dark in [false, true]) {
+      recipesTest(
+        'nessun overflow a 360×640 con testo al 130% '
+        '(tema ${dark ? 'scuro' : 'chiaro'})',
+        seed: (env) async {
+          final file = File('${env.support.path}/recipes/r1/miniatura.jpg');
+          await file.parent.create(recursive: true);
+          await file.writeAsBytes([1, 2, 3]);
+          await insert(
+            env,
+            sampleRecipe(
+              tags: const ['piatto unico', 'da preparare in anticipo', 'dolce'],
+            ).copyWith(
+              thumbnailPath: 'recipes/r1/miniatura.jpg',
+              restMinutes: 120,
+              servingsUnit: 'porzioni abbondanti',
+            ),
+          );
+        },
+        (tester, _) async {
+          if (dark) {
+            tester.platformDispatcher.platformBrightnessTestValue =
+                Brightness.dark;
+            addTearDown(
+              tester.platformDispatcher.clearPlatformBrightnessTestValue,
+            );
+          }
+          await openRecipe(tester, 'Torta di mele');
+          tester.view.physicalSize = const Size(360, 640);
+          tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+
+          await tester.tap(find.byTooltip('Più porzioni'));
+          await tester.pumpAndSettle();
+          final list = find.byType(CustomScrollView);
+          for (var i = 0; i < 4; i++) {
+            await tester.drag(list, const Offset(0, -300));
+            await tester.pumpAndSettle();
+          }
+          expect(tester.takeException(), isNull);
+
+          await tester.tap(find.text('Procedimento'));
+          await tester.pumpAndSettle();
+          for (var i = 0; i < 4; i++) {
+            await tester.drag(list, const Offset(0, -300));
+            await tester.pumpAndSettle();
+          }
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
   });
 }
+
+const servingsWarning =
+    'Con porzioni diverse, tempi di cottura e dimensioni della teglia '
+    'potrebbero cambiare.';
+
+/// Riga di un ingrediente con il suo nome e la quantità mostrata.
+Finder ingredient(String name, String amount) => find.ancestor(
+  of: find.text(name),
+  matching: find.byWidgetPredicate(
+    (w) =>
+        w is Row &&
+        w.children.any((c) => c is Flexible && _textOf(c.child) == amount),
+  ),
+);
+
+String? _textOf(Widget widget) => widget is Text ? widget.data : null;
+
+Future<void> showSteps(WidgetTester tester) async {
+  await tester.tap(find.text('Procedimento'));
+  await tester.pumpAndSettle();
+}
+
+Future<void> showIngredients(WidgetTester tester) async {
+  await tester.tap(find.text('Ingredienti'));
+  await tester.pumpAndSettle();
+}
+
+IconButton lessButton(WidgetTester tester) => tester.widget<IconButton>(
+  find.ancestor(
+    of: find.byIcon(Icons.remove),
+    matching: find.byType(IconButton),
+  ),
+);

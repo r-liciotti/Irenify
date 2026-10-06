@@ -84,13 +84,21 @@ Schede a due colonne con foto 3:4, barra di ricerca, chip dei filtri, stato vuot
 - **Correzioni:** "Togli i filtri" annulla anche una ricerca scritta e non ancora partita.
 - **Prove:** 485 test. Sul Pixel ricerca "farin", chip "Primo" e badge sono corretti.
 
-## Fase 4 — Dettaglio ricetta (≈ 0,75 gg, assorbe la F3)
+## Fase 4 — Dettaglio ricetta (≈ 0,75 gg, assorbe la F3) — ✅ completata il 2026-10-06
 
 Foto a tutta larghezza con foglio arrotondato, schede Ingredienti / Procedimento, icona per ingrediente, ingredienti in
 grassetto nei passi, barra porzioni fissa con mezze porzioni, avviso "tempi e teglia potrebbero cambiare", "i" sulle
 quantità non lineari, conversioni (3 cucchiaini → 1 cucchiaio, 1500 g → 1,5 kg), tag.
 
 **Uscita:** dettaglio come nella pagina di prova, con porzioni completamente gestite.
+
+**Come è stata fatta:**
+- **D-48:** passo ½ da 2 porzioni in giù; conversioni con fattori esatti; grassetto e icone ricavati dal testo.
+- **Contratto con segnaposto:** firme scritte dall'agente principale, poi 2 subagent in parallelo, uno sulle regole
+  in Dart puro e uno sulla schermata con i widget in `presentation/detail/`.
+- **Correzioni dopo la prova sul Pixel:** la chip del tag scelto dal dettaglio viene portata nello schermo; icone
+  per le eccezioni inglesi.
+- **Prove:** 549 test. Sul Pixel ½ ricetta, avviso, "i", grassetto e tag sono corretti.
 
 ## Fase 5 — Importazione (≈ 0,75 gg)
 

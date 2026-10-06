@@ -94,12 +94,18 @@
       "unit": { "type": "String" }
     }
   },
-  "recipeBatches": "{count, plural, =1{1 ricetta} other{{count} ricette}}",
-  "@recipeBatches": {
+  "recipeBatchesUnit": "{count, plural, =1{ricetta} other{ricette}}",
+  "@recipeBatchesUnit": {
     "placeholders": {
       "count": { "type": "int" }
     }
   },
+  "recipeServingsChangedWarning": "Con porzioni diverse, tempi di cottura e dimensioni della teglia potrebbero cambiare.",
+  "recipeNonLinearTooltip": "Perché questa quantità",
+  "recipeNonLinearSublinear": "Sale, spezie e lievito non crescono in proporzione alle porzioni: la quantità è già corretta.",
+  "recipeNonLinearInteger": "Arrotondata a un numero intero: non si può usare una frazione (es. un uovo).",
+  "recipeNonLinearFixed": "Questa quantità non cambia con le porzioni.",
+  "recipeTags": "Tag",
   "recipeServingsLess": "Meno porzioni",
   "recipeServingsMore": "Più porzioni",
   "recipeServingsReset": "Porzioni originali",

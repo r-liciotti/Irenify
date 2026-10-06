@@ -382,11 +382,47 @@ abstract class AppLocalizations {
   /// **'{count} {unit}'**
   String recipeServingsValue(String count, String unit);
 
-  /// No description provided for @recipeBatches.
+  /// No description provided for @recipeBatchesUnit.
   ///
   /// In it, this message translates to:
-  /// **'{count, plural, =1{1 ricetta} other{{count} ricette}}'**
-  String recipeBatches(int count);
+  /// **'{count, plural, =1{ricetta} other{ricette}}'**
+  String recipeBatchesUnit(int count);
+
+  /// No description provided for @recipeServingsChangedWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'Con porzioni diverse, tempi di cottura e dimensioni della teglia potrebbero cambiare.'**
+  String get recipeServingsChangedWarning;
+
+  /// No description provided for @recipeNonLinearTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Perché questa quantità'**
+  String get recipeNonLinearTooltip;
+
+  /// No description provided for @recipeNonLinearSublinear.
+  ///
+  /// In it, this message translates to:
+  /// **'Sale, spezie e lievito non crescono in proporzione alle porzioni: la quantità è già corretta.'**
+  String get recipeNonLinearSublinear;
+
+  /// No description provided for @recipeNonLinearInteger.
+  ///
+  /// In it, this message translates to:
+  /// **'Arrotondata a un numero intero: non si può usare una frazione (es. un uovo).'**
+  String get recipeNonLinearInteger;
+
+  /// No description provided for @recipeNonLinearFixed.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa quantità non cambia con le porzioni.'**
+  String get recipeNonLinearFixed;
+
+  /// No description provided for @recipeTags.
+  ///
+  /// In it, this message translates to:
+  /// **'Tag'**
+  String get recipeTags;
 
   /// No description provided for @recipeServingsLess.
   ///

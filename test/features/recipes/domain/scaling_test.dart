@@ -155,4 +155,23 @@ void main() {
       expect(s.gramsEstimate, 10);
     });
   });
+
+  group('mezze porzioni (D-48)', () {
+    test('½ porzione su 2: 1 uovo intero resta 1', () {
+      final factor = scalingFactor(baseServings: 2, servings: 0.5);
+      expect(factor, 0.25);
+      final s = scaleIngredient(
+        ingredient(quantity: 1, rule: ScalingRule.integer),
+        factor,
+      );
+      expect(s.quantity, 1);
+    });
+
+    test('1½ porzioni su 4: 200 g × 0,375 = 75 g', () {
+      final factor = scalingFactor(baseServings: 4, servings: 1.5);
+      expect(factor, 0.375);
+      final s = scaleIngredient(ingredient(quantity: 200), factor);
+      expect(s.quantity, 75);
+    });
+  });
 }

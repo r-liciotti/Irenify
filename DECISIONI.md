@@ -11,6 +11,31 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-48 — Dettaglio della ricetta: porzioni, conversioni, grassetto, icone (2026-10-06) — Attiva
+- **Decisione:**
+  - **Mezze porzioni:** passo 1 sopra le 2 porzioni, passo ½ da 2 in giù (2 → 1½ → 1 → ½), con minimo ½. Si
+    scrivono come frazioni ("1½ persone", "½ ricetta").
+  - **Conversioni solo per la lettura**, con fattori esatti e in tutte e due le direzioni: g↔kg e ml↔l alla soglia
+    di 1000; 3 cucchiaini = 1 cucchiaio solo se il risultato è un multiplo di ½ cucchiaio; meno di 1 cucchiaio
+    diventa cucchiaini. Mai sulle quantità fisse o q.b., mai tazze, bicchieri o pizzichi. Un intervallo usa la stessa
+    unità ai due estremi.
+  - **Grassetto nei passi:** riconoscimento sul testo della parola principale dell'ingrediente, a parole intere,
+    ignorando maiuscole e accenti, con le forme singolare e plurale. Nessun cambio dello schema di Gemini.
+  - **Icone come emoji di sistema** (aggiornato il 2026-10-06 su richiesta dell'utente): circa 90 categorie
+    (`IngredientKind`), ognuna con la sua emoji (🎃 🥚 🧄 🧀 🫒…), scelte dal nome (e da `canonicalNameEn`); 🍽️ se
+    l'ingrediente non si riconosce. Su Android le emoji sono quelle di sistema (Noto, nessun file da includere); quelle
+    di WhatsApp hanno una licenza chiusa. Nessun campo nuovo nel database.
+- **Perché:** l'utente vuole conversioni **attendibili**: fattori esatti e niente conversioni approssimate. Il
+  grassetto per testo vale subito anche per le ricette già salvate. La categoria degli alimenti arriverà con la F4.
+- **Alternative scartate:**
+  - passo ½ sempre;
+  - conversioni solo verso l'alto;
+  - ingredienti di ogni passo indicati da Gemini (schema, migrazione, solo ricette nuove);
+  - categoria assegnata da Gemini;
+  - icone Material (poche e fuori tema per il cibo: l'utente le ha scartate dopo la prova sul telefono).
+- **Deciso da:** utente ("tutto va bene, per le conversioni l'importante è che siano attendibili"; per le icone: "usa
+  quelle di WhatsApp o simili che hanno molta più scelta").
+
 ## D-47 — Altre decisioni della F2 (2026-10-06) — Attiva
 - **Decisione:** ricerca FTS5 su titolo, ingredienti, tag e autore (accenti ignorati, prefisso); scheda Nutrienti
   nascosta fino alla F4; badge Importazioni = job in corso + falliti finché non eliminati o riprovati; "Aggiungi il

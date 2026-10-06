@@ -134,4 +134,19 @@ void main() {
       );
     });
   });
+
+  group('porzioni (D-48)', () {
+    test('frazioni come per le unità a pezzi', () {
+      expect(formatServings(0.5), '½');
+      expect(formatServings(1.5), '1½');
+      expect(formatServings(2.5), '2½');
+      expect(formatServings(4), '4');
+      expect(formatServings(12), '12');
+    });
+
+    test('scarti di virgola mobile non si vedono', () {
+      expect(formatServings(1.5000000001), '1½');
+      expect(formatServings(1.9999999999), '2');
+    });
+  });
 }

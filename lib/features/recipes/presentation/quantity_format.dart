@@ -123,3 +123,7 @@ String formatScaled(
   quantityMax: scaled.quantityMax,
   unit: unit,
 );
+
+/// Numero delle porzioni: "4", "1½", "½", "2½" (D-48), con le stesse
+/// frazioni delle unità a pezzi.
+String formatServings(double servings) => _withFraction(servings);

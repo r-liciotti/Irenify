@@ -187,15 +187,37 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String recipeBatches(int count) {
+  String recipeBatchesUnit(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count ricette',
-      one: '1 ricetta',
+      other: 'ricette',
+      one: 'ricetta',
     );
     return '$_temp0';
   }
+
+  @override
+  String get recipeServingsChangedWarning =>
+      'Con porzioni diverse, tempi di cottura e dimensioni della teglia potrebbero cambiare.';
+
+  @override
+  String get recipeNonLinearTooltip => 'Perché questa quantità';
+
+  @override
+  String get recipeNonLinearSublinear =>
+      'Sale, spezie e lievito non crescono in proporzione alle porzioni: la quantità è già corretta.';
+
+  @override
+  String get recipeNonLinearInteger =>
+      'Arrotondata a un numero intero: non si può usare una frazione (es. un uovo).';
+
+  @override
+  String get recipeNonLinearFixed =>
+      'Questa quantità non cambia con le porzioni.';
+
+  @override
+  String get recipeTags => 'Tag';
 
   @override
   String get recipeServingsLess => 'Meno porzioni';
