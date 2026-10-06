@@ -205,7 +205,7 @@ ripartiti al salvataggio della chiave: 2 ricette ("Risoni con zucca e feta" da I
 q.b. e passi corretti), 2 doppioni riconosciuti, 5 "non è una ricetta" tutti corretti (pubblicità, post di moda, foto
 con il solo nome del piatto).
 
-## Fase 8 — Interfaccia provvisoria e prova completa (≈ 0,5 gg)
+## Fase 8 — Interfaccia provvisoria e prova completa (≈ 0,5 gg) — ✅ completata il 2026-10-06 (prova ridotta, D-44)
 
 **Perché:** verificare sul telefono l'intero percorso e chiudere la F1.
 
@@ -221,6 +221,17 @@ con il solo nome del piatto).
 
 **Uscita della F1:** almeno l'80% dei link di prova diventa una ricetta salvata e corretta.
 
+**Come è stata fatta:** contratto (D-40…D-43: job senza modello Whisper che aspettano il download e ripartono dalla
+tappa audio, limite di 3 minuti anche per i video della galleria misurato dal WAV, rotta del dettaglio, testi, preferiti,
+`RecipeRemover`, eliminazione di `lib/spike/`), poi due subagent in parallelo: Importazioni (azioni secondo il codice
+d'errore, sola didascalia, elimina, tocco → ricetta, motivo di Gemini per i post scartati) e Ricette (elenco con
+miniature, dettaglio con porzioni ricalcolate secondo D-42, unità e frazioni all'italiana, fonte, didascalia e
+trascrizione, preferito, elimina). `/code-review` finale: 4 difetti corretti (ripresa dei job in attesa del modello
+anche all'avvio, falso "download non riuscito", tolleranza sul limite di durata, singolare dopo l'arrotondamento).
+416 test. Prova sul Pixel: 2 reel Instagram nuovi → 2/2 ricette corrette (più le 2 ricette e i 5 scarti corretti della
+fase 7). Prova ridotta rispetto ai 6–8 link previsti: reel parlato, TikTok nuovo e video dalla galleria restano da
+provare dal vivo all'inizio della F2 (D-44).
+
 ---
 
 ## Riepilogo
@@ -234,4 +245,4 @@ con il solo nome del piatto).
 | 5 | Didascalia e video ✅ | prova sul telefono | 0,75 gg |
 | 6 | Audio e trascrizione ✅ | prova sul telefono | 0,75 gg |
 | 7 | Estrazione con Gemini ✅ | **chiave Gemini** | 1 gg |
-| 8 | Interfaccia provvisoria e prova completa | 6–8 link reali | 0,5 gg |
+| 8 | Interfaccia provvisoria e prova completa ✅ | 6–8 link reali | 0,5 gg |

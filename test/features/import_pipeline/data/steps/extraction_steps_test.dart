@@ -181,6 +181,32 @@ void main() {
       },
     );
 
+    test('nessun testo per modello mancante o video lungo: lo dice (D-40, '
+        'D-41)', () async {
+      ImportJob skipped(SkipReason reason) {
+        final base = job(caption: null, transcript: null, quality: null);
+        return base.copyWith(
+          data: base.data.copyWith(
+            skippedSteps: {ImportStatus.audio: SkippedStep(reason: reason)},
+          ),
+        );
+      }
+
+      await expectLater(
+        step.run(skipped(SkipReason.noModel), files),
+        throwsA(isA<SpeechModelMissingFailure>()),
+      );
+      await expectLater(
+        step.run(skipped(SkipReason.videoTooLong), files),
+        throwsA(isA<VideoTooLongFailure>()),
+      );
+      await expectLater(
+        step.run(skipped(SkipReason.cpuUnsupported), files),
+        throwsA(isA<NothingToExtractFailure>()),
+      );
+      expect(llm.calls, 0);
+    });
+
     test('risposta non valida: secondo tentativo con gli errori', () async {
       final wrong = llmFixture('pasta_alla_norma')
         ..[RecipeJson.servings] = 0

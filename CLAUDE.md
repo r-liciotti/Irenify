@@ -8,9 +8,9 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-02, fase 7)
+## Stato (aggiornato al 2026-10-06, F1 conclusa)
 
-Fase **F1 in corso** (piano in `F1_PIANO.md`, 8 fasi). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
+Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
 **Fase 2 (database) completata il 2026-09-28**: drift in `lib/data/db/` (schema v1 in `drift_schemas/`),
 entità freezed in `features/*/domain/`, `RecipeRepository` e `ImportJobRepository` in `features/*/data/`.
@@ -32,10 +32,12 @@ acceso (D-34). Sul Pixel: 0,89 s per secondo di audio (build di debug), picco ~9
 `domain/recipe_schema.dart`, client REST in `data/llm/gemini_provider.dart` (+ `gemini_prompt.dart`), tappe
 `ExtractStep` e `SaveRecipeStep`, validazione e conversione in `domain/recipe_extraction.dart`, miniature in
 `recipes/data/recipe_files.dart`, chiave e modello in Impostazioni (`settings/data/llm_settings_store.dart`,
-`settings/presentation/gemini_*`). Un link condiviso ora diventa una ricetta nella scheda Ricette. Prossima: **fase 8**
-(interfaccia provvisoria, prova completa con 6–8 link, eliminazione di `lib/spike/`).
-La schermata di prova della F0 (`lib/spike/`) è raggiungibile da Impostazioni → "Strumenti di prova (F0)" (solo link
-inseriti a mano: le condivisioni non le riceve più). **Non** va estesa; va eliminata in fase 8.
+`settings/presentation/gemini_*`). Un link condiviso ora diventa una ricetta nella scheda Ricette.
+**Fase 8 (interfaccia provvisoria) completata il 2026-10-06**: Importazioni con azioni (`presentation/import_job_tile.dart`,
+`import_actions.dart`), elenco e dettaglio ricetta (`recipes/presentation/`, scalatura in `recipes/domain/scaling.dart`,
+formattazione in `quantity_format.dart`), job in attesa del modello Whisper (D-40), limite di durata per i file (D-41).
+`lib/spike/` eliminato. Prossimo passo: prova dal vivo di reel parlato / TikTok / video dalla galleria (D-44), poi la F2
+del piano approvato.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

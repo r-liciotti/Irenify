@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import '../../domain/import_flow.dart';
 import '../../domain/import_job.dart';
 import '../../domain/import_step.dart';
 import '../../domain/transcription.dart';
@@ -25,6 +26,13 @@ class AudioStep implements ImportStep {
   final CpuCompatibility _cpu;
 
   static const audioName = 'audio.wav';
+
+  /// Byte di un WAV lungo quanto il limite di durata dei video, con 5 s di
+  /// tolleranza: TikTok arrotonda la durata al secondo e l'intestazione di
+  /// FFmpeg ha metadati di lunghezza variabile. Un video che ha passato il
+  /// controllo della tappa video non va scartato qui.
+  static final _maxWavBytes =
+      (ImportFlow.maxVideoDuration.inSeconds + 5) * 32000 + 4096;
 
   @override
   ImportStatus get step => ImportStatus.audio;
@@ -54,6 +62,12 @@ class AudioStep implements ImportStep {
       } on NoAudioTrackException {
         return StepResult.notApplicable(job, SkipReason.noAudio);
       }
+    }
+    // I video condivisi come file non hanno la durata della pagina: la si
+    // ricava dal WAV, che è a 16 kHz mono 16 bit (D-41).
+    if (await audio.length() > _maxWavBytes) {
+      await audio.delete();
+      return StepResult.notApplicable(job, SkipReason.videoTooLong);
     }
     return StepResult.done(
       job.copyWith(data: job.data.copyWith(audioPath: audio.path)),

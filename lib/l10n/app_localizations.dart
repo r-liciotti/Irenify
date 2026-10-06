@@ -220,6 +220,312 @@ abstract class AppLocalizations {
   /// **'salvataggio'**
   String get importStepCompleted;
 
+  /// No description provided for @actionCancel.
+  ///
+  /// In it, this message translates to:
+  /// **'Annulla'**
+  String get actionCancel;
+
+  /// No description provided for @actionDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get actionDelete;
+
+  /// No description provided for @importActionCaptionOnly.
+  ///
+  /// In it, this message translates to:
+  /// **'Continua con la sola didascalia'**
+  String get importActionCaptionOnly;
+
+  /// No description provided for @importActionOpenRecipe.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri la ricetta'**
+  String get importActionOpenRecipe;
+
+  /// No description provided for @importDeleteTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare l\'importazione?'**
+  String get importDeleteTitle;
+
+  /// No description provided for @importDeleteBody.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'importazione e i suoi file temporanei verranno eliminati. Le ricette già salvate restano nel ricettario.'**
+  String get importDeleteBody;
+
+  /// No description provided for @importNotARecipeReason.
+  ///
+  /// In it, this message translates to:
+  /// **'Motivo: {reason}'**
+  String importNotARecipeReason(String reason);
+
+  /// No description provided for @importCaptionOnlyChosen.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo didascalia'**
+  String get importCaptionOnlyChosen;
+
+  /// No description provided for @recipeNotFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa ricetta non esiste più.'**
+  String get recipeNotFound;
+
+  /// No description provided for @recipeNeedsReview.
+  ///
+  /// In it, this message translates to:
+  /// **'Controlla la ricetta: alcune quantità sono stimate o mancano le porzioni.'**
+  String get recipeNeedsReview;
+
+  /// No description provided for @recipeServings.
+  ///
+  /// In it, this message translates to:
+  /// **'Porzioni'**
+  String get recipeServings;
+
+  /// No description provided for @recipeServingsValue.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} {unit}'**
+  String recipeServingsValue(String count, String unit);
+
+  /// No description provided for @recipeBatches.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{1 ricetta} other{{count} ricette}}'**
+  String recipeBatches(int count);
+
+  /// No description provided for @recipeServingsLess.
+  ///
+  /// In it, this message translates to:
+  /// **'Meno porzioni'**
+  String get recipeServingsLess;
+
+  /// No description provided for @recipeServingsMore.
+  ///
+  /// In it, this message translates to:
+  /// **'Più porzioni'**
+  String get recipeServingsMore;
+
+  /// No description provided for @recipeServingsReset.
+  ///
+  /// In it, this message translates to:
+  /// **'Porzioni originali'**
+  String get recipeServingsReset;
+
+  /// No description provided for @recipeIngredients.
+  ///
+  /// In it, this message translates to:
+  /// **'Ingredienti'**
+  String get recipeIngredients;
+
+  /// No description provided for @recipeSteps.
+  ///
+  /// In it, this message translates to:
+  /// **'Procedimento'**
+  String get recipeSteps;
+
+  /// No description provided for @recipeToTaste.
+  ///
+  /// In it, this message translates to:
+  /// **'q.b.'**
+  String get recipeToTaste;
+
+  /// No description provided for @recipeEstimated.
+  ///
+  /// In it, this message translates to:
+  /// **'stimata'**
+  String get recipeEstimated;
+
+  /// No description provided for @recipePrepTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Preparazione {minutes} min'**
+  String recipePrepTime(int minutes);
+
+  /// No description provided for @recipeCookTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Cottura {minutes} min'**
+  String recipeCookTime(int minutes);
+
+  /// No description provided for @recipeRestTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Riposo {minutes} min'**
+  String recipeRestTime(int minutes);
+
+  /// No description provided for @recipeStepDuration.
+  ///
+  /// In it, this message translates to:
+  /// **'{minutes} min'**
+  String recipeStepDuration(int minutes);
+
+  /// No description provided for @recipeStepTemperature.
+  ///
+  /// In it, this message translates to:
+  /// **'{degrees} °C'**
+  String recipeStepTemperature(int degrees);
+
+  /// No description provided for @recipeDifficultyEasy.
+  ///
+  /// In it, this message translates to:
+  /// **'Facile'**
+  String get recipeDifficultyEasy;
+
+  /// No description provided for @recipeDifficultyMedium.
+  ///
+  /// In it, this message translates to:
+  /// **'Media'**
+  String get recipeDifficultyMedium;
+
+  /// No description provided for @recipeDifficultyHard.
+  ///
+  /// In it, this message translates to:
+  /// **'Difficile'**
+  String get recipeDifficultyHard;
+
+  /// No description provided for @recipeSource.
+  ///
+  /// In it, this message translates to:
+  /// **'Fonte'**
+  String get recipeSource;
+
+  /// No description provided for @recipeAuthor.
+  ///
+  /// In it, this message translates to:
+  /// **'di {author}'**
+  String recipeAuthor(String author);
+
+  /// No description provided for @recipeOpenPost.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri il post originale'**
+  String get recipeOpenPost;
+
+  /// No description provided for @recipeOpenPostFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile aprire il link.'**
+  String get recipeOpenPostFailed;
+
+  /// No description provided for @recipeCaption.
+  ///
+  /// In it, this message translates to:
+  /// **'Didascalia'**
+  String get recipeCaption;
+
+  /// No description provided for @recipeTranscript.
+  ///
+  /// In it, this message translates to:
+  /// **'Trascrizione'**
+  String get recipeTranscript;
+
+  /// No description provided for @recipeModel.
+  ///
+  /// In it, this message translates to:
+  /// **'Estratta con {model}'**
+  String recipeModel(String model);
+
+  /// No description provided for @recipeFavoriteAdd.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi ai preferiti'**
+  String get recipeFavoriteAdd;
+
+  /// No description provided for @recipeFavoriteRemove.
+  ///
+  /// In it, this message translates to:
+  /// **'Togli dai preferiti'**
+  String get recipeFavoriteRemove;
+
+  /// No description provided for @recipeDeleteTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare la ricetta?'**
+  String get recipeDeleteTitle;
+
+  /// No description provided for @recipeDeleteBody.
+  ///
+  /// In it, this message translates to:
+  /// **'«{title}» verrà eliminata definitivamente dal ricettario.'**
+  String recipeDeleteBody(String title);
+
+  /// No description provided for @unitTeaspoon.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{cucchiaino} other{cucchiaini}}'**
+  String unitTeaspoon(num count);
+
+  /// No description provided for @unitTablespoon.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{cucchiaio} other{cucchiai}}'**
+  String unitTablespoon(num count);
+
+  /// No description provided for @unitCup.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{tazza} other{tazze}}'**
+  String unitCup(num count);
+
+  /// No description provided for @unitGlass.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{bicchiere} other{bicchieri}}'**
+  String unitGlass(num count);
+
+  /// No description provided for @unitPiece.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{pezzo} other{pezzi}}'**
+  String unitPiece(num count);
+
+  /// No description provided for @unitClove.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{spicchio} other{spicchi}}'**
+  String unitClove(num count);
+
+  /// No description provided for @unitLeaf.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{foglia} other{foglie}}'**
+  String unitLeaf(num count);
+
+  /// No description provided for @unitSprig.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{rametto} other{rametti}}'**
+  String unitSprig(num count);
+
+  /// No description provided for @unitSlice.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{fetta} other{fette}}'**
+  String unitSlice(num count);
+
+  /// No description provided for @unitPinch.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{pizzico} other{pizzichi}}'**
+  String unitPinch(num count);
+
+  /// No description provided for @unitPacket.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{bustina} other{bustine}}'**
+  String unitPacket(num count);
+
+  /// No description provided for @unitBunch.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{mazzetto} other{mazzetti}}'**
+  String unitBunch(num count);
+
   /// No description provided for @settingsDiagnostics.
   ///
   /// In it, this message translates to:
@@ -243,18 +549,6 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'{count, plural, =0{Registro vuoto} =1{Copiata 1 riga} other{Copiate {count} righe}}'**
   String settingsLogCopied(int count);
-
-  /// No description provided for @settingsSpikeTools.
-  ///
-  /// In it, this message translates to:
-  /// **'Strumenti di prova (F0)'**
-  String get settingsSpikeTools;
-
-  /// No description provided for @settingsSpikeToolsSubtitle.
-  ///
-  /// In it, this message translates to:
-  /// **'Schermata provvisoria: analisi link, download e Whisper'**
-  String get settingsSpikeToolsSubtitle;
 
   /// No description provided for @geminiSection.
   ///
@@ -603,6 +897,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Gemini non risponde in questo momento: riprova più tardi.'**
   String get failureLlmUnavailable;
+
+  /// No description provided for @failureSpeechModelMissing.
+  ///
+  /// In it, this message translates to:
+  /// **'Per questo video serve la trascrizione: scarica il modello nelle Impostazioni.'**
+  String get failureSpeechModelMissing;
+
+  /// No description provided for @failureVideoTooLong.
+  ///
+  /// In it, this message translates to:
+  /// **'Il video dura più di 3 minuti e non ha una didascalia da usare.'**
+  String get failureVideoTooLong;
 
   /// No description provided for @actionRetry.
   ///

@@ -3,17 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/import_pipeline/presentation/imports_screen.dart';
+import '../features/recipes/presentation/recipe_detail_screen.dart';
 import '../features/recipes/presentation/recipes_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
-import '../spike/spike_screen.dart';
 import 'home_shell.dart';
 
 abstract final class Routes {
   static const recipes = '/ricette';
   static const imports = '/importazioni';
   static const settings = '/impostazioni';
-  // Provvisoria: eliminata a fine F1 insieme a lib/spike/.
-  static const spikeTools = '/impostazioni/strumenti-prova';
+
+  /// Dettaglio di una ricetta, a schermo intero sopra la barra in basso.
+  static String recipe(String id) => '$recipes/$id';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -30,6 +31,15 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: Routes.recipes,
                 builder: (context, state) => const RecipesScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => RecipeDetailScreen(
+                      recipeId: state.pathParameters['id']!,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -46,14 +56,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: Routes.settings,
                 builder: (context, state) => const SettingsScreen(),
-                routes: [
-                  GoRoute(
-                    path: 'strumenti-prova',
-                    // Sopra la barra in basso, a schermo intero.
-                    parentNavigatorKey: rootNavigatorKey,
-                    builder: (context, state) => const SpikeScreen(),
-                  ),
-                ],
               ),
             ],
           ),

@@ -30,11 +30,7 @@ class ExtractStep implements ImportStep {
     if (job.data.extraction != null) return StepResult.done(job);
 
     final input = extractionInputFor(job);
-    if (input == null) {
-      throw const NothingToExtractFailure(
-        cause: 'Né didascalia né trascrizione utilizzabili',
-      );
-    }
+    if (input == null) throw _noTextFailure(job);
 
     String? previousError;
     for (var attempt = 1; ; attempt++) {
@@ -66,6 +62,25 @@ class ExtractStep implements ImportStep {
           previousError = _checkAttempts(attempt, description);
       }
     }
+  }
+
+  /// Perché non c'è testo: se la trascrizione è stata saltata per un motivo
+  /// rimediabile o spiegabile, lo si dice (D-40, D-41).
+  static Failure _noTextFailure(ImportJob job) {
+    final reasons = job.data.skippedSteps.values.map((s) => s.reason).toSet();
+    if (reasons.contains(SkipReason.noModel)) {
+      return const SpeechModelMissingFailure(
+        cause: 'Nessuna didascalia e modello Whisper non scaricato',
+      );
+    }
+    if (reasons.contains(SkipReason.videoTooLong)) {
+      return const VideoTooLongFailure(
+        cause: 'Nessuna didascalia e video oltre il limite di durata',
+      );
+    }
+    return const NothingToExtractFailure(
+      cause: 'Né didascalia né trascrizione utilizzabili',
+    );
   }
 
   /// Restituisce [error] da passare al tentativo successivo, o lancia

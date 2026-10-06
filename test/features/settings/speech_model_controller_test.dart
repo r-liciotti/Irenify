@@ -18,13 +18,20 @@ void main() {
   final payload = List<int>.generate(100, (i) => i);
   late Directory dir;
 
-  setUp(() => dir = Directory.systemTemp.createTempSync('speech_model_'));
+  var resumed = 0;
+  setUp(() {
+    dir = Directory.systemTemp.createTempSync('speech_model_');
+    resumed = 0;
+  });
   tearDown(() => dir.deleteSync(recursive: true));
 
   ProviderContainer container(RangeServer server) => ProviderContainer.test(
     retry: noAutomaticRetry,
     overrides: [
       appLogProvider.overrideWithValue(AppLog()),
+      resumeJobsWaitingForModelProvider.overrideWithValue(() async {
+        resumed++;
+      }),
       whisperModelManagerProvider.overrideWithValue(
         WhisperModelManager(
           server.dio,
@@ -76,6 +83,7 @@ void main() {
     expect(progress.last.progress, 1);
     expect(states.whereType<SpeechModelVerifying>(), hasLength(1));
     expect(states.last, isA<SpeechModelReady>());
+    expect(resumed, 1, reason: 'i job in attesa del modello ripartono (D-40)');
 
     await c.read(speechModelControllerProvider.notifier).delete();
     expect(states.last, isA<SpeechModelMissing>());

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../app/providers.dart';
-import '../../../app/router.dart';
 import '../../../l10n/app_localizations.dart';
 import 'gemini_settings_tile.dart';
 import 'speech_model_tile.dart';
@@ -30,12 +28,6 @@ class SettingsScreen extends ConsumerWidget {
             title: Text(l10n.settingsCopyLog),
             subtitle: Text(l10n.settingsCopyLogSubtitle),
             onTap: () => _copyLog(context, ref),
-          ),
-          ListTile(
-            leading: const Icon(Icons.science_outlined),
-            title: Text(l10n.settingsSpikeTools),
-            subtitle: Text(l10n.settingsSpikeToolsSubtitle),
-            onTap: () => context.push(Routes.spikeTools),
           ),
         ],
       ),

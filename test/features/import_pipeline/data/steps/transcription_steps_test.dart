@@ -136,6 +136,22 @@ void main() {
       expect(await File(result.job.data.audioPath!).readAsString(), 'RIFF');
     });
 
+    test('video oltre 3 minuti (misurato dal WAV): saltato e WAV eliminato '
+        '(D-41)', () async {
+      // 3 minuti e 10 secondi a 16 kHz mono 16 bit.
+      await files.file('audio.wav').writeAsBytes(List.filled(190 * 32000, 0));
+      final result = await audio.run(job(), files);
+      expect(reasonOf(result), SkipReason.videoTooLong);
+      expect(await files.file('audio.wav').exists(), isFalse);
+    });
+
+    test('180,4 s (TikTok dichiara 180): non è troppo lungo', () async {
+      await files
+          .file('audio.wav')
+          .writeAsBytes(List.filled((180.4 * 32000).round() + 200, 0));
+      expect(await audio.run(job(), files), isA<StepDone>());
+    });
+
     test('WAV già estratto da un tentativo precedente: non si rifà', () async {
       await files.file('audio.wav').writeAsString('già qui');
       await audio.run(job(), files);

@@ -11,6 +11,43 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-44 — F1 chiusa con una prova completa ridotta (2026-10-06) — Attiva, da rivalutare all'inizio della F2
+- **Decisione:** la prova della fase 8 si chiude con 2 reel Instagram nuovi (2/2 ricette corrette) più i 9 job delle
+  fasi 5–7 (2 ricette, 2 doppioni, 5 "non è una ricetta" corretti), invece dei 6–8 link previsti.
+- **Rischio accettato:** mai provati dal vivo fino alla ricetta: reel parlato con Whisper, TikTok nuovo da link breve,
+  video dalla galleria (anche D-29), apertura del post dal dettaglio, quota Gemini esaurita. Sono coperti dai test; si
+  provano alla prima occasione (inizio F2) con contenuti reali.
+- **Perché:** l'utente non ha trovato esempi adatti al momento.
+- **Deciso da:** utente ("va bene per adesso").
+
+## D-43 — Interfaccia provvisoria della F1: dettaglio ricetta e azioni sulle importazioni (2026-10-06) — Attiva
+- **Decisione:** dettaglio della ricetta con miniatura, porzioni modificabili, ingredienti per gruppo con unità in
+  italiano, passi, avviso "Controlla la ricetta", fonte con link al post, didascalia e trascrizione espandibili,
+  preferito ed eliminazione con conferma (eliminando anche i file). Importazioni: tocco → ricetta; pulsante secondo
+  l'azione del codice d'errore; "Continua con la sola didascalia" solo per i link; eliminazione con conferma; per
+  `notARecipe` il motivo scritto da Gemini (unico `errorDetail` mostrabile). `lib/spike/` eliminato.
+- **Deciso da:** utente (punti D ed E del resoconto della fase 8).
+
+## D-42 — Regole di ricalcolo delle porzioni (2026-10-06) — Attiva
+- **Decisione:** fattore f = porzioni scelte / porzioni originali. `linear` q·f; `integer` (q·f) arrotondato, minimo 1;
+  `fixed` invariato; `sublinear` q·f^0,75 (o `scalingExponent` se presente: raddoppiando, ×1,7); `toTaste` e quantità
+  assente → "q.b."; `quantityMax` con la stessa regola. Ricette senza porzioni: "1 ricetta", poi ×2, ×3.
+- **Deciso da:** utente (punto C del resoconto della fase 8).
+
+## D-41 — Limite di 3 minuti anche per i video condivisi come file (2026-10-06) — Attiva, estende D-30
+- **Decisione:** la durata di un video della galleria si misura dal WAV estratto (16 kHz mono 16 bit = 32.000 byte/s);
+  oltre 3 minuti la tappa audio salta con "video troppo lungo" e, senza didascalia, il job si ferma con il codice
+  `videoTooLong` (nessuna azione).
+- **Perché:** la trascrizione non è annullabile (D-34): 20 minuti di video occuperebbero il telefono per un quarto d'ora.
+- **Deciso da:** utente (punto B del resoconto della fase 8).
+
+## D-40 — Senza modello Whisper un job senza didascalia aspetta il modello (2026-10-06) — Attiva
+- **Decisione:** se non c'è testo perché la trascrizione è stata saltata per modello mancante, il job si ferma con
+  `speechModelMissing` ("Apri impostazioni") invece di `nothingToExtract`; quando il download del modello finisce,
+  questi job ripartono da soli **dalla tappa audio** (come la chiave Gemini, D-39).
+- **Perché:** prima restavano fermi per sempre senza rimedio (video dalla galleria senza modello).
+- **Deciso da:** utente (punto A del resoconto della fase 8).
+
 ## D-39 — Chiave Gemini nelle Impostazioni, job in attesa ripresi al salvataggio (2026-10-02) — Attiva
 - **Decisione:** la chiave si inserisce dalle Impostazioni, si salva cifrata (`flutter_secure_storage`) e si verifica con
   "Prova la chiave" (`GET /v1beta/models/{id}`, non consuma quota). Al salvataggio ripartono i job fermi per chiave

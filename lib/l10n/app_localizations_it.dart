@@ -78,6 +78,285 @@ class AppLocalizationsIt extends AppLocalizations {
   String get importStepCompleted => 'salvataggio';
 
   @override
+  String get actionCancel => 'Annulla';
+
+  @override
+  String get actionDelete => 'Elimina';
+
+  @override
+  String get importActionCaptionOnly => 'Continua con la sola didascalia';
+
+  @override
+  String get importActionOpenRecipe => 'Apri la ricetta';
+
+  @override
+  String get importDeleteTitle => 'Eliminare l\'importazione?';
+
+  @override
+  String get importDeleteBody =>
+      'L\'importazione e i suoi file temporanei verranno eliminati. Le ricette già salvate restano nel ricettario.';
+
+  @override
+  String importNotARecipeReason(String reason) {
+    return 'Motivo: $reason';
+  }
+
+  @override
+  String get importCaptionOnlyChosen => 'Solo didascalia';
+
+  @override
+  String get recipeNotFound => 'Questa ricetta non esiste più.';
+
+  @override
+  String get recipeNeedsReview =>
+      'Controlla la ricetta: alcune quantità sono stimate o mancano le porzioni.';
+
+  @override
+  String get recipeServings => 'Porzioni';
+
+  @override
+  String recipeServingsValue(String count, String unit) {
+    return '$count $unit';
+  }
+
+  @override
+  String recipeBatches(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ricette',
+      one: '1 ricetta',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recipeServingsLess => 'Meno porzioni';
+
+  @override
+  String get recipeServingsMore => 'Più porzioni';
+
+  @override
+  String get recipeServingsReset => 'Porzioni originali';
+
+  @override
+  String get recipeIngredients => 'Ingredienti';
+
+  @override
+  String get recipeSteps => 'Procedimento';
+
+  @override
+  String get recipeToTaste => 'q.b.';
+
+  @override
+  String get recipeEstimated => 'stimata';
+
+  @override
+  String recipePrepTime(int minutes) {
+    return 'Preparazione $minutes min';
+  }
+
+  @override
+  String recipeCookTime(int minutes) {
+    return 'Cottura $minutes min';
+  }
+
+  @override
+  String recipeRestTime(int minutes) {
+    return 'Riposo $minutes min';
+  }
+
+  @override
+  String recipeStepDuration(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String recipeStepTemperature(int degrees) {
+    return '$degrees °C';
+  }
+
+  @override
+  String get recipeDifficultyEasy => 'Facile';
+
+  @override
+  String get recipeDifficultyMedium => 'Media';
+
+  @override
+  String get recipeDifficultyHard => 'Difficile';
+
+  @override
+  String get recipeSource => 'Fonte';
+
+  @override
+  String recipeAuthor(String author) {
+    return 'di $author';
+  }
+
+  @override
+  String get recipeOpenPost => 'Apri il post originale';
+
+  @override
+  String get recipeOpenPostFailed => 'Impossibile aprire il link.';
+
+  @override
+  String get recipeCaption => 'Didascalia';
+
+  @override
+  String get recipeTranscript => 'Trascrizione';
+
+  @override
+  String recipeModel(String model) {
+    return 'Estratta con $model';
+  }
+
+  @override
+  String get recipeFavoriteAdd => 'Aggiungi ai preferiti';
+
+  @override
+  String get recipeFavoriteRemove => 'Togli dai preferiti';
+
+  @override
+  String get recipeDeleteTitle => 'Eliminare la ricetta?';
+
+  @override
+  String recipeDeleteBody(String title) {
+    return '«$title» verrà eliminata definitivamente dal ricettario.';
+  }
+
+  @override
+  String unitTeaspoon(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'cucchiaini',
+      one: 'cucchiaino',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitTablespoon(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'cucchiai',
+      one: 'cucchiaio',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitCup(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'tazze',
+      one: 'tazza',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitGlass(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'bicchieri',
+      one: 'bicchiere',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitPiece(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'pezzi',
+      one: 'pezzo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitClove(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'spicchi',
+      one: 'spicchio',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitLeaf(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'foglie',
+      one: 'foglia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitSprig(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'rametti',
+      one: 'rametto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitSlice(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'fette',
+      one: 'fetta',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitPinch(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'pizzichi',
+      one: 'pizzico',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitPacket(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'bustine',
+      one: 'bustina',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unitBunch(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'mazzetti',
+      one: 'mazzetto',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get settingsDiagnostics => 'Diagnostica';
 
   @override
@@ -98,13 +377,6 @@ class AppLocalizationsIt extends AppLocalizations {
     );
     return '$_temp0';
   }
-
-  @override
-  String get settingsSpikeTools => 'Strumenti di prova (F0)';
-
-  @override
-  String get settingsSpikeToolsSubtitle =>
-      'Schermata provvisoria: analisi link, download e Whisper';
 
   @override
   String get geminiSection => 'Estrazione delle ricette';
@@ -312,6 +584,14 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get failureLlmUnavailable =>
       'Gemini non risponde in questo momento: riprova più tardi.';
+
+  @override
+  String get failureSpeechModelMissing =>
+      'Per questo video serve la trascrizione: scarica il modello nelle Impostazioni.';
+
+  @override
+  String get failureVideoTooLong =>
+      'Il video dura più di 3 minuti e non ha una didascalia da usare.';
 
   @override
   String get actionRetry => 'Riprova';

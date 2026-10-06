@@ -38,6 +38,8 @@ extension FailureCodeText on FailureCode {
     FailureCode.invalidExtraction => l10n.failureInvalidExtraction,
     FailureCode.contentBlocked => l10n.failureContentBlocked,
     FailureCode.llmUnavailable => l10n.failureLlmUnavailable,
+    FailureCode.speechModelMissing => l10n.failureSpeechModelMissing,
+    FailureCode.videoTooLong => l10n.failureVideoTooLong,
   };
 }
 

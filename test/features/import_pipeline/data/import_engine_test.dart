@@ -13,6 +13,7 @@ import 'package:irenefy/features/import_pipeline/data/job_storage.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_flow.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_job.dart';
 import 'package:irenefy/features/import_pipeline/domain/import_step.dart';
+import 'package:irenefy/features/import_pipeline/domain/transcription.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 
 import '../../../data/db/test_database.dart';
@@ -549,6 +550,63 @@ void main() {
     },
   );
 
+  test(
+    'arrivato il modello, i job ripartono dalla tappa audio (D-40)',
+    () async {
+      var modelReady = false;
+      steps[ImportStatus.audio]!.body = (job, files, runs) async => modelReady
+          ? StepResult.done(job)
+          : StepResult.notApplicable(job, SkipReason.noModel);
+      steps[ImportStatus.extracted]!.body = (job, files, runs) async {
+        if (job.data.skippedSteps.containsKey(ImportStatus.audio)) {
+          throw const SpeechModelMissingFailure();
+        }
+        return StepResult.done(job);
+      };
+      final job = await repo.create(sharedText: 'A');
+      final engine = newEngine();
+      await engine.wake();
+      expect((await repo.getById(job.id))!.errorCode, 'speechModelMissing');
+
+      modelReady = true;
+      await engine.resumeFailed({
+        FailureCode.speechModelMissing,
+      }, from: ImportStatus.audio);
+      await engine.wake();
+
+      final done = (await repo.getById(job.id))!;
+      expect(done.status, ImportStatus.completed);
+      expect(steps[ImportStatus.audio]!.runs, 2, reason: 'rifatta');
+      expect(steps[ImportStatus.media]!.runs, 1, reason: 'non rifatta');
+      expect(done.data.skippedSteps, isEmpty);
+    },
+  );
+
+  test("all'avvio, se il modello c'è, ripartono i job che lo aspettavano "
+      '(D-40)', () async {
+    final job = await repo.create(sharedText: 'A');
+    await repo.save(
+      job.copyWith(
+        status: ImportStatus.failed,
+        failedStep: ImportStatus.extracted,
+        errorCode: FailureCode.speechModelMissing.name,
+      ),
+    );
+    final engine = ImportEngine(
+      repository: repo,
+      storage: storage,
+      steps: steps.values.toList(),
+      log: log,
+      speechModels: _ReadyModel(),
+      clock: () => now,
+    );
+    await engine.start();
+    await engine.wake();
+
+    expect((await repo.getById(job.id))!.status, ImportStatus.completed);
+    expect(steps[ImportStatus.audio]!.runs, 1);
+  });
+
   test('una tappa non ancora disponibile ferma il job', () async {
     steps.remove(ImportStatus.extracted);
     final job = await repo.create(sharedText: 'A');
@@ -560,4 +618,9 @@ void main() {
     expect(failed.errorCode, 'stepNotAvailable');
     expect(failed.errorDetail, contains('non disponibile'));
   });
+}
+
+class _ReadyModel implements SpeechModelStore {
+  @override
+  Future<File?> readyModel() async => File('modello.bin');
 }

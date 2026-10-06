@@ -15,6 +15,7 @@ import '../domain/import_flow.dart';
 import '../domain/import_job.dart';
 import '../domain/import_step.dart';
 import '../domain/post_page.dart';
+import '../domain/transcription.dart';
 import 'import_job_repository.dart';
 import 'job_storage.dart';
 import '../../settings/data/whisper_model_manager.dart';
@@ -95,6 +96,7 @@ final importEngineProvider = Provider<ImportEngine>((ref) {
     storage: ref.watch(jobStorageProvider),
     steps: ref.watch(importStepsProvider),
     log: ref.watch(appLogProvider),
+    speechModels: ref.watch(whisperModelManagerProvider),
   );
   ref.onDispose(engine.dispose);
   return engine;
@@ -113,14 +115,17 @@ class ImportEngine {
     required JobStorage storage,
     required List<ImportStep> steps,
     required AppLog log,
+    SpeechModelStore? speechModels,
     DateTime Function()? clock,
-  }) : _repo = repository,
+  }) : _speechModels = speechModels,
+       _repo = repository,
        _storage = storage,
        _log = log,
        _clock = clock ?? DateTime.now,
        _steps = {for (final s in steps) s.step: s};
 
   final ImportJobRepository _repo;
+  final SpeechModelStore? _speechModels;
   final JobStorage _storage;
   final AppLog _log;
   final DateTime Function() _clock;
@@ -138,6 +143,7 @@ class ImportEngine {
   Future<void> start() async {
     await _cleanUpFolders();
     await _resumeNowAvailable();
+    await _resumeWaitingForSpeechModel();
     unawaited(wake());
   }
 
@@ -164,10 +170,32 @@ class ImportEngine {
 
   /// Fa ripartire tutti i job falliti con uno dei [codes]: per esempio
   /// quelli fermi per la chiave Gemini quando l'utente la salva (D-39).
-  Future<void> resumeFailed(Set<FailureCode> codes) async {
+  ///
+  /// Con [from] ripartono da quella tappa invece che da quella fallita, e le
+  /// tappe da lì in poi tornano "da fare": per esempio dalla tappa audio
+  /// quando arriva il modello Whisper (D-40).
+  Future<void> resumeFailed(
+    Set<FailureCode> codes, {
+    ImportStatus? from,
+  }) async {
     for (final code in codes) {
       for (final job in await _repo.failedWith(code)) {
-        await _repo.save(_restarted(job));
+        final restarted = _restarted(job);
+        await _repo.save(
+          from == null
+              ? restarted
+              : restarted.copyWith(
+                  status: ImportFlow.statusBefore(from),
+                  data: restarted.data.copyWith(
+                    skippedSteps: {
+                      for (final e in restarted.data.skippedSteps.entries)
+                        if (ImportFlow.steps.indexOf(e.key) <
+                            ImportFlow.steps.indexOf(from))
+                          e.key: e.value,
+                    },
+                  ),
+                ),
+        );
         _log.info('${_tag(job)} riparte dopo ${code.name}');
       }
     }
@@ -373,6 +401,20 @@ class ImportEngine {
       }
     } catch (e, st) {
       _log.error('Ripresa dei job in attesa non riuscita', e, st);
+    }
+  }
+
+  /// Job fermi per il modello Whisper mancante, se intanto il modello c'è:
+  /// copre i casi che la ripresa a fine download non vede (job fallito
+  /// subito dopo, app chiusa prima della ripresa), D-40.
+  Future<void> _resumeWaitingForSpeechModel() async {
+    try {
+      if (await _speechModels?.readyModel() == null) return;
+      await resumeFailed({
+        FailureCode.speechModelMissing,
+      }, from: ImportStatus.audio);
+    } catch (e, st) {
+      _log.error('Ripresa dei job in attesa del modello non riuscita', e, st);
     }
   }
 

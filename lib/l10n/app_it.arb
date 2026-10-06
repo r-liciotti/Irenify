@@ -36,6 +36,173 @@
   "importStepExtracted": "estrazione della ricetta",
   "importStepNutrition": "valori nutrizionali",
   "importStepCompleted": "salvataggio",
+  "actionCancel": "Annulla",
+  "actionDelete": "Elimina",
+  "importActionCaptionOnly": "Continua con la sola didascalia",
+  "importActionOpenRecipe": "Apri la ricetta",
+  "importDeleteTitle": "Eliminare l'importazione?",
+  "importDeleteBody": "L'importazione e i suoi file temporanei verranno eliminati. Le ricette già salvate restano nel ricettario.",
+  "importNotARecipeReason": "Motivo: {reason}",
+  "@importNotARecipeReason": {
+    "placeholders": {
+      "reason": { "type": "String" }
+    }
+  },
+  "importCaptionOnlyChosen": "Solo didascalia",
+  "recipeNotFound": "Questa ricetta non esiste più.",
+  "recipeNeedsReview": "Controlla la ricetta: alcune quantità sono stimate o mancano le porzioni.",
+  "recipeServings": "Porzioni",
+  "recipeServingsValue": "{count} {unit}",
+  "@recipeServingsValue": {
+    "placeholders": {
+      "count": { "type": "String" },
+      "unit": { "type": "String" }
+    }
+  },
+  "recipeBatches": "{count, plural, =1{1 ricetta} other{{count} ricette}}",
+  "@recipeBatches": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recipeServingsLess": "Meno porzioni",
+  "recipeServingsMore": "Più porzioni",
+  "recipeServingsReset": "Porzioni originali",
+  "recipeIngredients": "Ingredienti",
+  "recipeSteps": "Procedimento",
+  "recipeToTaste": "q.b.",
+  "recipeEstimated": "stimata",
+  "recipePrepTime": "Preparazione {minutes} min",
+  "@recipePrepTime": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "recipeCookTime": "Cottura {minutes} min",
+  "@recipeCookTime": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "recipeRestTime": "Riposo {minutes} min",
+  "@recipeRestTime": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "recipeStepDuration": "{minutes} min",
+  "@recipeStepDuration": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "recipeStepTemperature": "{degrees} °C",
+  "@recipeStepTemperature": {
+    "placeholders": {
+      "degrees": { "type": "int" }
+    }
+  },
+  "recipeDifficultyEasy": "Facile",
+  "recipeDifficultyMedium": "Media",
+  "recipeDifficultyHard": "Difficile",
+  "recipeSource": "Fonte",
+  "recipeAuthor": "di {author}",
+  "@recipeAuthor": {
+    "placeholders": {
+      "author": { "type": "String" }
+    }
+  },
+  "recipeOpenPost": "Apri il post originale",
+  "recipeOpenPostFailed": "Impossibile aprire il link.",
+  "recipeCaption": "Didascalia",
+  "recipeTranscript": "Trascrizione",
+  "recipeModel": "Estratta con {model}",
+  "@recipeModel": {
+    "placeholders": {
+      "model": { "type": "String" }
+    }
+  },
+  "recipeFavoriteAdd": "Aggiungi ai preferiti",
+  "recipeFavoriteRemove": "Togli dai preferiti",
+  "recipeDeleteTitle": "Eliminare la ricetta?",
+  "recipeDeleteBody": "«{title}» verrà eliminata definitivamente dal ricettario.",
+  "@recipeDeleteBody": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "unitTeaspoon": "{count, plural, =1{cucchiaino} other{cucchiaini}}",
+  "@unitTeaspoon": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitTablespoon": "{count, plural, =1{cucchiaio} other{cucchiai}}",
+  "@unitTablespoon": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitCup": "{count, plural, =1{tazza} other{tazze}}",
+  "@unitCup": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitGlass": "{count, plural, =1{bicchiere} other{bicchieri}}",
+  "@unitGlass": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitPiece": "{count, plural, =1{pezzo} other{pezzi}}",
+  "@unitPiece": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitClove": "{count, plural, =1{spicchio} other{spicchi}}",
+  "@unitClove": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitLeaf": "{count, plural, =1{foglia} other{foglie}}",
+  "@unitLeaf": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitSprig": "{count, plural, =1{rametto} other{rametti}}",
+  "@unitSprig": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitSlice": "{count, plural, =1{fetta} other{fette}}",
+  "@unitSlice": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitPinch": "{count, plural, =1{pizzico} other{pizzichi}}",
+  "@unitPinch": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitPacket": "{count, plural, =1{bustina} other{bustine}}",
+  "@unitPacket": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
+  "unitBunch": "{count, plural, =1{mazzetto} other{mazzetti}}",
+  "@unitBunch": {
+    "placeholders": {
+      "count": { "type": "num" }
+    }
+  },
 
   "settingsDiagnostics": "Diagnostica",
   "settingsCopyLog": "Copia registro",
@@ -46,8 +213,6 @@
       "count": { "type": "int" }
     }
   },
-  "settingsSpikeTools": "Strumenti di prova (F0)",
-  "settingsSpikeToolsSubtitle": "Schermata provvisoria: analisi link, download e Whisper",
   "geminiSection": "Estrazione delle ricette",
   "geminiKeyTitle": "Chiave Gemini",
   "geminiKeyLoading": "Lettura in corso…",
@@ -137,6 +302,8 @@
   "failureInvalidExtraction": "Gemini non ha restituito una ricetta valida.",
   "failureContentBlocked": "Gemini ha bloccato questo contenuto.",
   "failureLlmUnavailable": "Gemini non risponde in questo momento: riprova più tardi.",
+  "failureSpeechModelMissing": "Per questo video serve la trascrizione: scarica il modello nelle Impostazioni.",
+  "failureVideoTooLong": "Il video dura più di 3 minuti e non ha una didascalia da usare.",
   "actionRetry": "Riprova",
   "actionOpenSettings": "Apri impostazioni"
 }

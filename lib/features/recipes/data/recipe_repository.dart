@@ -209,8 +209,18 @@ class RecipeRepository {
     return row?.recipeId;
   }
 
-  /// Elimina la ricetta e, a cascata, tutti i suoi dati (D-16).
-  /// Restituisce `false` se non esisteva.
+  /// Segna o toglie la ricetta [id] dai preferiti.
+  Future<void> setFavorite(String id, {required bool favorite}) =>
+      (_db.update(_db.recipes)..where((r) => r.id.equals(id))).write(
+        RecipesCompanion(
+          isFavorite: Value(favorite),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+
+  /// Elimina la ricetta e, a cascata, tutti i suoi dati (D-16); i file
+  /// (miniatura) li elimina `RecipeRemover`. Restituisce `false` se non
+  /// esisteva.
   Future<bool> delete(String id) async {
     final count = await (_db.delete(
       _db.recipes,

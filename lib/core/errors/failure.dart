@@ -30,7 +30,9 @@ enum FailureCode {
   nothingToExtract,
   invalidExtraction,
   contentBlocked,
-  llmUnavailable;
+  llmUnavailable,
+  speechModelMissing,
+  videoTooLong;
 
   /// Codice salvato → [FailureCode]; un nome sconosciuto diventa [unexpected].
   static FailureCode fromName(String? name) =>
@@ -49,7 +51,9 @@ enum FailureCode {
     llmUnavailable => RecoveryAction.retry,
     // Il rimedio è inserire o correggere la chiave; salvandola il job
     // riparte da solo (D-39).
-    missingApiKey || invalidApiKey => RecoveryAction.openSettings,
+    missingApiKey ||
+    invalidApiKey ||
+    speechModelMissing => RecoveryAction.openSettings,
     // Ripetere non cambierebbe nulla (D-26).
     unsupportedLink ||
     invalidLink ||
@@ -57,7 +61,8 @@ enum FailureCode {
     stepNotAvailable ||
     notARecipe ||
     nothingToExtract ||
-    contentBlocked => RecoveryAction.none,
+    contentBlocked ||
+    videoTooLong => RecoveryAction.none,
   };
 }
 
@@ -246,4 +251,23 @@ final class LlmUnavailableFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.llmUnavailable;
+}
+
+/// Il post non ha didascalia e la trascrizione è stata saltata perché il
+/// modello Whisper non è scaricato: il job riparte da solo quando lo si
+/// scarica dalle Impostazioni (D-40).
+final class SpeechModelMissingFailure extends Failure {
+  const SpeechModelMissingFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.speechModelMissing;
+}
+
+/// Il video supera i 3 minuti e non c'è una didascalia da usare al posto
+/// della trascrizione (D-30, D-41).
+final class VideoTooLongFailure extends Failure {
+  const VideoTooLongFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.videoTooLong;
 }

@@ -93,11 +93,11 @@ void main() {
     await tester.pumpAndSettle();
     // In fondo alle impostazioni, sotto la chiave Gemini e la trascrizione.
     await tester.scrollUntilVisible(
-      find.text('Strumenti di prova (F0)'),
+      find.text('Copia registro'),
       200,
       scrollable: find.byType(Scrollable).last,
     );
-    expect(find.text('Strumenti di prova (F0)'), findsOneWidget);
+    expect(find.text('Copia registro'), findsOneWidget);
 
     await tester.tap(find.text('Ricette'));
     await tester.pumpAndSettle();

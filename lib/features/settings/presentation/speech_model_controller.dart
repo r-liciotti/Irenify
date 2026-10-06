@@ -5,7 +5,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
 import '../../../core/errors/failure.dart';
+import '../../import_pipeline/data/import_engine.dart';
+import '../../import_pipeline/domain/import_job.dart';
 import '../data/whisper_model_manager.dart';
+
+/// Fa ripartire, dalla tappa audio, i job fermi perché mancava il modello
+/// (D-40). Separato per poterlo sostituire nei test.
+final resumeJobsWaitingForModelProvider = Provider<Future<void> Function()>(
+  (ref) =>
+      () => ref.read(importEngineProvider).resumeFailed(const {
+        FailureCode.speechModelMissing,
+      }, from: ImportStatus.audio),
+);
 
 /// Stato del modello Whisper mostrato nelle impostazioni.
 sealed class SpeechModelState {
@@ -98,6 +109,7 @@ class SpeechModelController extends Notifier<SpeechModelState> {
       final bytes = _manager.expectedBytes;
       log.info('Modello Whisper pronto ($bytes byte)');
       if (ref.mounted) state = SpeechModelReady(bytes);
+      unawaited(_resumeWaitingJobs());
     } on Object catch (e, st) {
       if (!ref.mounted) return;
       if (cancelToken.isCancelled) {
@@ -109,6 +121,18 @@ class SpeechModelController extends Notifier<SpeechModelState> {
       }
     } finally {
       if (identical(_cancelToken, cancelToken)) _cancelToken = null;
+    }
+  }
+
+  /// Fa ripartire i job in attesa del modello (D-40). Un errore qui non
+  /// rende "non riuscito" un download andato a buon fine: lo si registra, e
+  /// al prossimo avvio ci riprova il motore.
+  Future<void> _resumeWaitingJobs() async {
+    final log = ref.read(appLogProvider);
+    try {
+      await ref.read(resumeJobsWaitingForModelProvider)();
+    } on Object catch (e, st) {
+      log.error('Ripresa dei job in attesa del modello non riuscita', e, st);
     }
   }
 
