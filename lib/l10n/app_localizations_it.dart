@@ -329,6 +329,9 @@ class AppLocalizationsIt extends AppLocalizations {
       'usati i sottotitoli della piattaforma';
 
   @override
+  String get importSkipNoSpeech => 'solo musica, nessuna voce';
+
+  @override
   String get importDurationUnderSecond => 'meno di 1 s';
 
   @override
@@ -553,6 +556,12 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get recipeOpenPostFailed => 'Impossibile aprire il link.';
+
+  @override
+  String get recipeOpenOnInstagram => 'Apri il post su Instagram';
+
+  @override
+  String get recipeOpenOnTikTok => 'Apri il post su TikTok';
 
   @override
   String get recipeCaption => 'Didascalia';

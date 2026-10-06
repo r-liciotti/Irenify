@@ -159,6 +159,7 @@
   "importSkipNoModel": "modello della trascrizione non scaricato",
   "importSkipCpuUnsupported": "trascrizione non supportata da questo telefono",
   "importSkipPlatformSubtitles": "usati i sottotitoli della piattaforma",
+  "importSkipNoSpeech": "solo musica, nessuna voce",
   "importDurationUnderSecond": "meno di 1 s",
   "importDurationSeconds": "{seconds} s",
   "@importDurationSeconds": {
@@ -316,6 +317,8 @@
   },
   "recipeOpenPost": "Apri il post originale",
   "recipeOpenPostFailed": "Impossibile aprire il link.",
+  "recipeOpenOnInstagram": "Apri il post su Instagram",
+  "recipeOpenOnTikTok": "Apri il post su TikTok",
   "recipeCaption": "Didascalia",
   "recipeTranscript": "Trascrizione",
   "recipeModel": "Estratta con {model}",

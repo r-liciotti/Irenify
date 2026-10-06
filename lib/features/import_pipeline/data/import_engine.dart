@@ -22,6 +22,8 @@ import 'job_storage.dart';
 import '../../settings/data/whisper_model_manager.dart';
 import 'audio/cpu_compatibility.dart';
 import 'audio/ffmpeg_audio_extractor.dart';
+import 'audio/vad_model.dart';
+import 'audio/whisper_speech_detector.dart';
 import 'audio/whisper_transcriber.dart';
 import 'downloader.dart';
 import 'link_resolver.dart';
@@ -74,13 +76,15 @@ final importStepsProvider = Provider<List<ImportStep>>((ref) {
     MediaStep(clients: clients, downloader: downloader, log: log),
     AudioStep(
       extractor: ref.watch(audioExtractorProvider),
-      models: models,
       cpu: ref.watch(cpuCompatibilityProvider),
     ),
     TranscribeStep(
       transcriber: ref.watch(transcriberProvider),
       models: models,
       screenAwake: ref.watch(screenAwakeProvider),
+      speechDetector: ref.watch(speechDetectorProvider),
+      vadModel: () => ref.read(vadModelProvider.future),
+      log: log,
     ),
     ExtractStep(llm: ref.watch(llmProviderProvider)),
     NutritionStep(lookup: () => ref.read(foodLookupProvider.future)),

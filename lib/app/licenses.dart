@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 /// Licenze dei componenti inclusi nell'app che non arrivano da un pacchetto
 /// Dart (`assets/licenses/`): font, whisper.cpp, modello Whisper e FFmpeg
-/// (D-50), dati nutrizionali USDA, CIQUAL e Open Food Facts (D-54). Le
+/// (D-50), modello Silero VAD (D-61), dati nutrizionali USDA, CIQUAL e Open Food Facts (D-54). Le
 /// mostra la pagina delle licenze di Flutter insieme a quelle dei pacchetti.
 /// Da chiamare una volta, in `main`.
 void registerAppLicenses() {
@@ -16,6 +16,7 @@ const appLicenseFiles = {
   'Manrope': 'assets/licenses/Manrope-OFL.txt',
   'whisper.cpp': 'assets/licenses/whisper.cpp-MIT.txt',
   'Whisper': 'assets/licenses/Whisper-model-MIT.txt',
+  'Silero VAD': 'assets/licenses/Silero-VAD.txt',
   'FFmpeg': 'assets/licenses/FFmpeg-LGPL.txt',
   'USDA FoodData Central': 'assets/licenses/USDA-FoodData-Central.txt',
   'ANSES-CIQUAL': 'assets/licenses/CIQUAL-Etalab.txt',

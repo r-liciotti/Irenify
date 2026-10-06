@@ -106,6 +106,7 @@ String skipReasonText(AppLocalizations l10n, SkippedStep skipped) =>
       SkipReason.noModel => l10n.importSkipNoModel,
       SkipReason.cpuUnsupported => l10n.importSkipCpuUnsupported,
       SkipReason.platformSubtitles => l10n.importSkipPlatformSubtitles,
+      SkipReason.noSpeech => l10n.importSkipNoSpeech,
     };
 
 /// Tappe in verticale, con lo stato e la durata di ognuna.

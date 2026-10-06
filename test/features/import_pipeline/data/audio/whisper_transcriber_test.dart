@@ -64,6 +64,20 @@ void main() {
     expect(whisper.request?.isTranslate, isFalse);
   });
 
+  test('senza modello Silero niente VAD; con il modello lo passa a '
+      'whisper.cpp (D-61)', () async {
+    final whisper = FakeWhisper();
+    final transcriber = WhisperTranscriber(call: whisper.call);
+
+    await transcriber.transcribe(wav, model);
+    expect(whisper.request?.vadModelPath, isNull);
+
+    final vad = File('${dir.path}/ggml-silero-v5.1.2.bin');
+    await transcriber.transcribe(wav, model, vadModel: vad);
+    expect(whisper.request?.vadModelPath, vad.path);
+    expect(whisper.request?.language, 'auto');
+  });
+
   test('restituisce il testo senza spazi ai bordi', () async {
     final whisper = FakeWhisper(text: '  Due uova e 200 g di farina.\n');
 

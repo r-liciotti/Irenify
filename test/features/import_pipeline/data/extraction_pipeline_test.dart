@@ -28,7 +28,14 @@ import 'steps/fake_llm_provider.dart';
 import 'steps/fake_platform_client.dart';
 import 'steps/nutrition_step_test.dart' show FakeFoodLookup;
 import 'steps/transcription_steps_test.dart'
-    show FakeAwake, FakeCpu, FakeExtractor, FakeModels, FakeTranscriber;
+    show
+        FakeAwake,
+        FakeCpu,
+        FakeExtractor,
+        FakeModels,
+        FakeSpeechDetector,
+        FakeTranscriber,
+        fakeVadModelLoader;
 
 /// Tappa di contorno: applica [body] al job.
 class _Step implements ImportStep {
@@ -198,11 +205,14 @@ void main() {
           downloader: Downloader(FakeHttp(const {}).dio),
           log: AppLog(),
         ),
-        AudioStep(extractor: extractor, models: models, cpu: FakeCpu()),
+        AudioStep(extractor: extractor, cpu: FakeCpu()),
         TranscribeStep(
           transcriber: transcriber,
           models: models,
           screenAwake: FakeAwake(),
+          speechDetector: FakeSpeechDetector(const [SpeechSegment(0, 8)]),
+          vadModel: fakeVadModelLoader,
+          log: AppLog(),
         ),
       ],
     );

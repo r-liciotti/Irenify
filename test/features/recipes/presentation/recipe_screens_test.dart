@@ -709,6 +709,23 @@ void main() {
     );
 
     recipesTest(
+      'icona del social sotto il titolo: apre il post (D-60)',
+      seed: (env) => insert(env, sampleRecipe()),
+      (tester, _) async {
+        await openRecipe(tester, 'Torta di mele');
+        // Si vede senza aprire il Procedimento, ed è solo un'icona.
+        final button = find.byTooltip('Apri il post su Instagram');
+        expect(button, findsOneWidget);
+        expect(find.text('Apri il post su Instagram'), findsNothing);
+        // Nei test url_launcher non ha la piattaforma: l'apertura fallisce,
+        // a riprova che il tocco passa dal launcher.
+        await tester.tap(button);
+        await settle(tester);
+        expect(find.text('Impossibile aprire il link.'), findsOneWidget);
+      },
+    );
+
+    recipesTest(
       'senza fonte, didascalia e trascrizione: niente pulsante né sezioni',
       seed: (env) => insert(
         env,
@@ -721,6 +738,10 @@ void main() {
       (tester, _) async {
         await openRecipe(tester, 'Torta di mele');
         expect(find.text('Facile'), findsNothing);
+        expect(
+          find.byKey(const ValueKey('recipe-detail-open-post')),
+          findsNothing,
+        );
         await showSteps(tester);
         expect(find.text('Apri il post originale'), findsNothing);
         expect(find.text('Didascalia'), findsNothing);

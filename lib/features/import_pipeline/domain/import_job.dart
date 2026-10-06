@@ -95,6 +95,10 @@ enum SkipReason {
   /// Audio non necessario: la trascrizione arriva dai sottotitoli della
   /// piattaforma (D-31).
   platformSubtitles,
+
+  /// Nessuna voce nell'audio (solo musica): il rilevatore Silero non trova
+  /// abbastanza parlato (D-61).
+  noSpeech,
 }
 
 @freezed

@@ -10,19 +10,18 @@ import 'transcribe_step.dart' show readSubtitles;
 /// Whisper, nella cartella del job.
 ///
 /// Non serve, e si salta con il motivo, se la trascrizione arriverà dai
-/// sottotitoli della piattaforma (D-31), se il processore non regge la build
-/// di whisper.cpp (D-07) o se il modello non è scaricato.
+/// sottotitoli della piattaforma (D-31) o se il processore non regge la build
+/// di whisper.cpp (D-07), che contiene anche il rilevatore di voce.
+///
+/// Il WAV si estrae anche senza il modello Whisper (D-61): il rilevatore di
+/// voce della tappa trascrizione lo usa per riconoscere i video di sola
+/// musica, che così non restano in attesa del modello.
 class AudioStep implements ImportStep {
-  AudioStep({
-    required AudioExtractor extractor,
-    required SpeechModelStore models,
-    required CpuCompatibility cpu,
-  }) : _extractor = extractor,
-       _models = models,
-       _cpu = cpu;
+  AudioStep({required AudioExtractor extractor, required CpuCompatibility cpu})
+    : _extractor = extractor,
+      _cpu = cpu;
 
   final AudioExtractor _extractor;
-  final SpeechModelStore _models;
   final CpuCompatibility _cpu;
 
   static const audioName = 'audio.wav';
@@ -47,9 +46,6 @@ class AudioStep implements ImportStep {
     }
     if (!await _cpu.supportsWhisper()) {
       return StepResult.notApplicable(job, SkipReason.cpuUnsupported);
-    }
-    if (await _models.readyModel() == null) {
-      return StepResult.notApplicable(job, SkipReason.noModel);
     }
 
     var audio = files.file(audioName);

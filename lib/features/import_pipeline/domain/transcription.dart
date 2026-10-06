@@ -43,7 +43,47 @@ abstract interface class Transcriber {
   /// altrimenti due trascrizioni girerebbero insieme (D-09). Non deve lasciare
   /// file accanto a [wav] (whisper_ggml crea `<wav>.wav`: va eliminato).
   /// Gli errori diventano `TranscriptionFailure`.
-  Future<String> transcribe(File wav, File model);
+  ///
+  /// Con [vadModel] (modello Silero, F6 fase 1, D-61) whisper.cpp trascrive
+  /// solo i tratti parlati.
+  Future<String> transcribe(File wav, File model, {File? vadModel});
+}
+
+/// Un tratto parlato dell'audio, in secondi dall'inizio.
+class SpeechSegment {
+  const SpeechSegment(this.start, this.end);
+
+  final double start;
+  final double end;
+
+  double get duration => end - start;
+
+  @override
+  bool operator ==(Object other) =>
+      other is SpeechSegment && other.start == start && other.end == end;
+
+  @override
+  int get hashCode => Object.hash(start, end);
+
+  @override
+  String toString() => 'SpeechSegment($start–$end)';
+}
+
+/// Sotto questa durata complessiva di parlato il video conta come "solo
+/// musica" e la trascrizione si salta (D-61).
+const minSpeechSeconds = 1.0;
+
+/// C'è abbastanza voce da trascrivere?
+bool hasSpeech(List<SpeechSegment> segments) =>
+    segments.fold<double>(0, (sum, s) => sum + s.duration) >= minSpeechSeconds;
+
+/// Rilevatore di voce (Silero VAD di whisper.cpp, D-61): veloce, non carica
+/// il modello Whisper.
+abstract interface class SpeechDetector {
+  /// Tratti parlati del WAV [wav] (16 kHz mono). `null` se il rilevatore non
+  /// è disponibile su questa piattaforma (iOS fino alla F5): in quel caso si
+  /// trascrive tutto, come prima. Gli altri errori sono eccezioni.
+  Future<List<SpeechSegment>?> detect(File wav);
 }
 
 /// Il processore può eseguire la build di whisper.cpp dell'app?

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../app/theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/recipe.dart';
 import '../../domain/recipe_enums.dart';
 
-/// Parte alta del foglio: titolo, descrizione, tempi e difficoltà, avviso
-/// "Controlla la ricetta" e tag.
+/// Parte alta del foglio: titolo, descrizione, tempi e difficoltà con il
+/// pulsante del post originale (D-60), avviso "Controlla la ricetta" e tag.
 class RecipeDetailHeader extends StatelessWidget {
   const RecipeDetailHeader({
     required this.recipe,
     required this.onTagSelected,
+    required this.onOpenPost,
     super.key,
   });
 
@@ -18,6 +20,9 @@ class RecipeDetailHeader extends StatelessWidget {
 
   /// Tocco su un tag: il ricettario filtrato per quel tag.
   final ValueChanged<String> onTagSelected;
+
+  /// Tocco sull'icona del social: apre il post originale (D-60).
+  final ValueChanged<String> onOpenPost;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +39,7 @@ class RecipeDetailHeader extends StatelessWidget {
       if (recipe.difficulty case final d?)
         (Icons.signal_cellular_alt, _difficultyLabel(l10n, d)),
     ];
+    final postUrl = recipe.source.url;
     final muted = theme.textTheme.bodyMedium?.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
     );
@@ -47,21 +53,39 @@ class RecipeDetailHeader extends StatelessWidget {
             const SizedBox(height: 8),
             Text(description, style: theme.textTheme.bodyLarge),
           ],
-          if (facts.isNotEmpty) ...[
+          if (facts.isNotEmpty || postUrl != null) ...[
             const SizedBox(height: 12),
-            Wrap(
-              spacing: 16,
-              runSpacing: 6,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                for (final (icon, label) in facts)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
+                Expanded(
+                  child: Wrap(
+                    spacing: 16,
+                    runSpacing: 6,
                     children: [
-                      Icon(icon, size: 18, color: colors.accentDecoration),
-                      const SizedBox(width: 6),
-                      Flexible(child: Text(label, style: muted)),
+                      for (final (icon, label) in facts)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              icon,
+                              size: 18,
+                              color: colors.accentDecoration,
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(child: Text(label, style: muted)),
+                          ],
+                        ),
                     ],
                   ),
+                ),
+                if (postUrl != null) ...[
+                  const SizedBox(width: 12),
+                  _OpenPostButton(
+                    platform: recipe.source.platform,
+                    onPressed: () => onOpenPost(postUrl),
+                  ),
+                ],
               ],
             ),
           ],
@@ -104,6 +128,44 @@ class RecipeDetailHeader extends StatelessWidget {
 /// Iniziale maiuscola, solo per l'etichetta: il tag resta quello salvato.
 String _capitalized(String tag) =>
     tag.isEmpty ? tag : tag[0].toUpperCase() + tag.substring(1);
+
+/// Icona del social di origine (logo Instagram o TikTok; freccia per le
+/// altre fonti) che apre il post originale. Solo icona, senza testo (D-60):
+/// la descrizione sta nel tooltip e nel lettore dello schermo.
+class _OpenPostButton extends StatelessWidget {
+  const _OpenPostButton({required this.platform, required this.onPressed});
+
+  final SourcePlatform platform;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final (Widget icon, String label) = switch (platform) {
+      SourcePlatform.instagram => (
+        const FaIcon(FontAwesomeIcons.instagram, size: 22),
+        l10n.recipeOpenOnInstagram,
+      ),
+      SourcePlatform.tiktok => (
+        const FaIcon(FontAwesomeIcons.tiktok, size: 20),
+        l10n.recipeOpenOnTikTok,
+      ),
+      SourcePlatform.file || SourcePlatform.manual => (
+        const Icon(Icons.open_in_new, size: 22),
+        l10n.recipeOpenPost,
+      ),
+    };
+    return IconButton.filledTonal(
+      key: const ValueKey('recipe-detail-open-post'),
+      tooltip: label,
+      // Area di tocco di almeno 48 dp anche con la densità compatta.
+      constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+      onPressed: onPressed,
+      // Il tooltip fa anche da etichetta per il lettore dello schermo.
+      icon: icon,
+    );
+  }
+}
 
 class _ReviewBanner extends StatelessWidget {
   const _ReviewBanner();

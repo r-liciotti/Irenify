@@ -382,6 +382,11 @@ void main() {
     expect(text('whisper.cpp'), contains('The ggml authors'));
     expect(text('Whisper'), contains('Copyright (c) 2022 OpenAI'));
     expect(text('Whisper'), contains('ggerganov/whisper.cpp'));
+    expect(
+      text('Silero VAD'),
+      contains('Copyright (c) 2020-present Silero Team'),
+    );
+    expect(text('Silero VAD'), contains('snakers4/silero-vad'));
     expect(text('FFmpeg'), contains('Lesser General Public License'));
     expect(text('FFmpeg'), contains('https://ffmpeg.org'));
     expect(text('USDA FoodData Central'), contains('CC0'));

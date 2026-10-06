@@ -622,6 +622,12 @@ abstract class AppLocalizations {
   /// **'usati i sottotitoli della piattaforma'**
   String get importSkipPlatformSubtitles;
 
+  /// No description provided for @importSkipNoSpeech.
+  ///
+  /// In it, this message translates to:
+  /// **'solo musica, nessuna voce'**
+  String get importSkipNoSpeech;
+
   /// No description provided for @importDurationUnderSecond.
   ///
   /// In it, this message translates to:
@@ -969,6 +975,18 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Impossibile aprire il link.'**
   String get recipeOpenPostFailed;
+
+  /// No description provided for @recipeOpenOnInstagram.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri il post su Instagram'**
+  String get recipeOpenOnInstagram;
+
+  /// No description provided for @recipeOpenOnTikTok.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri il post su TikTok'**
+  String get recipeOpenOnTikTok;
 
   /// No description provided for @recipeCaption.
   ///

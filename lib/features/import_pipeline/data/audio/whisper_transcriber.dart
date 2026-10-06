@@ -49,21 +49,27 @@ class WhisperTranscriber implements Transcriber {
 
   /// Richiesta per whisper.cpp: lingua riconosciuta, niente traduzione,
   /// senza timestamp e **senza `initialPrompt`** (lo rallenta da 1,3 a 9
-  /// volte, D-10).
-  static TranscribeRequest request(File wav) => TranscribeRequest(
-    audio: wav.path,
-    language: language,
-    threads: threads,
-    isNoTimestamps: true,
-    splitOnWord: false,
-  );
+  /// volte, D-10). Con [vadModel] whisper.cpp trascrive solo i tratti
+  /// parlati (Silero VAD, D-61).
+  static TranscribeRequest request(File wav, {File? vadModel}) =>
+      TranscribeRequest(
+        audio: wav.path,
+        language: language,
+        threads: threads,
+        isNoTimestamps: true,
+        splitOnWord: false,
+        vadModelPath: vadModel?.path,
+      );
 
   @override
-  Future<String> transcribe(File wav, File model) async {
+  Future<String> transcribe(File wav, File model, {File? vadModel}) async {
     // Niente timeout: whisper.cpp non si può interrompere e una seconda
     // trascrizione partirebbe mentre la prima gira ancora (D-09).
     try {
-      final text = await _call(modelPath: model.path, request: request(wav));
+      final text = await _call(
+        modelPath: model.path,
+        request: request(wav, vadModel: vadModel),
+      );
       return text.trim();
     } on Object catch (error, stackTrace) {
       throw TranscriptionFailure(cause: error, stackTrace: stackTrace);

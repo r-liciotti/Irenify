@@ -175,6 +175,16 @@ Future<void> _scrollTo(WidgetTester tester, Finder finder) async {
 const _addVideo = 'Aggiungi il video';
 
 void main() {
+  test('motivo "solo musica" della trascrizione saltata (D-61)', () {
+    expect(
+      skipReasonText(
+        lookupAppLocalizations(const Locale('it')),
+        const SkippedStep(reason: SkipReason.noSpeech),
+      ),
+      'solo musica, nessuna voce',
+    );
+  });
+
   testWidgets('job concluso: tappe fatte e saltate con durata e motivo', (
     tester,
   ) async {

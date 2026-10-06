@@ -28,6 +28,7 @@ const _$SkipReasonEnumMap = {
   SkipReason.noModel: 'noModel',
   SkipReason.cpuUnsupported: 'cpuUnsupported',
   SkipReason.platformSubtitles: 'platformSubtitles',
+  SkipReason.noSpeech: 'noSpeech',
 };
 
 _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>

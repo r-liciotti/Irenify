@@ -20,7 +20,7 @@ Come nelle macro-fasi precedenti (D-13):
 | 2 | Altri telefoni | Whisper sceglie a runtime la libreria adatta al processore; l'APK firmato funziona anche fuori dal Pixel 9 Pro | ✅ utente (D-59) |
 | 3 | Offline e quote | Il job aspetta la rete o il rinnovo della quota giornaliera di Gemini (mezzanotte del Pacifico) e riparte da solo; "Riprova" resta | ✅ utente (D-59) |
 
-## Fase 1 — Video senza voce (≈ 0,75 gg)
+## Fase 1 — Video senza voce (≈ 0,75 gg) — 🟡 sviluppata il 2026-10-06, manca la prova con un reel di sola musica
 
 Rilevatore di voce Silero (VAD) di whisper.cpp 1.9.1, già incluso ma non esposto da `whisper_ggml` 2.6.0:
 - pacchetto copiato nel progetto, con un comando nativo "c'è voce?" e i tratti parlati;
@@ -30,7 +30,22 @@ Rilevatore di voce Silero (VAD) di whisper.cpp 1.9.1, già incluso ma non espost
 
 Esempio da battere: reel di 13,6 s di sola musica, 49 s di trascrizione inutile.
 
-**Uscita:** sul Pixel un reel di sola musica non passa più da Whisper; un reel parlato si trascrive come prima.
+Insieme (D-60): pulsante "Guarda su Instagram/TikTok" sotto il titolo della ricetta.
+
+**Uscita:** sul Pixel un reel di sola musica non passa più da Whisper; un reel parlato si trascrive come prima; dal
+dettaglio si apre il post originale.
+
+**Com'è andata:**
+- **Sviluppo:** `whisper_ggml` copiato in `packages/` (D-61), poi 3 subagent:
+  - codice nativo: richiesta `detectSpeech` e `vad_model_path` nella trascrizione;
+  - tappa: `WhisperSpeechDetector`, `vad_model.dart`, `TranscribeStep` con `noSpeech`; il rilevatore gira prima del
+    controllo del modello Whisper, quindi `AudioStep` estrae il WAV anche senza modello;
+  - icona del post sotto il titolo (D-60).
+- **Test:** 864 passati.
+- **Prova sul Pixel:** reel parlato di 38 s trascritto con VAD in 30 s, testo corretto; icona di Instagram visibile
+  nel dettaglio.
+- **Da fare:** prova di un reel di sola musica (serve un link nuovo dall'utente: quello delle Cinnamon Tortilla Rolls
+  è già nel ricettario e verrebbe riconosciuto come doppione).
 
 ## Fase 2 — Offline e quote (≈ 0,75 gg)
 

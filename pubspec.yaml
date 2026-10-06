@@ -59,6 +59,14 @@ dependencies:
   file_picker: ^13.1.0
   sqlite3: ^3.5.2
   package_info_plus: ^10.2.2
+  font_awesome_flutter: ^11.0.0
+
+
+# whisper_ggml copiato nel progetto (F6 fase 1, D-61): aggiunge il rilevatore di voce
+# Silero (richiesta nativa `detectSpeech`) e la trascrizione dei soli tratti parlati.
+dependency_overrides:
+  whisper_ggml:
+    path: packages/whisper_ggml
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +103,7 @@ flutter:
   # alimenti (D-54) generato da tool/nutrition/build_food_db.dart.
   assets:
     - assets/branding/
+    - assets/whisper/
     - assets/licenses/
     - assets/nutrition/
 

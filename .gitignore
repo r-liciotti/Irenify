@@ -59,3 +59,8 @@ WORKLOG.md
 
 # Dataset scaricati da tool/nutrition/build_food_db.dart
 tool/nutrition/.cache/
+
+# Artefatti della build nativa del pacchetto copiato (F6, D-61)
+packages/whisper_ggml/android/.cxx/
+packages/whisper_ggml/android/build/
+packages/whisper_ggml/.dart_tool/

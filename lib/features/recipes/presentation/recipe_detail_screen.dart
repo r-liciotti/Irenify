@@ -119,7 +119,11 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
             onDelete: () => _delete(recipe),
           ),
           SliverToBoxAdapter(
-            child: RecipeDetailHeader(recipe: recipe, onTagSelected: _showTag),
+            child: RecipeDetailHeader(
+              recipe: recipe,
+              onTagSelected: _showTag,
+              onOpenPost: _openPost,
+            ),
           ),
           SliverPersistentHeader(
             pinned: true,

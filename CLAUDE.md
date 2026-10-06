@@ -65,7 +65,11 @@ salvataggio con la ricetta (`RecipeRepository.insert(…, nutrition:)`, `saveNut
 Nutrienti nel dettaglio (`nutrition/presentation/recipe_nutrition_tab.dart`, D-58; valori ricalcolati all'apertura con
 `recipeNutritionProvider`). **F4 conclusa.** Nei widget test il database degli alimenti si apre dall'asset con
 `assetFoodLookupOverride()` (`test/app/test_food_lookup.dart`). **F6 pianificata** (`F6_PIANO.md`, D-59: VAD, offline e
-quote con attesa automatica, backup zip, Whisper per altri telefoni e APK firmato, prova su 30 link). Prossima: fase 1. Prove dal vivo D-44 ancora aperte.
+quote con attesa automatica, backup zip, Whisper per altri telefoni e APK firmato, prova su 30 link). Fase 1 (2026-10-06, manca la prova di sola musica): rilevatore di voce Silero (D-61) con
+`whisper_ggml` **copiato in `packages/whisper_ggml/`** (`dependency_overrides`; modifiche native marcate "Irenefy
+(D-61)" in `android/src/whisper/main.cpp`; i file generati del pacchetto vanno rigenerati con cura: `--delete-conflicting-outputs`
+cancella gli altri), modello `assets/whisper/ggml-silero-v5.1.2.bin`, motivo `noSpeech`; icona del post originale sotto il
+titolo (D-60, `font_awesome_flutter`). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

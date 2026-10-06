@@ -11,6 +11,35 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-61 — Rilevatore di voce Silero e whisper_ggml copiato nel progetto (2026-10-06) — Attiva
+- **Decisione:**
+  - **Pacchetto:** `whisper_ggml` 2.6.0 copiato in `packages/whisper_ggml/` (solo `lib`, `android`, `ios`, circa
+    11 MB) e usato con `dependency_overrides`.
+  - **Comando nativo:** nuova richiesta `detectSpeech` che restituisce i tratti parlati (Silero VAD di whisper.cpp
+    1.9.1, senza caricare Whisper).
+  - **Trascrizione:** con `vad` attivo trascrive solo il parlato.
+  - **Modello:** `ggml-silero-v5.1.2.bin` (885.098 byte, MIT, sha256 `29940d98…ea2cf`) incluso come asset
+    `assets/whisper/`.
+  - **Tappa:** sotto 1 s di parlato complessivo la trascrizione si salta con il motivo `noSpeech` ("solo musica,
+    nessuna voce").
+  - **iOS:** fino alla F5 il rilevatore non c'è e si trascrive tutto, come prima.
+- **Limite:** Silero può scambiare il canto per voce: le canzoni con parole possono ancora essere trascritte.
+- **Alternative scartate:** VAD in Dart con un'altra libreria (onnxruntime, dipendenza pesante); modello scaricato a
+  parte come quello di Whisper (1 MB non giustifica un download).
+- **Deciso da:** utente ("si" al resoconto della fase 1 della F6).
+
+## D-60 — Pulsante "Guarda su Instagram/TikTok" sotto il titolo della ricetta (2026-10-06) — Attiva
+- **Decisione:** nel dettaglio della ricetta, sotto titolo e tempi, un pulsante con **l'icona** del social di origine
+  (logo Instagram o TikTok da `font_awesome_flutter`, senza testo: correzione dell'utente "non scrivere guarda su
+  instagram ma utilizza una icona"; tooltip e lettore dello schermo dicono "Apri il post su Instagram/TikTok") apre il
+  post originale. Si mostra solo se la ricetta ha un link: i video
+  condivisi come file non ce l'hanno. Il pulsante "Apri il post originale" in fondo al Procedimento resta. Va
+  sviluppato insieme alla fase 1 della F6.
+- **Alternative scartate:** icona del social sulla foto accanto a cuore e cestino (meno evidente); tocco sulla foto
+  (poco scopribile).
+- **Deciso da:** utente ("inseriamo anche un pulsante per rivedere la ricetta nel social di riferimento"; posizione
+  "Sotto il titolo").
+
 ## D-59 — F6: backup zip, APK per altri telefoni, attesa automatica di rete e quota (2026-10-06) — Attiva
 - **Decisione:**
   - **Backup:** un file `.zip` con le ricette in JSON (versionato) e le miniature, salvato dove sceglie l'utente;
