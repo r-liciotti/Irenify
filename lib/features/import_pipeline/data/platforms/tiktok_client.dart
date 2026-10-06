@@ -197,16 +197,33 @@ PostPage _pageFromItem(Map<String, Object?> item, String? chainToken) {
   );
 }
 
-/// Sottotitoli WebVTT in italiano, se ci sono: in un'altra lingua non
-/// servono e si trascrive con Whisper (D-31).
+/// Sottotitoli WebVTT da usare al posto di Whisper (D-31, D-53), in ordine:
+/// quelli italiani riconosciuti dall'audio (`Source` "ASR"), quelli
+/// riconosciuti dall'audio in un'altra lingua (la lingua del parlato: la
+/// ricetta la traduce Gemini), quelli italiani tradotti automaticamente da
+/// TikTok. Le traduzioni in altre lingue non servono; senza sottotitoli si
+/// trascrive con Whisper.
 Uri? _subtitlesUrl(Object? infos) {
   if (infos is! List<Object?>) return null;
+  Uri? best;
+  var bestRank = 0;
   for (final entry in infos.map(_map).nonNulls) {
-    final italian = (_text(entry['LanguageCodeName']) ?? '').startsWith('ita');
     final url = _uri(entry['Url']);
-    if (entry['Format'] == 'webvtt' && italian && url != null) return url;
+    if (entry['Format'] != 'webvtt' || url == null) continue;
+    final italian = (_text(entry['LanguageCodeName']) ?? '').startsWith('ita');
+    final spoken = _text(entry['Source'])?.toUpperCase() == 'ASR';
+    final rank = switch ((italian, spoken)) {
+      (true, true) => 3,
+      (false, true) => 2,
+      (true, false) => 1,
+      (false, false) => 0,
+    };
+    if (rank > bestRank) {
+      best = url;
+      bestRank = rank;
+    }
   }
-  return null;
+  return best;
 }
 
 /// Primo oggetto `itemStruct` in profondità.

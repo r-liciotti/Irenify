@@ -50,6 +50,16 @@ e lasciamo appassire
         'Grattugiamo la zucca',
       );
     });
+
+    test('toglie anche la frase inventata in inglese (D-53)', () {
+      expect(
+        cleanTranscript(
+          'Spread the butter on the tortilla\n'
+          'Subtitles by the Amara.org community',
+        ),
+        'Spread the butter on the tortilla',
+      );
+    });
   });
 
   group('qualità', () {
@@ -66,6 +76,16 @@ e lasciamo appassire
         ),
         TranscriptQuality.ok,
       );
+    });
+
+    test('un parlato in inglese vale come uno in italiano (D-53)', () {
+      expect(
+        assessTranscript(
+          'Spread the butter, sprinkle cinnamon and sugar, then roll it up',
+        ),
+        TranscriptQuality.ok,
+      );
+      expect(assessTranscript('Hi guys!'), TranscriptQuality.low);
     });
 
     test('una frase ripetuta in loop è scarsa', () {

@@ -78,12 +78,14 @@ Map<String, Object?> _object(Map<String, Object?> properties) => {
 final _ingredient = _object({
   RecipeJson.group: _nullable(
     'string',
-    'Nome del gruppo come nella fonte ("Per la crema"); null se la ricetta '
+    'Nome del gruppo in italiano ("Per la crema"); null se la ricetta '
         'non divide gli ingredienti in gruppi.',
   ),
   RecipeJson.name: {
     'type': 'string',
-    'description': 'Nome in italiano come nella fonte ("farina 00").',
+    'description':
+        'Nome in italiano, tradotto se la fonte è in un\'altra lingua '
+        '("farina 00").',
   },
   RecipeJson.quantity: _nullable(
     'number',
@@ -153,10 +155,14 @@ final Map<String, Object?> recipeResponseSchema = _object({
     'string',
     'Se isRecipe è false: perché, in una frase in italiano; altrimenti null.',
   ),
-  RecipeJson.title: _nullable('string', 'Titolo breve della ricetta.'),
+  RecipeJson.title: _nullable(
+    'string',
+    'Titolo breve della ricetta, in italiano.',
+  ),
   RecipeJson.description: _nullable(
     'string',
-    'Una o due frasi di presentazione tratte dalla fonte; null se assenti.',
+    'Una o due frasi di presentazione tratte dalla fonte, in italiano; null '
+        'se assenti.',
   ),
   RecipeJson.servings: _nullable(
     'number',

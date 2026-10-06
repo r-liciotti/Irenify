@@ -56,3 +56,6 @@ WORKLOG.md
 
 # Copie isolate dei subagent (git worktree)
 .claude/worktrees/
+
+# Dataset scaricati da tool/nutrition/build_food_db.dart
+tool/nutrition/.cache/

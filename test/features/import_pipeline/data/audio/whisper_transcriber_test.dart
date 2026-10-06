@@ -43,28 +43,26 @@ void main() {
 
   tearDown(() => dir.deleteSync(recursive: true));
 
-  test(
-    'passa a whisper.cpp i parametri della D-10 e il percorso del modello',
-    () async {
-      final whisper = FakeWhisper();
+  test('passa a whisper.cpp i parametri della D-10, la lingua riconosciuta '
+      '(D-53) e il percorso del modello', () async {
+    final whisper = FakeWhisper();
 
-      await WhisperTranscriber(call: whisper.call).transcribe(wav, model);
+    await WhisperTranscriber(call: whisper.call).transcribe(wav, model);
 
-      expect(whisper.modelPath, model.path);
-      expect(
-        whisper.request,
-        TranscribeRequest(
-          audio: wav.path,
-          language: 'it',
-          threads: 8,
-          isNoTimestamps: true,
-        ),
-      );
-      expect(whisper.request?.initialPrompt, isNull);
-      expect(whisper.request?.splitOnWord, isFalse);
-      expect(whisper.request?.isTranslate, isFalse);
-    },
-  );
+    expect(whisper.modelPath, model.path);
+    expect(
+      whisper.request,
+      TranscribeRequest(
+        audio: wav.path,
+        language: 'auto',
+        threads: 8,
+        isNoTimestamps: true,
+      ),
+    );
+    expect(whisper.request?.initialPrompt, isNull);
+    expect(whisper.request?.splitOnWord, isFalse);
+    expect(whisper.request?.isTranslate, isFalse);
+  });
 
   test('restituisce il testo senza spazi ai bordi', () async {
     final whisper = FakeWhisper(text: '  Due uova e 200 g di farina.\n');

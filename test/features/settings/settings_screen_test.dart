@@ -384,6 +384,13 @@ void main() {
     expect(text('Whisper'), contains('ggerganov/whisper.cpp'));
     expect(text('FFmpeg'), contains('Lesser General Public License'));
     expect(text('FFmpeg'), contains('https://ffmpeg.org'));
+    expect(text('USDA FoodData Central'), contains('CC0'));
+    expect(
+      text('USDA FoodData Central'),
+      contains('Agricultural Research Service. FoodData'),
+    );
+    expect(text('ANSES-CIQUAL'), contains('Etalab'));
+    expect(text('ANSES-CIQUAL'), contains('Ciqual'));
     for (final font in ['Gloock', 'Manrope']) {
       expect(text(font), contains('SIL Open Font License'), reason: font);
     }

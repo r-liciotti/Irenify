@@ -25,8 +25,9 @@ String subtitlesToText(String vtt) {
 }
 
 /// Toglie dalla trascrizione ciò che non è parlato: `[Musica]`, `(applausi)`,
-/// note musicali e le frasi che Whisper inventa sul silenzio in italiano
-/// (titoli di coda dei sottotitoli con cui è stato addestrato).
+/// note musicali e le frasi che Whisper inventa sul silenzio, in italiano e
+/// in inglese (titoli di coda dei sottotitoli con cui è stato addestrato).
+/// La qualità non dipende dalla lingua: conta solo parole e ripetizioni.
 String cleanTranscript(String text) {
   var cleaned = text.replaceAll(_nonSpeech, ' ');
   for (final phrase in _hallucinations) {
@@ -67,6 +68,7 @@ final _hallucinations = [
     caseSensitive: false,
   ),
   RegExp(r'Sottotitoli a cura di [^\n.]*\.?', caseSensitive: false),
+  RegExp(r'Subtitles by the Amara\.org community\.?', caseSensitive: false),
   RegExp(r'Amara\.org', caseSensitive: false),
 ];
 

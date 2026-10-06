@@ -11,6 +11,57 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-54 — Valori nutrizionali: fonti, grammi, q.b., visualizzazione (2026-10-06) — Attiva
+- **Decisione:**
+  - **Fonti:**
+    - **USDA SR Legacy** come base (CC0, ~7.800 alimenti, porzioni in grammi);
+    - **Foundation** solo per gli alimenti con tutti gli 8 nutrienti;
+    - **CIQUAL 2025** (ANSES, Licence Ouverte/Etalab 2.0, attribuzione nelle Licenze) per i prodotti italiani assenti
+      in USDA.
+  - **Abbinamento:** tabella curata di circa 300 ingredienti (alias inglesi e italiani → alimento), con FTS5 filtrato
+    come ripiego; si cerca su `canonicalNameEn` dato da Gemini.
+  - **Grammi:** dalla quantità quando la conversione è certa (g, kg, ml con la densità, cucchiai, tazze e pezzi con
+    le porzioni USDA); altrimenti `gramsEstimate` di Gemini.
+  - **q.b.:** esclusi dal totale, con la scritta "esclusi i q.b.".
+  - **Scheda Nutrienti:** per porzione, con selettore "per porzione / ricetta intera / per 100 g"; copertura del peso
+    e ingredienti non abbinati visibili; valori sempre indicati come stime.
+- **Alternative scartate:**
+  - solo USDA, con equivalenti approssimati (guanciale → bacon);
+  - grammi sempre da Gemini;
+  - q.b. contati con la stima di Gemini (inventata);
+  - solo valori per porzione;
+  - CREA e BDA IEO (licenze non compatibili);
+  - abbinamento solo con FTS5 (abbina male: "egg" → "Bread, egg").
+- **Deciso da:** utente ("1 B, 2 A, 3 A, 4 a").
+
+## D-53 — Ricette sempre in italiano; lingua della trascrizione riconosciuta automaticamente (2026-10-06) — Attiva
+- **Decisione:**
+  - **Ricetta sempre in italiano:** la prima regola del prompt di Gemini (`gemini_prompt.dart`) chiede titolo,
+    descrizione, unità delle porzioni, nomi e note degli ingredienti, gruppi, passaggi e motivo di "non è una
+    ricetta" sempre in italiano, traducendo se la fonte è in un'altra lingua. I nomi di piatti senza traduzione
+    d'uso comune restano ("brownies", "tortilla"), il resto del titolo si traduce. Quantità e unità restano quelle
+    della fonte (convertite solo nei valori dello schema, "tbsp" → "tablespoon"); `canonicalNameEn` resta in
+    inglese. Allineate le descrizioni dello schema (`recipe_schema.dart`).
+  - **Whisper riconosce la lingua:** `WhisperTranscriber` passa `language: 'auto'` (prima `'it'`). Verificato nel
+    sorgente di `whisper_ggml` 2.6.0 per Android (`android/src/whisper/main.cpp`): `'auto'` salta il controllo
+    della lingua e arriva a `wparams.language`; whisper.cpp 1.9.1 riconosce la lingua sui primi 30 s e poi
+    trascrive (`detect_language` resta false, nessuna traduzione).
+  - **Sottotitoli TikTok (modifica la D-31):** in ordine, i sottotitoli italiani riconosciuti dall'audio
+    (`Source` "ASR"), quelli riconosciuti dall'audio in un'altra lingua (la lingua del parlato), quelli italiani
+    tradotti da TikTok; le traduzioni in altre lingue no. Senza nessuno di questi si usa Whisper, come prima.
+  - Tolta anche la frase che Whisper inventa sul silenzio in inglese ("Subtitles by the Amara.org community"). La
+    valutazione della qualità della trascrizione non dipendeva già dalla lingua.
+- **Perché:** l'utente ha importato un reel in inglese ("Easy Cinnamon Tortilla Rolls"): titolo, descrizione e
+  ingredienti sono rimasti in inglese (il prompt chiedeva l'italiano solo per i passaggi) e Whisper, forzato
+  sull'italiano, trascrive male un parlato inglese.
+- **Da verificare sul telefono:** il riconoscimento aggiunge un passaggio del codificatore sui primi 30 s (qualche
+  secondo in più per video); controllare che i reel italiani con musica vengano ancora riconosciuti come italiani.
+  Su iOS (F5) il codice nativo del pacchetto (`ios/Classes/whisper_flutter_plus.cpp`) **rifiuta** `'auto'`
+  ("unknown language"): andrà corretto prima della prova su iPhone.
+- **Alternative scartate:** Whisper solo in italiano (trascrizioni inservibili sui reel stranieri); traduzione
+  lasciata all'utente (ricette miste italiano/inglese nel ricettario).
+- **Deciso da:** utente ("si fai uno e due"); regola dei sottotitoli TikTok proposta da Claude durante lo sviluppo.
+
 ## D-52 — Importazioni dentro Impostazioni e schermata di caricamento (2026-10-06) — Attiva
 - **Decisione:**
   - **Barra in basso con 2 schede**, Ricette e Impostazioni. Il badge delle importazioni da seguire passa sulla
@@ -218,7 +269,7 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
   comuni); l'agente principale unisce, verifica e prova sul telefono.
 - **Deciso da:** utente ("va bene, ottimizza l'utilizzo dei subagent").
 
-## D-31 — Sottotitoli automatici di TikTok al posto di Whisper quando ci sono (2026-10-02) — Attiva
+## D-31 — Sottotitoli automatici di TikTok al posto di Whisper quando ci sono (2026-10-02) — Attiva (scelta della lingua modificata da D-53)
 - **Decisione:** se la pagina TikTok offre i sottotitoli automatici **in italiano** (WebVTT), la tappa video li
   scarica e la trascrizione usa quelli (niente Whisper, niente conversione audio); se mancano o sono vuoti si usa
   Whisper. Il job annota la fonte della trascrizione.

@@ -29,6 +29,35 @@ void main() {
       expect(geminiSystemPrompt, contains(captionLabel));
       expect(geminiSystemPrompt, contains(transcriptLabel));
     });
+
+    test('chiede tutta la ricetta in italiano, traducendo (D-53)', () {
+      final rules = geminiSystemPrompt.split('Regole:\n').last;
+      final language = rules.split('\n').first;
+
+      // È la prima regola e copre tutti i testi della ricetta.
+      expect(language, startsWith('- Lingua:'));
+      for (final key in [
+        RecipeJson.title,
+        RecipeJson.description,
+        RecipeJson.servingsUnit,
+        RecipeJson.name,
+        RecipeJson.note,
+        RecipeJson.group,
+        RecipeJson.steps,
+        RecipeJson.notRecipeReason,
+      ]) {
+        expect(language, contains(key));
+      }
+      expect(language, contains('SEMPRE in italiano'));
+      expect(language, contains('traduci'));
+      expect(language, contains('"tbsp" → "tablespoon"'));
+      expect(
+        language,
+        contains('Solo ${RecipeJson.canonicalNameEn} resta in inglese'),
+      );
+      // La regola dei passaggi non ripete più la lingua.
+      expect(geminiSystemPrompt, isNot(contains('passaggi brevi in italiano')));
+    });
   });
 
   group('messaggio dell\'utente', () {

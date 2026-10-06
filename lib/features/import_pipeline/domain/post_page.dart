@@ -60,7 +60,7 @@ class PostPage {
   final VideoDownload? download;
 
   /// Sottotitoli automatici (WebVTT) offerti dalla piattaforma, se ci sono:
-  /// su TikTok, preferibilmente in italiano (D-31).
+  /// su TikTok, in italiano o nella lingua del parlato (D-31, D-53).
   final Uri? subtitlesUrl;
 }
 

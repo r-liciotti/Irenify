@@ -193,11 +193,15 @@ void main() {
       );
     }
 
-    Map<String, String> subtitle(String language, String format) => {
+    Map<String, String> subtitle(
+      String language,
+      String format, {
+      String source = 'ASR',
+    }) => {
       'LanguageCodeName': language,
-      'Url': 'https://sottotitoli.example/$language/$format',
+      'Url': 'https://sottotitoli.example/$language/$format/$source',
       'Format': format,
-      'Source': 'ASR',
+      'Source': source,
     };
 
     Uri? subtitlesOf(String html) => parseTikTokPage(html)!.subtitlesUrl;
@@ -210,17 +214,54 @@ void main() {
       ]);
       expect(
         subtitlesOf(html).toString(),
-        'https://sottotitoli.example/ita-IT/webvtt',
+        'https://sottotitoli.example/ita-IT/webvtt/ASR',
       );
     });
 
-    test('senza italiano: nessuno, si trascrive con Whisper (D-31)', () {
+    test('senza italiano: quelli della lingua parlata, non le traduzioni '
+        '(D-53)', () {
       final html = withSubtitles([
-        subtitle('spa-ES', 'srt'),
+        subtitle('spa-ES', 'webvtt', source: 'MT'),
+        subtitle('eng-US', 'srt'),
         subtitle('eng-US', 'webvtt'),
-        subtitle('fra-FR', 'webvtt'),
+        subtitle('fra-FR', 'webvtt', source: 'MT'),
       ]);
-      expect(subtitlesOf(html), isNull);
+      expect(
+        subtitlesOf(html).toString(),
+        'https://sottotitoli.example/eng-US/webvtt/ASR',
+      );
+    });
+
+    test("la lingua parlata batte l'italiano tradotto da TikTok (D-53)", () {
+      final html = withSubtitles([
+        subtitle('ita-IT', 'webvtt', source: 'MT'),
+        subtitle('eng-US', 'webvtt'),
+      ]);
+      expect(
+        subtitlesOf(html).toString(),
+        'https://sottotitoli.example/eng-US/webvtt/ASR',
+      );
+    });
+
+    test("solo traduzioni: l'italiano, altrimenti nessuno (Whisper)", () {
+      expect(
+        subtitlesOf(
+          withSubtitles([
+            subtitle('eng-US', 'webvtt', source: 'MT'),
+            subtitle('ita-IT', 'webvtt', source: 'MT'),
+          ]),
+        ).toString(),
+        'https://sottotitoli.example/ita-IT/webvtt/MT',
+      );
+      expect(
+        subtitlesOf(
+          withSubtitles([
+            subtitle('spa-ES', 'webvtt', source: 'MT'),
+            subtitle('fra-FR', 'webvtt', source: 'MT'),
+          ]),
+        ),
+        isNull,
+      );
     });
 
     test('senza WebVTT o senza sottotitoli: nessuno', () {

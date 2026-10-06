@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F2 fase 6)
+## Stato (aggiornato al 2026-10-06, F4 fase 1)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -26,7 +26,7 @@ tappa `NormalizeLinkStep` + `LinkResolver`, scorciatoia di condivisione e correz
 **Fase 6 (audio e trascrizione) completata il 2026-10-02**: contratto in `domain/transcription.dart`, tappe `AudioStep` e
 `TranscribeStep`, implementazioni in `data/audio/` (FFmpeg diretto, Whisper, controllo CPU), testo e qualità in
 `domain/transcript_text.dart`, modello gestito da `features/settings/data/whisper_model_manager.dart` (Impostazioni →
-"Trascrizione"). Sottotitoli TikTok in italiano al posto di Whisper (D-31); Whisper solo ad app aperta e con lo schermo
+"Trascrizione"). Sottotitoli TikTok al posto di Whisper (D-31; dal 2026-10-06 anche nella lingua parlata, D-53); Whisper solo ad app aperta e con lo schermo
 acceso (D-34). Sul Pixel: 0,89 s per secondo di audio (build di debug), picco ~935 MB PSS.
 **Fase 7 (estrazione con Gemini) completata il 2026-10-02**: contratto in `domain/llm_provider.dart` e
 `domain/recipe_schema.dart`, client REST in `data/llm/gemini_provider.dart` (+ `gemini_prompt.dart`), tappe
@@ -50,7 +50,11 @@ motore, `canAddVideo` in `domain/import_flow.dart`, `takeFile` in `job_storage.d
 avvio (`features/onboarding/`, D-50), impostazioni con tema, "Elimina dati" (`settings/data/data_eraser.dart`), guida,
 versione e licenze. Revisione del codice della F2 fatta e corretta (16 difetti). D-52: barra a 2 schede (Ricette, Impostazioni; in futuro
 Piano pasti e Spesa), Importazioni dentro le Impostazioni (`/impostazioni/importazioni`), schermata di caricamento
-`/importazione/:id` aperta da ogni condivisione. Prova dal vivo completa rimandata (D-51). Prossima: F4 (nutrizione). Prove dal vivo D-44 ancora aperte.
+`/importazione/:id` aperta da ogni condivisione. Prova dal vivo completa rimandata (D-51). D-53: ricette sempre in italiano (tradotte da Gemini), Whisper con lingua `auto` (su iOS va corretto il
+codice nativo prima della F5). F4 in corso (piano in `F4_PIANO.md`, D-54): fase 1 (2026-10-06) database degli alimenti
+`assets/nutrition/foods.sqlite` generato da `dart run tool/nutrition/build_food_db.dart` (USDA SR Legacy + CIQUAL, tabella
+curata `tool/nutrition/curated_foods.csv`, contratto in `lib/features/nutrition/data/food_db_schema.dart`). Prossima:
+fase 2 (calcolo). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT
@@ -174,6 +178,10 @@ flutter run -d <device>             # telefono Android / iPhone reale
 - Database: righe drift `*Row`, entità di dominio freezed separate; conversioni solo nei repository. Enum salvati
   per nome: mai rinominarli (D-18). Test: `newTestDatabase()` in `test/data/db/`; widget test con DB tramite
   `appTest(...)` in `test/app/app_test.dart` (smonta l'app e chiude il DB dentro il test, altrimenti si blocca).
+- Database degli alimenti (F4): mai modificarlo a mano; si rigenera con lo script, che è deterministico (la versione
+  è l'hash del contenuto). Per cambiare un abbinamento si corregge `tool/nutrition/curated_foods.csv`: lo script si
+  ferma su alias o alimenti doppi e su alimenti inesistenti o incompleti. Non eseguire mai `'rebuild'` su
+  `food_search` (indice a contenuto esterno: reindicizzerebbe anche gli alimenti esclusi).
 - Registro interno `AppLog` (`appLogProvider`): oscura le chiavi `AIza…` e `AQ.…`; mai loggare segreti in altro modo.
 - Gemini: client dio **separato** (`geminiHttpClientProvider`, niente UA Safari), chiave solo nell'header
   `x-goog-api-key`, mai un `DioException` come causa di un `Failure` (contiene le intestazioni). Nei test `FakeHttp`

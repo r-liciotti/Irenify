@@ -91,9 +91,11 @@ flutter:
 
   # Font inclusi nell'app (D-45): funzionano offline. Licenze dei font, di
   # whisper.cpp, del modello Whisper e di FFmpeg (D-50) in assets/licenses/,
-  # registrate in LicenseRegistry (lib/app/licenses.dart).
+  # registrate in LicenseRegistry (lib/app/licenses.dart). Database degli
+  # alimenti (D-54) generato da tool/nutrition/build_food_db.dart.
   assets:
     - assets/licenses/
+    - assets/nutrition/
 
   fonts:
     - family: Gloock

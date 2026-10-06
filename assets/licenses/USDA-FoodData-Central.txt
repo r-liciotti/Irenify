@@ -1,0 +1,15 @@
+USDA FoodData Central
+
+Questa app include valori nutrizionali e porzioni tratti da USDA FoodData
+Central (dataset SR Legacy, aprile 2018, e Foundation Foods, dicembre 2025),
+usati per stimare i valori nutrizionali delle ricette.
+
+I dati di FoodData Central sono di pubblico dominio negli Stati Uniti e sono
+pubblicati con la dedica CC0 1.0 Universal (Creative Commons Public Domain
+Dedication): https://creativecommons.org/publicdomain/zero/1.0/
+
+Citazione consigliata:
+U.S. Department of Agriculture, Agricultural Research Service. FoodData
+Central. https://fdc.nal.usda.gov
+
+I valori calcolati dall'app sono stime e non sono approvati dall'USDA.

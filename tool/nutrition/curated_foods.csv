@@ -1,0 +1,435 @@
+aliases_en,name_it,aliases_it,source,source_id,piece_g,note
+cornstarch|corn starch|cornflour|maize starch,Amido di mais,amido di mais|maizena|amido,usda_sr,169698,,«amido» generico = amido di mais
+coconut flour|desiccated coconut|shredded coconut|grated coconut|coconut flakes,Cocco rapè,cocco rape|cocco grattugiato|farina di cocco|cocco disidratato|cocco in scaglie,usda_sr,170170,,
+self-rising flour|self-raising flour,Farina autolievitante,farina autolievitante,usda_sr,168895,,
+chickpea flour|gram flour|besan,Farina di ceci,farina di ceci,usda_sr,174288,,
+wheat flour|all-purpose flour|flour|00 flour|type 00 flour|plain flour|white flour|cake flour|pastry flour,Farina di frumento 00,farina|farina 00|farina 0|farina bianca|farina di frumento|farina di grano tenero|farina debole,usda_sr,169761,,«flour» generico = farina 00; la farina italiana non è arricchita
+buckwheat flour|buckwheat,Farina di grano saraceno,farina di grano saraceno|grano saraceno,usda_sr,170687,,
+cornmeal|polenta|corn meal|maize flour|yellow cornmeal|instant polenta,Farina di mais,farina di mais|polenta|farina per polenta|fioretto|farina gialla|polenta istantanea,usda_sr,168929,,
+almond flour|almond meal|ground almonds|blanched almonds,Farina di mandorle,farina di mandorle|mandorle pelate|mandorle tritate|mandorle spellate,usda_sr,170568,,mandorle pelate macinate
+rice flour|white rice flour,Farina di riso,farina di riso,usda_sr,169714,,
+rye flour,Farina di segale,farina di segale|segale,usda_sr,168886,,
+whole wheat flour|wholemeal flour|whole-wheat flour|whole grain flour,Farina integrale,farina integrale|farina di grano integrale|farina integrale di frumento,usda_sr,168893,,
+bread flour|strong flour|manitoba flour|high-gluten flour,Farina Manitoba,farina manitoba|farina forte|farina di forza|farina per pane,usda_sr,168896,,
+potato starch|potato flour,Fecola di patate,fecola|fecola di patate|amido di patate,usda_sr,168446,,
+semolina|durum wheat semolina|semolina flour|durum flour|remilled semolina,Semola di grano duro,semola|semola rimacinata|semola di grano duro|semola rimacinata di grano duro|farina di semola|semolino,usda_sr,168933,,
+baking soda|bicarbonate of soda|sodium bicarbonate,Bicarbonato di sodio,bicarbonato|bicarbonato di sodio,usda_sr,175040,,
+cream of tartar,Cremor tartaro,cremor tartaro|cremortartaro,usda_sr,175041,,
+fresh yeast|compressed yeast|cake yeast|brewer's yeast,Lievito di birra fresco,lievito di birra|lievito di birra fresco|lievito fresco|cubetto di lievito,usda_sr,175042,25,cubetto da 25 g
+dry yeast|active dry yeast|instant yeast|yeast|dried yeast|instant dry yeast,Lievito di birra secco,lievito di birra secco|lievito secco|lievito secco attivo|lievito istantaneo|lievito disidratato|bustina di lievito di birra,usda_sr,175043,7,bustina da 7 g
+baking powder|double-acting baking powder,Lievito per dolci,lievito per dolci|lievito chimico|lievito in polvere|lievito vanigliato|lievito istantaneo per dolci|lievito per torte|lievito,usda_sr,172804,16,bustina da 16 g; «lievito» generico = per dolci (più frequente nelle ricette)
+jam|preserves|fruit jam|jelly|marmalade|fruit preserves,Confettura,marmellata|confettura|confettura di frutta|confettura extra|marmellata di albicocche|confettura di albicocche,usda_sr,169641,,
+vanilla extract|vanilla|vanilla essence|vanillin|vanilla bean|vanilla pod|vanilla sugar,Estratto di vaniglia,vaniglia|estratto di vaniglia|aroma vaniglia|essenza di vaniglia|vanillina|bustina di vanillina|bacca di vaniglia|baccello di vaniglia|zucchero vanigliato,usda_sr,173471,0.5,"pezzo = bustina di vanillina (0,5 g); peso trascurabile per tutte le forme"
+marshmallow|marshmallows,Marshmallow,marshmallow,usda_sr,167995,7,
+molasses,Melassa,melassa,usda_sr,168820,,
+honey,Miele,miele|miele millefiori|miele di acacia,usda_sr,169640,,
+maple syrup,Sciroppo d'acero,sciroppo d'acero|sciroppo di acero,usda_sr,169661,,
+agave syrup|agave nectar,Sciroppo d'agave,sciroppo d'agave|sciroppo di agave|agave,usda_sr,170277,,
+glucose syrup|corn syrup|light corn syrup|glucose,Sciroppo di glucosio,sciroppo di glucosio|glucosio|glucosio liquido,usda_sr,168837,,
+powdered sugar|icing sugar|confectioners sugar,Zucchero a velo,zucchero a velo|zucchero al velo|zucchero impalpabile,usda_sr,169656,,
+brown sugar|cane sugar|light brown sugar|dark brown sugar|demerara sugar|muscovado sugar|raw sugar|coconut sugar,Zucchero di canna,zucchero di canna|zucchero grezzo|zucchero muscovado|zucchero demerara|zucchero integrale|zucchero di cocco,usda_sr,168833,,
+sugar|white sugar|granulated sugar|caster sugar|superfine sugar|table sugar,Zucchero semolato,zucchero|zucchero semolato|zucchero bianco|zucchero extrafine|zucchero raffinato,usda_sr,169655,,
+sweetened condensed milk|condensed milk,Latte condensato,latte condensato|latte condensato zuccherato,usda_sr,171275,,
+evaporated milk,Latte evaporato,latte evaporato,usda_sr,171276,,
+milk powder|powdered milk|dry milk,Latte in polvere,latte in polvere,usda_sr,170876,,
+milk|whole milk|cow's milk|fresh milk|full-fat milk,Latte intero,latte|latte intero|latte vaccino|latte fresco|latte fresco intero,usda_sr,171265,,
+semi-skimmed milk|reduced fat milk|2% milk|low-fat milk|lowfat milk,Latte parzialmente scremato,latte parzialmente scremato|latte ps|latte scremato parzialmente,usda_sr,171267,,
+skim milk|skimmed milk|nonfat milk|fat-free milk,Latte scremato,latte scremato|latte magro,usda_sr,171269,,
+buttermilk,Latticello,latticello,usda_sr,170874,,
+sour cream|creme fraiche,Panna acida,panna acida|creme fraiche,usda_sr,171257,,
+cooking cream|light cream|single cream|table cream|half and half,Panna da cucina,panna da cucina|panna per cucinare,usda_sr,170857,,
+heavy cream|whipping cream|cream|double cream|fresh cream|heavy whipping cream|whipped cream,Panna fresca,panna|panna fresca|panna liquida|panna da montare|panna fresca liquida|panna montata|panna fresca da montare,usda_sr,170859,,
+yogurt|plain yogurt|natural yogurt|whole milk yogurt|yoghurt,Yogurt bianco intero,yogurt|yogurt bianco|yogurt intero|yogurt naturale|yogurt bianco intero|yogurt magro|vasetto di yogurt,usda_sr,171284,125,pezzo = vasetto da 125 g
+greek yogurt|greek yoghurt|strained yogurt,Yogurt greco,yogurt greco|yogurt greco intero,usda_sr,171304,,
+nonfat greek yogurt|fat-free greek yogurt|low-fat greek yogurt|0% greek yogurt,Yogurt greco 0%,yogurt greco 0%|yogurt greco magro|yogurt greco 0,usda_sr,170894,,
+butter|unsalted butter|sweet butter,Burro,burro|burro fuso|burro morbido|burro freddo|noce di burro|burro a pomata|burro a temperatura ambiente,usda_sr,173430,10,pezzo = noce di burro (10 g)
+ghee|clarified butter|butter oil,Burro chiarificato,burro chiarificato|ghee,usda_sr,173412,,
+salted butter,Burro salato,burro salato,usda_sr,173410,,
+lardo|cured pork fat|fatback|pork fatback,Lardo,lardo|lardo di colonnata|lardo di arnad,ciqual,16530,,"lardo crudo: CIQUAL «lard gras, cru»"
+margarine,Margarina,margarina,usda_sr,172346,,
+coconut oil,Olio di cocco,olio di cocco|burro di cocco,usda_sr,171412,,
+canola oil|rapeseed oil,Olio di colza,olio di colza,usda_sr,172336,,
+corn oil,Olio di mais,olio di mais|olio di semi di mais,usda_sr,167737,,
+peanut oil|groundnut oil,Olio di semi di arachide,olio di arachidi|olio di semi di arachide|olio di arachide,usda_sr,171410,,
+sunflower oil|seed oil|vegetable oil|frying oil|neutral oil,Olio di semi di girasole,olio di semi|olio di semi di girasole|olio di girasole|olio per friggere|olio vegetale,usda_sr,171025,,«vegetable oil»/«olio di semi» generici = girasole
+sesame oil|toasted sesame oil,Olio di sesamo,olio di sesamo|olio di sesamo tostato,usda_sr,171016,,
+olive oil|extra virgin olive oil|evoo|oil|virgin olive oil|extra-virgin olive oil|light olive oil,Olio extravergine d'oliva,olio|olio d'oliva|olio di oliva|olio extravergine d'oliva|olio extravergine di oliva|olio evo|olio extra vergine di oliva|olio extravergine|filo d'olio|olio extra vergine d'oliva,usda_sr,171413,,«oil» generico = olio d'oliva (scelta per la cucina italiana)
+lard|pork lard,Strutto,strutto|sugna,usda_sr,171401,,
+asiago|asiago cheese|montasio,Asiago,asiago|montasio,ciqual,12761,,
+brie|brie cheese,Brie,brie,usda_sr,172177,,
+burrata|stracciatella|stracciatella cheese,Burrata,burrata|stracciatella|stracciatella di burrata,ciqual,12072,125,stracciatella = interno della burrata
+camembert,Camembert,camembert,usda_sr,172178,,
+goat cheese|chevre|fresh goat cheese,Caprino,caprino|formaggio di capra|formaggio caprino,ciqual,12805,,
+cheddar|cheddar cheese|shredded cheddar,Cheddar,cheddar,usda_sr,173414,,
+emmental|emmentaler|swiss cheese|emmenthal,Emmental,emmental|emmenthal|groviera,ciqual,12115,,«groviera» in Italia indica spesso l'emmental
+feta|feta cheese,Feta,feta,usda_sr,173420,,
+cottage cheese,Fiocchi di latte,fiocchi di latte|cottage cheese|cottage,usda_sr,172179,,
+fontina|fontina cheese,Fontina,fontina|fontal,ciqual,12121,,
+blue cheese|roquefort|stilton,Formaggio erborinato,formaggio erborinato|roquefort|stilton|formaggio blu,usda_sr,172175,,
+processed cheese|american cheese|cheese slices|sliced cheese,Formaggio fuso a fette,sottilette|formaggio a fette|formaggio fuso|fette di formaggio,ciqual,12300,20,pezzo = una fetta (~20 g)
+cream cheese|philadelphia|soft cheese|spreadable cheese|cream cheese spread,Formaggio spalmabile,formaggio spalmabile|philadelphia|formaggio cremoso|formaggio fresco spalmabile|robiola spalmabile,ciqual,12068,,CIQUAL (fresco spalmabile ~21% grassi) corrisponde al Philadelphia venduto in Italia; il «cream cheese» USDA è più grasso
+gorgonzola|gorgonzola cheese|gorgonzola dolce|gorgonzola piccante,Gorgonzola,gorgonzola|gorgonzola dolce|gorgonzola piccante,ciqual,12524,,
+gouda|edam,Gouda,gouda|edamer|edam,usda_sr,171241,,
+grana padano|grana padano cheese|grana,Grana Padano,grana|grana padano|grana grattugiato|grana padano grattugiato,ciqual,12123,,
+gruyere|comte,Gruyère,gruyere|gruviera|comte,ciqual,12114,,
+halloumi,Halloumi,halloumi,usda_sr,170845,,halloumi assente: mozzarella intera USDA (bassa umidità) come approssimazione
+mascarpone|mascarpone cheese,Mascarpone,mascarpone,ciqual,19584,,
+mozzarella|fresh mozzarella|mozzarella cheese|fior di latte|bocconcini|mozzarella balls|cherry mozzarella,Mozzarella,mozzarella|fior di latte|mozzarella fior di latte|mozzarelline|bocconcini|ciliegine|ciliegine di mozzarella|mozzarella vaccina,ciqual,19590,125,pezzo = una mozzarella da 125 g; CIQUAL (fresca) invece di USDA (a bassa umidità)
+buffalo mozzarella|mozzarella di bufala,Mozzarella di bufala,mozzarella di bufala|bufala|mozzarella di bufala campana,ciqual,19591,125,
+low-moisture mozzarella|shredded mozzarella|pizza mozzarella|part-skim mozzarella|grated mozzarella,Mozzarella per pizza,mozzarella per pizza|mozzarella grattugiata|mozzarella a cubetti|mozzarella julienne|mozzarella in cubetti,usda_sr,171244,,
+parmesan|parmesan cheese|parmigiano reggiano|parmigiano|grated parmesan|parmigiano-reggiano|hard cheese|grated cheese,Parmigiano Reggiano,parmigiano|parmigiano reggiano|parmigiano grattugiato|formaggio grattugiato|parmigiano reggiano grattugiato|scaglie di parmigiano,ciqual,12120,,"CIQUAL «Parmesan» più vicino al Parmigiano reale di «Cheese, parmesan, hard» USDA; «formaggio grattugiato» = parmigiano"
+pecorino|pecorino romano|pecorino cheese|romano cheese|pecorino sardo,Pecorino,pecorino|pecorino romano|pecorino sardo|pecorino toscano|pecorino grattugiato|pecorino siciliano,ciqual,12122,,
+provolone|scamorza|smoked scamorza|provola|smoked provola|caciocavallo|smoked cheese,Provolone,provolone|scamorza|scamorza affumicata|provola|provola affumicata|caciocavallo|formaggio affumicato|provolone dolce|provolone piccante,ciqual,12716,,"scamorza, provola e caciocavallo (pasta filata stagionata) assenti nelle fonti: provolone CIQUAL ha composizione molto vicina"
+ricotta|ricotta cheese|whole milk ricotta|sheep ricotta,Ricotta,ricotta|ricotta vaccina|ricotta fresca|ricotta di pecora|ricotta di mucca,usda_sr,170851,,USDA: la ricotta CIQUAL non ha le kcal
+stracchino|crescenza|robiola|squacquerone,Stracchino,stracchino|crescenza|robiola|squacquerone,ciqual,12003,,stracchino assente nelle fonti: formaggio a pasta molle tipo camembert come approssimazione (kcal e grassi simili)
+taleggio|taleggio cheese|washed-rind cheese,Taleggio,taleggio|quartirolo,ciqual,12041,,"taleggio assente: formaggio a pasta molle a crosta lavata (CIQUAL), composizione molto vicina"
+egg white|egg whites|albumen,Albume,albume|albumi|chiara d'uovo|chiare d'uovo|bianco d'uovo|albume d'uovo,usda_sr,172183,33,
+egg yolk|egg yolks|yolk|yolks,Tuorlo d'uovo,tuorlo|tuorli|tuorlo d'uovo|tuorli d'uovo|rosso d'uovo,usda_sr,172184,17,
+egg|eggs|whole egg|whole eggs|large egg|medium egg,Uovo,uovo|uova|uovo intero|uova intere|uovo medio|uova medie|uovo grande,usda_sr,171287,50,pezzo = uovo medio sgusciato
+lamb|leg of lamb|lamb chops|lamb leg,Agnello,agnello|cosciotto d'agnello|costolette d'agnello|abbacchio|carne d'agnello,usda_sr,174311,,
+chicken wings,Ali di pollo,ali di pollo|alette di pollo,usda_sr,172390,,
+duck|duck breast,Anatra,anatra|petto d'anatra|petto di anatra,usda_sr,172410,,
+beef steak|steak|sirloin steak|beef sirloin|beef fillet|beef tenderloin|ribeye,Bistecca di manzo,bistecca|bistecca di manzo|controfiletto|filetto di manzo|entrecote|tagliata|roast beef|fettine di manzo,usda_sr,168728,,
+ground beef|minced beef|beef mince|ground meat|minced meat|mince|hamburger meat,Carne macinata di manzo,carne macinata|macinato|macinato di manzo|carne trita|trito di manzo|macinato misto|carne macinata di manzo|macinato di bovino,usda_sr,174036,,«macinato misto» (manzo e maiale) assegnato qui
+rabbit,Coniglio,coniglio,usda_sr,172521,,
+pork ribs|spare ribs|spareribs|baby back ribs,Costine di maiale,costine|costine di maiale|puntine|puntine di maiale|costolette di maiale,usda_sr,167853,,
+pork loin|pork|pork chop|pork chops|pork tenderloin,Lonza di maiale,maiale|lonza|arista|lonza di maiale|braciola di maiale|braciole di maiale|filetto di maiale|carne di maiale,usda_sr,167818,,
+ground pork|minced pork,Macinato di maiale,macinato di maiale|carne macinata di maiale,usda_sr,167902,,
+ground chicken|minced chicken,Macinato di pollo,macinato di pollo|carne macinata di pollo,usda_sr,171116,,
+ground turkey|minced turkey,Macinato di tacchino,macinato di tacchino,usda_sr,171505,,
+ground veal,Macinato di vitello,macinato di vitello,usda_sr,175290,,
+lean ground beef|extra lean ground beef,Macinato magro,macinato magro|carne macinata magra|macinato scelto,usda_sr,171790,,
+beef|beef stew meat|stewing beef|beef chuck|chuck roast|beef roast,Manzo da spezzatino,manzo|carne di manzo|spezzatino|spezzatino di manzo|polpa di manzo|carne per brasato|cappello del prete|reale di manzo,usda_sr,169491,,
+pork belly,Pancia di maiale,pancia di maiale|pancetta fresca|porchetta,ciqual,28002,,
+chicken breast|chicken|chicken fillet|chicken breasts|boneless chicken|chicken tenders,Petto di pollo,pollo|petto di pollo|fettine di pollo|bocconcini di pollo|filetti di pollo|straccetti di pollo|fesa di pollo|carne di pollo,usda_sr,171077,,«chicken» generico = petto (taglio più frequente nei reel)
+turkey breast|turkey,Petto di tacchino,tacchino|petto di tacchino|fesa di tacchino|fettine di tacchino,usda_sr,171098,,
+whole chicken|chicken with skin,Pollo intero,pollo intero|pollo a pezzi,usda_sr,171447,,
+italian sausage|sausage|pork sausage|sausages|fresh sausage,Salsiccia,salsiccia|salsicce|salsiccia di maiale|luganega|salsiccia fresca,usda_sr,171631,80,pezzo = una salsiccia (~80 g)
+chicken thigh|chicken thighs|boneless chicken thighs|chicken legs|chicken drumsticks,Sovracosce di pollo,sovracosce|sovracosce di pollo|cosce di pollo|fusi di pollo|coscia di pollo,usda_sr,173627,,
+veal|veal cutlet|veal scallopini|veal escalope,Vitello,vitello|fettine di vitello|scaloppine|scaloppine di vitello|carne di vitello|fesa di vitello|noce di vitello,usda_sr,175269,,
+frankfurter|hot dog|wurstel|wiener|frankfurters,Würstel,wurstel|hot dog|frankfurter,usda_sr,172968,50,
+bacon|streaky bacon|bacon strips,Bacon,bacon,usda_sr,168277,25,pezzo = una fetta (~25 g cruda)
+bresaola,Bresaola,bresaola,ciqual,28503,10,pezzo = una fetta (~10 g)
+chorizo|nduja|spicy salami spread,Chorizo,chorizo|nduja,usda_sr,173859,,'nduja assente nelle fonti: chorizo USDA (salume piccante di maiale) come approssimazione
+coppa|capicola|capocollo,Coppa,coppa|capocollo|capicollo,ciqual,28850,,
+guanciale|cured pork cheek|pork jowl,Guanciale,guanciale,usda_sr,167812,,guanciale assente in USDA e CIQUAL: pancia di maiale cruda USDA (~53% grassi) come approssimazione; sodio sottostimato
+mortadella,Mortadella,mortadella,ciqual,30789,20,
+pancetta|diced pancetta|cubed pancetta|pancetta cubes,Pancetta,pancetta|pancetta tesa|pancetta arrotolata|pancetta dolce|cubetti di pancetta|dadini di pancetta|pancetta a cubetti|pancetta a dadini,ciqual,28858,,
+smoked pancetta,Pancetta affumicata,pancetta affumicata|cubetti di pancetta affumicata|dadini di pancetta affumicata,ciqual,28502,,
+ham|cooked ham|sliced ham|boiled ham,Prosciutto cotto,prosciutto cotto|cotto|fesa di prosciutto cotto,ciqual,28910,25,pezzo = una fetta (~25 g)
+prosciutto|prosciutto crudo|parma ham|cured ham|dry-cured ham|serrano ham,Prosciutto crudo,prosciutto crudo|crudo|prosciutto di parma|prosciutto san daniele|prosciutto|jamon serrano,ciqual,28800,15,pezzo = una fetta (~15 g); «prosciutto» generico = crudo
+salami|salame|pepperoni|milano salami,Salame,salame|salame milano|salamino|salamino piccante|salame ungherese|salame napoli,ciqual,30350,8,pezzo = una fetta (~8 g)
+speck|smoked ham|smoked prosciutto,Speck,speck|prosciutto affumicato,ciqual,28801,15,speck assente: prosciutto crudo affumicato CIQUAL
+anchovies|anchovy|anchovy fillets|canned anchovies|anchovies in oil,Acciughe sott'olio,acciughe|acciuga|filetti di acciuga|acciughe sott'olio|alici sott'olio|filetti di alici|pasta d'acciughe|alici sotto sale|acciughe sotto sale,usda_sr,174183,4,pezzo = un filetto (~4 g)
+fresh anchovies,Alici fresche,alici|alici fresche|acciughe fresche,usda_sr,174182,,
+lobster,Astice,astice|aragosta,usda_sr,174208,,
+sea bass|seabass|branzino,Branzino,branzino|spigola|filetto di branzino|filetti di branzino,usda_sr,175142,,
+squid|calamari,Calamari,calamari|calamaro|totani|anelli di calamaro|calamaretti,usda_sr,174223,,
+scallops|scallop,Capesante,capesante|capasanta|capesante sgusciate,usda_sr,174220,20,pezzo = una noce (~20 g)
+mussels|mussel,Cozze,cozze|cozza|muscoli,usda_sr,174216,,valori della sola polpa: con il guscio il peso va diviso per ~4
+shrimp|prawns|shrimps|prawn|king prawns|tiger prawns|langoustines|scampi,Gamberi,gamberi|gambero|gamberetti|gamberoni|mazzancolle|code di gambero|scampi|gamberi sgusciati,usda_sr,174210,,peso della parte edibile: con il guscio i grammi si sovrastimano
+crab|crab meat,Granchio,granchio|polpa di granchio,usda_sr,174204,,
+cod|cod fillet|salt cod|baccala|hake|white fish,Merluzzo,merluzzo|filetti di merluzzo|filetto di merluzzo|baccala|baccala ammollato|nasello|pesce bianco,usda_sr,171955,,baccalà di solito già ammollato: valori vicini al merluzzo fresco (il secco salato è ~3 volte più calorico)
+sea bream|gilthead bream|dorade|bream,Orata,orata|filetto di orata|filetti di orata,ciqual,26088,,orata d'allevamento
+swordfish,Pesce spada,pesce spada,usda_sr,173703,,
+octopus|baby octopus,Polpo,polpo|polipo|moscardini,usda_sr,174218,,
+salmon|salmon fillet|fresh salmon|atlantic salmon,Salmone,salmone|filetto di salmone|salmone fresco|trancio di salmone|tranci di salmone,usda_sr,175167,,
+smoked salmon|lox,Salmone affumicato,salmone affumicato,usda_sr,173687,,
+sardines|sardine|fresh sardines,Sarde,sarde|sardine|sardine fresche|sarde fresche,usda_sr,175139,,solo la versione in scatola in SR Legacy
+cuttlefish,Seppie,seppia|seppie|seppioline,usda_sr,174215,,
+mackerel,Sgombro,sgombro|sgombri,usda_sr,175119,,
+sole|flounder|plaice,Sogliola,sogliola|platessa|filetti di platessa|rombo,usda_sr,174196,,
+surimi|crab sticks|imitation crab,Surimi,surimi|bastoncini di surimi|bastoncini di granchio,usda_sr,173702,17,
+tuna in water|canned tuna in water,Tonno al naturale,tonno al naturale,usda_sr,173709,,
+fresh tuna|tuna steak|ahi tuna|yellowfin tuna,Tonno fresco,tonno fresco|trancio di tonno|filetto di tonno,usda_sr,175159,,
+canned tuna|tuna in oil|tuna|tinned tuna,Tonno sott'olio,tonno|tonno in scatola|tonno sott'olio|tonno all'olio d'oliva|tonno sgocciolato,usda_sr,173708,,«tonno» generico = in scatola
+trout|rainbow trout,Trota,trota|filetto di trota|trota salmonata,usda_sr,173717,,
+clams|clam|baby clams,Vongole,vongole|vongola|lupini di mare|telline,usda_sr,174214,,valori della sola polpa: con il guscio il peso va diviso per ~6
+garlic|garlic clove|garlic cloves|minced garlic,Aglio,aglio|spicchio d'aglio|spicchi d'aglio|spicchio di aglio|aglio tritato|spicchio|spicchi,usda_sr,169230,3,pezzo = spicchio
+asparagus|asparagus spears,Asparagi,asparagi|asparago|punte di asparagi,usda_sr,168389,15,
+avocado|avocados,Avocado,avocado,usda_sr,171705,140,pezzo = polpa di un avocado medio
+beet|beets|beetroot|cooked beetroot,Barbabietola,barbabietola|barbabietole|rapa rossa|rape rosse|barbabietola rossa,usda_sr,169145,80,
+swiss chard|chard|silverbeet,Bietole,bietole|bieta|bietola|erbette|coste|biete,usda_sr,169991,,
+broccoli|broccoli florets,Broccoli,broccoli|broccolo|cime di broccoli|cimette di broccoli,usda_sr,170379,,
+capers|caper,Capperi,capperi|cappero|capperi sotto sale|capperi sott'aceto|capperi dissalati,usda_sr,172238,,
+artichoke|artichokes|artichoke hearts,Carciofo,carciofo|carciofi|cuori di carciofo|carciofini,usda_sr,169205,80,pezzo = carciofo pulito (parte edibile)
+carrot|carrots,Carota,carota|carote,usda_sr,170393,60,
+brussels sprouts,Cavoletti di Bruxelles,cavoletti di bruxelles|cavolini di bruxelles|cavoletti,usda_sr,170383,15,
+cauliflower|romanesco|romanesco broccoli,Cavolfiore,cavolfiore|cavolfiori|romanesco|broccolo romanesco|cimette di cavolfiore,usda_sr,169986,,
+cabbage|white cabbage|green cabbage,Cavolo cappuccio,cavolo|cavolo cappuccio|cavolo bianco|cappuccio,usda_sr,169975,,
+kale|tuscan kale|cavolo nero|lacinato kale,Cavolo nero,cavolo nero|cavolo riccio|kale,usda_sr,168421,,
+red cabbage|purple cabbage,Cavolo rosso,cavolo rosso|cavolo viola|cappuccio rosso,usda_sr,169977,,
+pickles|gherkins|cornichons|pickled cucumbers,Cetriolini sott'aceto,cetriolini|cetriolini sott'aceto|sottaceti,usda_sr,168558,10,
+cucumber|cucumbers,Cetriolo,cetriolo|cetrioli,usda_sr,168409,200,
+chicory|chicory greens|dandelion greens|puntarelle,Cicoria,cicoria|catalogna|puntarelle|cicorie|cicoria ripassata,usda_sr,169992,,
+broccoli rabe|rapini|turnip greens|broccoli raab|friarielli,Cime di rapa,cime di rapa|friarielli|rapini,usda_sr,170381,,
+onion|onions|yellow onion|white onion|red onion|red onions|brown onion|sweet onion,Cipolla,cipolla|cipolle|cipolla bianca|cipolla dorata|cipolla rossa|cipolle rosse|cipolla di tropea|cipolla ramata,usda_sr,170000,110,pezzo = cipolla media
+spring onion|spring onions|scallion|scallions|green onion|green onions,Cipollotto,cipollotto|cipollotti|cipollina|cipolline fresche|cipolla verde,usda_sr,170005,15,
+tomato paste|tomato concentrate|double concentrated tomato paste,Concentrato di pomodoro,concentrato di pomodoro|doppio concentrato|doppio concentrato di pomodoro|triplo concentrato|concentrato,usda_sr,170459,,
+green beans|string beans|snap beans|french beans,Fagiolini,fagiolini|fagiolino,usda_sr,169961,,
+fennel|fennel bulb,Finocchio,finocchio|finocchi,usda_sr,169385,250,
+zucchini flowers|squash blossoms|courgette flowers,Fiori di zucca,fiori di zucca|fiori di zucchina,usda_sr,170487,5,fiori assenti: zucchina estiva generica
+mushrooms|mushroom|button mushrooms|white mushrooms|champignon mushrooms|cremini mushrooms,Funghi champignon,funghi|fungo|champignon|funghi champignon|funghi coltivati|funghi prataioli|funghi misti,usda_sr,169251,,
+porcini|porcini mushrooms|cep|boletus,Funghi porcini,porcini|funghi porcini|porcino,ciqual,20160,,
+dried porcini|dried mushrooms|dried porcini mushrooms,Funghi porcini secchi,funghi secchi|porcini secchi|funghi porcini secchi,usda_sr,168436,,porcini secchi assenti: shiitake secchi USDA come approssimazione
+shiitake|shiitake mushrooms,Funghi shiitake,shiitake|funghi shiitake,usda_sr,169242,,
+bean sprouts|mung bean sprouts|sprouts,Germogli di soia,germogli|germogli di soia,usda_sr,169957,,
+jalapeno|jalapenos,Jalapeño,jalapeno|jalapenos,usda_sr,168576,14,
+lettuce|romaine lettuce|romaine|salad|green salad|salad greens|mixed greens|lamb's lettuce,Lattuga,lattuga|insalata|lattuga romana|insalata verde|insalata mista|misticanza|valeriana|songino|lattughino|gentilina,usda_sr,169247,,
+iceberg lettuce|iceberg,Lattuga iceberg,iceberg|lattuga iceberg|insalata iceberg,usda_sr,169248,,
+corn|sweet corn|corn kernels|canned corn,Mais dolce,mais|mais in scatola|mais dolce|chicchi di mais|granturco,usda_sr,169214,,
+eggplant|aubergine|eggplants|aubergines,Melanzana,melanzana|melanzane|melanzana viola|melanzane tonde,usda_sr,169228,300,
+black olives|kalamata olives|olives,Olive nere,olive nere|olive taggiasche|olive di gaeta|olive|olive denocciolate|olive kalamata,usda_sr,169094,4,
+green olives,Olive verdi,olive verdi|olive verdi denocciolate,usda_sr,169096,4,
+tomato puree|passata|tomato passata|strained tomatoes|sieved tomatoes,Passata di pomodoro,passata|passata di pomodoro|pomodoro passato|salsa di pomodoro|passata rustica,usda_sr,170460,,
+potato|potatoes|russet potato|yukon gold potato|new potatoes|baby potatoes,Patata,patata|patate|patate novelle|patate a pasta gialla|patate a pasta bianca|patata media,usda_sr,170026,170,pezzo = patata media
+sweet potato|sweet potatoes|yam,Patata dolce,patata dolce|patate dolci|batata|patata americana,usda_sr,168482,130,
+chili pepper|chili|chilli|fresh chili|red chili|hot pepper|chile pepper|chilli pepper,Peperoncino fresco,peperoncino|peperoncino fresco|peperoncini|peperoncino rosso|peperoncino piccante,usda_sr,170106,8,
+yellow bell pepper|yellow pepper,Peperone giallo,peperone giallo|peperoni gialli,usda_sr,169383,160,
+bell pepper|red bell pepper|red pepper|sweet pepper|peppers|bell peppers|capsicum,Peperone rosso,peperone|peperoni|peperone rosso|peperoni rossi|peperoni misti,usda_sr,170108,160,
+green bell pepper|green pepper|friggitelli,Peperone verde,peperone verde|peperoni verdi|friggitelli|friarielli napoletani,usda_sr,170427,160,
+peas|green peas|frozen peas|garden peas|sweet peas,Piselli,piselli|pisellini|piselli surgelati|piselli freschi|piselli fini,usda_sr,170419,,
+canned tomatoes|peeled tomatoes|whole peeled tomatoes|diced tomatoes|chopped tomatoes|crushed tomatoes|san marzano tomatoes|canned whole tomatoes|tinned tomatoes,Pomodori pelati,pelati|pomodori pelati|polpa di pomodoro|pomodori in scatola|pomodoro a pezzi|pomodori a pezzetti|polpa|pomodori san marzano|polpa di pomodoro a pezzi,usda_sr,170051,,
+sun-dried tomatoes|sundried tomatoes|dried tomatoes,Pomodori secchi,pomodori secchi|pomodori essiccati,usda_sr,168567,,
+sun-dried tomatoes in oil,Pomodori secchi sott'olio,pomodori secchi sott'olio,usda_sr,169384,,
+cherry tomatoes|cherry tomato|grape tomatoes|datterini,Pomodorini,pomodorini|pomodorino|pomodorini ciliegino|datterini|pomodori datterini|pomodorini pachino|pachino|ciliegini,ciqual,20172,15,pomodorini assenti in SR Legacy (Foundation incompleto): CIQUAL
+tomato|tomatoes|fresh tomatoes|ripe tomatoes|plum tomatoes|roma tomatoes|vine tomatoes|beefsteak tomato,Pomodoro,pomodoro|pomodori|pomodori maturi|pomodori ramati|pomodori freschi|pomodori perini|pomodori cuore di bue|pomodoro maturo,usda_sr,170457,120,
+leek|leeks,Porro,porro|porri,usda_sr,169246,90,
+radicchio|treviso radicchio,Radicchio,radicchio|radicchio rosso|radicchio trevisano|radicchio di treviso|radicchio tardivo|trevisana,usda_sr,168564,,
+turnip|turnips,Rapa,rapa|rape|rapa bianca,usda_sr,170465,,
+radish|radishes,Ravanelli,ravanelli|ravanello,usda_sr,169276,5,
+arugula|rocket|rucola|baby arugula,Rucola,rucola|rucoletta|rucola selvatica,usda_sr,169387,,
+shallot|shallots,Scalogno,scalogno|scalogni,usda_sr,170499,30,
+endive|escarole|frisee|curly endive,Scarola,scarola|indivia|indivia riccia|indivia belga,usda_sr,168412,,
+celery|celery stalk|celery stalks|celery stick,Sedano,sedano|costa di sedano|coste di sedano|gambo di sedano|gambi di sedano,usda_sr,169988,40,pezzo = una costa
+celeriac|celery root,Sedano rapa,sedano rapa,usda_sr,170400,,
+spinach|baby spinach|spinach leaves|fresh spinach,Spinaci,spinaci|spinacini|foglie di spinaci|spinaci freschi|spinaci novelli,usda_sr,168462,,
+frozen spinach,Spinaci surgelati,spinaci surgelati|spinaci in cubetti,usda_sr,169287,,
+tomato sauce|marinara sauce|marinara|pizza sauce,Sugo di pomodoro,sugo di pomodoro|sugo pronto|sugo|salsa marinara,usda_sr,170054,,
+savoy cabbage,Verza,verza|cavolo verza,usda_sr,170388,,
+ginger|fresh ginger|ginger root,Zenzero fresco,zenzero|zenzero fresco|radice di zenzero,usda_sr,169231,,
+pumpkin|squash|winter squash|pumpkin puree,Zucca,zucca|polpa di zucca|zucca mantovana|zucca delica|purea di zucca,usda_sr,168448,,
+butternut squash|butternut,Zucca butternut,zucca butternut|zucca violina|zucca lunga,usda_sr,169295,,
+zucchini|courgette|courgettes|zucchinis|summer squash,Zucchina,zucchina|zucchine|zucchini|zucchina chiara|zucchine romanesche,usda_sr,169291,200,
+dried borlotti beans|dried cranberry beans,Borlotti secchi,borlotti secchi|fagioli borlotti secchi,usda_sr,175189,,
+chickpeas|canned chickpeas|garbanzo beans|cooked chickpeas,Ceci in scatola,ceci|ceci in scatola|ceci lessati|ceci cotti|ceci precotti|ceci sgocciolati,usda_sr,173801,,
+dried chickpeas,Ceci secchi,ceci secchi,usda_sr,173756,,
+edamame,Edamame,edamame|fagioli di soia,usda_sr,168410,,
+borlotti beans|cranberry beans|roman beans,Fagioli borlotti,borlotti|fagioli borlotti|borlotti in scatola,usda_sr,173737,,
+cannellini beans|white beans|canned white beans|navy beans|great northern beans|beans,Fagioli cannellini,cannellini|fagioli cannellini|fagioli bianchi|fagioli|fagioli in scatola,usda_sr,175204,,«fagioli» generici = cannellini in scatola
+black beans,Fagioli neri,fagioli neri,usda_sr,173735,,
+kidney beans|red kidney beans|red beans,Fagioli rossi,fagioli rossi|fagioli kidney|kidney,usda_sr,174285,,
+dried white beans|dried beans|dried cannellini beans,Fagioli secchi,fagioli secchi|cannellini secchi|fagioli bianchi secchi,usda_sr,175202,,
+fava beans|broad beans|fresh fava beans,Fave,fave|fave fresche|fava,usda_sr,170377,,
+dried fava beans|dried broad beans,Fave secche,fave secche|fave decorticate,usda_sr,175205,,
+hummus|houmous,Hummus,hummus|hummus di ceci,usda_sr,174289,,
+cooked lentils|canned lentils,Lenticchie cotte,lenticchie cotte|lenticchie in scatola|lenticchie lessate|lenticchie precotte,usda_sr,172421,,
+red lentils|split red lentils,Lenticchie rosse,lenticchie rosse|lenticchie decorticate,usda_sr,174284,,
+lentils|dried lentils|brown lentils|green lentils,Lenticchie secche,lenticchie|lenticchie secche|lenticchie verdi|lenticchie di castelluccio,usda_sr,172420,,
+lupini beans|lupins,Lupini,lupini,usda_sr,172424,,
+split peas|dried peas,Piselli secchi,piselli secchi|piselli spezzati,usda_sr,172428,,
+tofu|firm tofu,Tofu,tofu,usda_sr,172475,,
+apricot|apricots,Albicocca,albicocca|albicocche,usda_sr,171697,35,
+pineapple,Ananas,ananas,usda_sr,169124,,
+watermelon,Anguria,anguria|cocomero,usda_sr,167765,,
+orange|oranges,Arancia,arancia|arance,usda_sr,169097,150,
+banana|bananas,Banana,banana|banane,usda_sr,173944,120,pezzo = banana sbucciata
+persimmon|kaki,Cachi,cachi|caco|kaki,usda_sr,169941,170,
+cherries|cherry|sweet cherries,Ciliegie,ciliegie|ciliegia|amarene,usda_sr,171719,8,
+figs|fig|fresh figs,Fichi,fichi|fico|fichi freschi,usda_sr,173021,50,
+strawberries|strawberry,Fragole,fragole|fragola,usda_sr,167762,12,
+kiwi|kiwifruit|kiwis,Kiwi,kiwi,usda_sr,168153,75,
+raspberries|raspberry|mixed berries|berries|frozen berries|red berries,Lamponi,lamponi|lampone|frutti di bosco|frutti rossi|frutti di bosco surgelati,usda_sr,167755,,«frutti di bosco» assegnati ai lamponi (valori vicini a more e mirtilli)
+coconut milk|canned coconut milk,Latte di cocco,latte di cocco,usda_sr,170173,,
+lime|limes,Lime,lime,usda_sr,168155,67,
+lemon|lemons,Limone,limone|limoni,usda_sr,167746,85,pezzo = polpa di un limone medio
+mandarin|tangerine|clementine|mandarins|clementines,Mandarino,mandarino|mandarini|clementina|clementine|mandarancio,usda_sr,169105,75,
+mango|mangoes,Mango,mango|manghi,usda_sr,169910,200,pezzo = polpa di un mango
+apple|apples|green apple|red apple,Mela,mela|mele|mela golden|mela renetta|mele golden|mela verde,usda_sr,171688,180,
+pomegranate|pomegranate seeds|pomegranate arils,Melograno,melograno|chicchi di melograno|melagrana,usda_sr,169134,,
+melon|cantaloupe,Melone,melone|melone retato|melone cantalupo,usda_sr,169092,,
+blueberries|blueberry,Mirtilli,mirtilli|mirtillo,usda_sr,171711,,
+blackberries|blackberry,More,more|mora|more di rovo,usda_sr,173946,,
+coconut cream,Panna di cocco,panna di cocco|crema di cocco,usda_sr,170580,,
+pear|pears,Pera,pera|pere|pera williams|pera abate,usda_sr,169118,180,
+peach|peaches|nectarine|nectarines,Pesca,pesca|pesche|pesche noci|nettarina|nettarine|percoca,usda_sr,169928,150,
+grapefruit,Pompelmo,pompelmo|pompelmo rosa,usda_sr,173033,,
+plum|plums,Prugna,prugna|prugne|susina|susine,usda_sr,169949,66,
+applesauce|apple puree,Purea di mele,purea di mele|composta di mele|mousse di mele,usda_sr,171695,,
+orange zest|orange peel|grated orange zest|orange rind,Scorza d'arancia,scorza d'arancia|scorza di arancia|buccia d'arancia|scorza grattugiata d'arancia,usda_sr,169103,8,
+lemon zest|lemon peel|grated lemon zest|lemon rind,Scorza di limone,scorza di limone|buccia di limone|scorza grattugiata di limone|scorza di limone grattugiata|scorzetta di limone,usda_sr,167749,6,pezzo = scorza di un limone
+orange juice|fresh orange juice,Succo d'arancia,succo d'arancia|succo di arancia|spremuta d'arancia|spremuta di arancia,usda_sr,169098,,
+lime juice,Succo di lime,succo di lime,usda_sr,168156,,
+lemon juice|fresh lemon juice,Succo di limone,succo di limone|succo di mezzo limone|spremuta di limone,usda_sr,167747,,
+grapes|grape|red grapes|green grapes,Uva,uva|acini d'uva|uva bianca|uva nera|acini,usda_sr,174683,5,
+dried apricots,Albicocche secche,albicocche secche|albicocche disidratate,usda_sr,173941,8,
+cashews|cashew|cashew nuts,Anacardi,anacardi|anacardo,usda_sr,170162,,
+peanuts|peanut|roasted peanuts,Arachidi,arachidi|noccioline|arachidi tostate|granella di arachidi,usda_sr,172430,,
+peanut butter|smooth peanut butter|crunchy peanut butter,Burro di arachidi,burro di arachidi|crema di arachidi|crema spalmabile di arachidi,usda_sr,172470,,
+candied fruit|mixed candied fruit|candied citron,Canditi,canditi|frutta candita|cedro candito|canditi misti,ciqual,31027,,
+chestnuts|chestnut|roasted chestnuts,Castagne,castagne|castagna|marroni|caldarroste,usda_sr,170575,10,
+hazelnut spread|chocolate hazelnut spread|nutella,Crema spalmabile alle nocciole,nutella|crema di nocciole|crema spalmabile|crema spalmabile alle nocciole|crema gianduia|gianduia,ciqual,31032,,
+dates|medjool dates|pitted dates,Datteri,datteri|dattero|datteri medjoul|datteri medjool,usda_sr,168191,24,
+dried figs,Fichi secchi,fichi secchi,usda_sr,174665,20,
+almonds|almond|whole almonds|sliced almonds|slivered almonds|almond flakes,Mandorle,mandorle|mandorla|mandorle intere|mandorle a lamelle|lamelle di mandorle|granella di mandorle|mandorle tostate|scaglie di mandorle,usda_sr,170567,,
+dried cranberries|craisins,Mirtilli rossi secchi,mirtilli rossi secchi|mirtilli rossi|cranberry|cranberries,usda_sr,171723,,
+hazelnuts|hazelnut|chopped hazelnuts,Nocciole,nocciole|nocciola|granella di nocciole|nocciole tostate|nocciole tritate,usda_sr,170581,,
+walnuts|walnut|walnut kernels|chopped walnuts,Noci,noci|noce|gherigli di noce|gherigli|noci sgusciate|noci tritate,usda_sr,170187,5,pezzo = un gheriglio
+macadamia|macadamia nuts,Noci di macadamia,noci di macadamia|macadamia,usda_sr,170178,,
+pecans|pecan|pecan nuts,Noci pecan,noci pecan|pecan,usda_sr,170182,,
+marzipan|almond paste,Pasta di mandorle,pasta di mandorle|pasta di mandorla|marzapane,ciqual,15201,,
+pine nuts|pignoli,Pinoli,pinoli|pinolo,usda_sr,170591,,
+pistachios|pistachio|pistachio nuts|chopped pistachios,Pistacchi,pistacchi|pistacchio|granella di pistacchi|granella di pistacchio|pistacchi di bronte|pistacchi sgusciati,usda_sr,170184,,
+prunes|dried plums,Prugne secche,prugne secche,usda_sr,168162,10,
+candied orange peel,Scorze d'arancia candite,scorze d'arancia candite|arancia candita|scorza d'arancia candita|cubetti di arancia candita,ciqual,31021,,
+chia seeds|chia,Semi di chia,semi di chia|chia,usda_sr,170554,,
+sunflower seeds,Semi di girasole,semi di girasole,usda_sr,170562,,
+flaxseed|flax seeds|linseed|ground flaxseed,Semi di lino,semi di lino|lino,usda_sr,169414,,
+poppy seeds,Semi di papavero,semi di papavero|papavero,usda_sr,171330,,
+sesame seeds|sesame|toasted sesame seeds|black sesame seeds,Semi di sesamo,semi di sesamo|sesamo|sesamo nero|sesamo tostato,usda_sr,170150,,
+pumpkin seeds|pepitas,Semi di zucca,semi di zucca,usda_sr,170556,,
+tahini|sesame paste|tahina,Tahina,tahina|tahini|crema di sesamo|pasta di sesamo,usda_sr,170189,,
+raisins|sultanas|golden raisins|currants,Uvetta,uvetta|uva sultanina|uva passa|uvetta sultanina|uva secca,usda_sr,168165,,
+bulgur|bulgur wheat,Bulgur,bulgur|bulghur,usda_sr,170688,,
+corn flakes|cornflakes,Corn flakes,corn flakes|cornflakes|fiocchi di mais,usda_sr,174648,,
+couscous,Cous cous,cous cous|couscous|cuscus|cuscus di semola,usda_sr,169699,,
+spelt|farro|emmer|spelt flour|farro flour,Farro,farro|farro perlato|farro decorticato|spelta|farina di farro,usda_sr,169745,,farro e farina di farro con lo stesso alimento (spelta)
+oats|rolled oats|oat flakes|oatmeal|old-fashioned oats|quick oats|oat flour|porridge oats,Fiocchi d'avena,fiocchi d'avena|avena|farina d'avena|fiocchi di avena|avena in fiocchi|farina di avena,usda_sr,173904,,
+granola|muesli,Granola,granola|muesli,usda_sr,171646,,
+millet,Miglio,miglio,usda_sr,169702,,
+pearl barley|barley|pearled barley,Orzo perlato,orzo|orzo perlato|orzo decorticato,usda_sr,170284,,attenzione: «orzo» in inglese è la pasta (risoni)
+quinoa,Quinoa,quinoa|quinoa rossa|quinoa nera,usda_sr,168874,,
+rice|white rice|long grain rice|basmati rice|jasmine rice|long-grain rice|thai rice,Riso bianco,riso|riso bianco|riso basmati|riso thai|riso jasmine|riso a chicco lungo|riso parboiled,usda_sr,168877,,
+arborio rice|carnaroli rice|risotto rice|medium grain rice|vialone nano rice,Riso Carnaroli,riso carnaroli|carnaroli|riso arborio|arborio|riso per risotti|riso vialone nano|vialone nano|riso roma|riso superfino|riso per risotto,usda_sr,168879,,
+cooked rice|leftover rice|steamed rice|boiled rice,Riso cotto,riso cotto|riso bollito|riso avanzato|riso lessato,usda_sr,168878,,
+brown rice|whole grain rice,Riso integrale,riso integrale|riso venere|riso nero|riso rosso,usda_sr,169703,,riso venere/rosso assegnati all'integrale (valori vicini)
+sushi rice|short grain rice|glutinous rice|sticky rice,Riso per sushi,riso per sushi|riso originario|riso a chicco tondo|riso giapponese|riso glutinoso,usda_sr,168931,,
+puffed rice|rice krispies|rice cereal,Riso soffiato,riso soffiato,usda_sr,173912,,
+gnocchi|potato gnocchi,Gnocchi di patate,gnocchi|gnocchi di patate|chicche,ciqual,26264,,
+egg noodles|noodles|ramen noodles|chinese noodles|lo mein noodles,Noodles all'uovo,noodles|noodles all'uovo|noodle|spaghetti cinesi|ramen,usda_sr,169731,,
+pasta|spaghetti|penne|fusilli|rigatoni|rigatoni pasta|orzo pasta|orzo|macaroni|linguine|farfalle|paccheri|bucatini|conchiglie|ditalini|orecchiette|dried pasta|short pasta|long pasta|risoni|vermicelli|lasagna sheets|lasagna noodles|lasagne|calamarata|mezze maniche,Pasta di semola,pasta|spaghetti|spaghettoni|penne|penne rigate|fusilli|rigatoni|risoni|maccheroni|linguine|farfalle|paccheri|bucatini|conchiglie|conchiglioni|ditalini|ditali|orecchiette|mezze maniche|calamarata|vermicelli|trofie|strozzapreti|pasta corta|pasta lunga|pasta secca|lasagne|sfoglie per lasagne|lasagne secche|caserecce|tortiglioni|pennette|stelline|pastina|mafalde|sedanini|gnocchetti sardi|malloreddus|fregola|mezzi rigatoni|spaghetti quadrati|tubetti|pici,usda_sr,168927,,pasta secca italiana (non arricchita); «orzo» in inglese = risoni
+fresh pasta|fresh egg pasta|egg pasta|tagliatelle|fettuccine|pappardelle|tagliolini|fresh lasagna sheets,Pasta fresca all'uovo,pasta fresca|pasta all'uovo|pasta fresca all'uovo|tagliatelle|fettuccine|pappardelle|tagliolini|tajarin|lasagne fresche|sfoglia all'uovo|garganelli|maltagliati|tagliatelle all'uovo,ciqual,9815,,
+whole wheat pasta|wholemeal pasta|whole grain pasta,Pasta integrale,pasta integrale|spaghetti integrali|penne integrali,usda_sr,169738,,
+ravioli|cheese ravioli|stuffed pasta|tortelli|filled pasta,Ravioli al formaggio,ravioli|tortelli|ravioli ricotta e spinaci|pasta ripiena|tortelloni|mezzelune|ravioli al formaggio,ciqual,25181,,
+soba|soba noodles|buckwheat noodles,Soba,soba|noodles di grano saraceno,usda_sr,168906,,
+rice noodles|rice vermicelli|pad thai noodles,Spaghetti di riso,spaghetti di riso|noodles di riso|vermicelli di riso|tagliatelle di riso,usda_sr,169742,,
+tortellini|meat tortellini|cappelletti|agnolotti,Tortellini,tortellini|cappelletti|agnolotti|tortellini alla carne|anolini,ciqual,25157,,
+baguette|french bread|sourdough bread|sourdough,Baguette,baguette|pane francese|pane a lievitazione naturale|pane con lievito madre|filoncino,usda_sr,172675,30,
+brioche|brioche bun|croissant,Brioche,brioche|pan brioche|cornetto|cornetti|croissant,ciqual,7746,50,
+crackers|saltines|saltine crackers,Crackers,crackers|cracker|crackers salati,usda_sr,172746,3,
+croutons,Crostini,crostini|crostini di pane|croutons,usda_sr,172751,,
+rusks|melba toast|zwieback,Fette biscottate,fette biscottate|fetta biscottata,usda_sr,174979,9,
+breadsticks|grissini,Grissini,grissini|grissino,usda_sr,174929,5,
+pizza dough|pizza base|bread dough,Impasto per pizza,impasto per pizza|pasta per pizza|pasta di pane|impasto della pizza|base pizza|panetto di pasta per pizza,ciqual,37001,,
+pancakes|pancake,Pancake,pancake,usda_sr,175009,40,
+white bread|sandwich bread|sliced bread|toast bread|white sandwich bread|brioche bread,Pancarrè,pancarre|pan carre|pane in cassetta|pane per tramezzini|pane da toast|fette di pancarre|pan bauletto,usda_sr,174924,25,pezzo = una fetta
+bread|italian bread|crusty bread|stale bread|day-old bread|country bread|ciabatta,Pane,pane|pane raffermo|pane casereccio|pane toscano|ciabatta|filone|pagnotta|fette di pane|fetta di pane|pane comune|mollica|mollica di pane,usda_sr,174913,30,pezzo = una fetta (~30 g)
+whole wheat bread|wholemeal bread|whole grain bread,Pane integrale,pane integrale|pane di segale|pane ai cereali,usda_sr,172688,30,
+pita|pita bread|flatbread|naan,Pane pita,pita|pane pita|piadina|piadine|pane arabo|naan,usda_sr,174915,60,piadina assente: pita USDA come approssimazione (la piadina è più grassa)
+breadcrumbs|bread crumbs|panko|dried breadcrumbs,Pangrattato,pangrattato|pan grattato|pane grattugiato|panko|pangrattato tostato,usda_sr,174928,,
+hamburger bun|burger bun|burger buns|buns,Panino per hamburger,panino per hamburger|panini per hamburger|bun|buns|panino|panini,usda_sr,172796,50,
+pie crust|pie dough|savory shortcrust pastry|brisee|pate brisee,Pasta brisée,pasta brisee|brisee|pasta brise|rotolo di pasta brisee,ciqual,23414,230,pezzo = rotolo pronto da 230 g
+phyllo dough|filo pastry|phyllo|filo dough|kataifi,Pasta fillo,pasta fillo|pasta phillo|pasta filo|pasta kataifi,ciqual,23445,20,pezzo = un foglio (~20 g)
+shortcrust pastry|sweet shortcrust pastry|sweet pastry|pastry dough,Pasta frolla,pasta frolla|frolla|rotolo di pasta frolla,ciqual,23440,230,pezzo = rotolo pronto da 230 g
+puff pastry|puff pastry sheet|puff pastry roll,Pasta sfoglia,pasta sfoglia|sfoglia|rotolo di pasta sfoglia|pasta sfoglia rettangolare|pasta sfoglia rotonda,ciqual,23424,230,pezzo = rotolo pronto da 230 g
+tortilla|tortillas|flour tortilla|flour tortillas|wrap|wraps,Tortilla di frumento,tortilla|tortillas|tortilla di frumento|wrap|piadina wrap,usda_sr,175037,45,
+corn tortilla|corn tortillas|tortilla chips|nachos,Tortilla di mais,tortilla di mais|nachos|tortilla chips,usda_sr,175036,25,
+amaretti|amaretti cookies|macaroons|almond cookies,Amaretti,amaretti|amaretto secco|amaretti secchi|amaretti di saronno,ciqual,23027,8,amaretti assenti: «macaron sec» CIQUAL (biscotto secco di mandorle e zucchero)
+oreo|oreos|chocolate sandwich cookies|chocolate cookies,Biscotti al cacao farciti,oreo|biscotti al cacao|biscotti al cioccolato|biscotti oreo,usda_sr,172718,11,
+digestive biscuits|graham crackers|digestives,Biscotti digestive,biscotti digestive|digestive|biscotti integrali,usda_sr,174957,15,
+butter cookies|biscuits|cookies|shortbread|shortbread cookies|dry biscuits|tea biscuits,Biscotti secchi,biscotti|biscotti secchi|frollini|biscotti al burro|biscotti frollini|biscotti oro saiwa|biscotti tritati|biscotto,usda_sr,174950,8,
+caramel|caramel sauce|dulce de leche,Caramello,caramello|salsa al caramello|mou|dulce de leche,usda_sr,168841,,
+sprinkles|colored sprinkles|nonpareils,Codette di zucchero,codette|zuccherini|confettini|codette colorate|granella di zucchero,ciqual,11510,,
+custard|pastry cream|vanilla pudding,Crema pasticcera,crema pasticcera|crema|budino alla vaniglia,usda_sr,169608,,crema pasticcera pronta: budino alla vaniglia USDA come approssimazione
+gelatin|gelatin sheets|gelatine|gelatine leaves|gelatin powder|isinglass,Gelatina in fogli,colla di pesce|gelatina in fogli|gelatina|fogli di gelatina|gelatina alimentare|gelatina in polvere,usda_sr,169599,2,pezzo = un foglio (2 g)
+ice cream|vanilla ice cream,Gelato,gelato|gelato alla vaniglia|gelato fiordilatte,usda_sr,167575,,
+sponge cake|pan di spagna|genoise,Pan di Spagna,pan di spagna|pandispagna|base per torte,usda_sr,172706,,
+panettone|pandoro,Panettone,panettone|pandoro|colomba,ciqual,7719,,pandoro e colomba assegnati al panettone (pandoro assente in CIQUAL)
+chocolate syrup|chocolate sauce,Salsa al cioccolato,salsa al cioccolato|topping al cioccolato,usda_sr,168835,,
+ladyfingers|savoiardi|sponge fingers|lady fingers,Savoiardi,savoiardi|savoiardo|pavesini,ciqual,24430,11,
+cocoa butter|cacao butter,Burro di cacao,burro di cacao,usda_sr,171421,,
+cocoa powder|unsweetened cocoa|cocoa|unsweetened cocoa powder|cacao powder|dutch-process cocoa,Cacao amaro in polvere,cacao|cacao amaro|cacao in polvere|cacao amaro in polvere|polvere di cacao,usda_sr,169593,,
+milk chocolate|milk chocolate chips,Cioccolato al latte,cioccolato al latte|gocce di cioccolato al latte,usda_sr,167587,,
+white chocolate|white chocolate chips,Cioccolato bianco,cioccolato bianco|gocce di cioccolato bianco,usda_sr,167571,,
+extra dark chocolate|85% dark chocolate|70% dark chocolate,Cioccolato extra fondente,cioccolato extra fondente|extra fondente|cioccolato fondente 85%|cioccolato 85%,usda_sr,170273,,
+dark chocolate|bittersweet chocolate|chocolate|baking chocolate,Cioccolato fondente,cioccolato fondente|fondente|cioccolato|cioccolato fondente al 70%|cioccolato da copertura|copertura al cioccolato,usda_sr,170272,,
+chocolate chips|semisweet chocolate|semi-sweet chocolate chips|chocolate chunks,Gocce di cioccolato,gocce di cioccolato|gocce di cioccolato fondente|cioccolato semidolce|scaglie di cioccolato|cioccolato a pezzi,usda_sr,167976,,
+balsamic vinegar|balsamic|balsamic glaze|balsamic reduction,Aceto balsamico,aceto balsamico|balsamico|aceto balsamico di modena|glassa di aceto balsamico|glassa balsamica|crema di balsamico,usda_sr,172241,,la glassa è più zuccherina: approssimazione
+white vinegar|distilled vinegar|rice vinegar|rice wine vinegar,Aceto di alcol,aceto di alcol|aceto di riso|aceto distillato,usda_sr,172237,,
+apple cider vinegar|cider vinegar,Aceto di mele,aceto di mele|aceto di sidro,usda_sr,173469,,
+red wine vinegar|wine vinegar|vinegar|white wine vinegar,Aceto di vino,aceto|aceto di vino|aceto di vino rosso|aceto di vino bianco|aceto bianco,usda_sr,172240,,«vinegar» generico = aceto di vino
+bechamel|bechamel sauce|white sauce,Besciamella,besciamella|besciamella pronta|salsa besciamella,ciqual,11101,,
+ketchup|tomato ketchup|catsup,Ketchup,ketchup,usda_sr,168556,,
+mayonnaise|mayo,Maionese,maionese,usda_sr,171009,,
+miso|miso paste|white miso,Miso,miso|pasta di miso,usda_sr,172442,,
+pesto|basil pesto|pesto genovese|pesto sauce,Pesto alla genovese,pesto|pesto alla genovese|pesto di basilico|pesto genovese,ciqual,11179,,
+red pesto|sun-dried tomato pesto,Pesto rosso,pesto rosso|pesto di pomodori secchi|pesto alla siciliana,ciqual,11210,,
+salt|table salt|sea salt|kosher salt|coarse salt|fine salt|flaky salt,Sale,sale|sale fino|sale grosso|sale marino|fiocchi di sale|sale rosa|sale integrale|sale da cucina,usda_sr,173468,,
+barbecue sauce|bbq sauce,Salsa barbecue,salsa barbecue|salsa bbq|barbecue,usda_sr,174523,,
+oyster sauce,Salsa di ostriche,salsa di ostriche,usda_sr,174529,,
+fish sauce,Salsa di pesce,salsa di pesce|colatura di alici|garum,usda_sr,174531,,
+soy sauce|tamari|shoyu|light soy sauce|dark soy sauce,Salsa di soia,salsa di soia|soia|shoyu|tamari|salsa di soia scura,usda_sr,174277,,
+hoisin sauce|hoisin,Salsa hoisin,salsa hoisin|hoisin,usda_sr,172886,,
+salsa|tomato salsa,Salsa messicana,salsa messicana|salsa pico de gallo|pico de gallo,usda_sr,174524,,
+hot sauce|tabasco|chili sauce,Salsa piccante,tabasco|salsa piccante,usda_sr,174528,,
+teriyaki sauce|teriyaki,Salsa teriyaki,salsa teriyaki|teriyaki,usda_sr,171167,,
+worcestershire sauce|worcestershire,Salsa Worcestershire,salsa worcestershire|worcestershire|salsa worcester,usda_sr,171610,,
+mustard|dijon mustard|yellow mustard|whole grain mustard,Senape,senape|senape di digione|mostarda di digione|senape in grani|senape dolce,usda_sr,172234,,
+sriracha|sriracha sauce,Sriracha,sriracha|salsa sriracha,usda_sr,171186,,
+garlic powder|granulated garlic,Aglio in polvere,aglio in polvere|aglio granulare|aglio granulato|aglio disidratato,usda_sr,171325,,
+bay leaf|bay leaves|laurel,Alloro,alloro|foglia di alloro|foglie di alloro|foglia d'alloro|foglie d'alloro|lauro,usda_sr,170917,0.2,pezzo = una foglia
+anise|aniseed|star anise|anise seeds,Anice,anice|semi di anice|anice stellato|anice verde,usda_sr,171316,,
+dried basil,Basilico secco,basilico secco|basilico essiccato,usda_sr,171317,,
+cinnamon|ground cinnamon|cinnamon stick|cinnamon powder,Cannella,cannella|cannella in polvere|stecca di cannella|cannella in stecche|stecche di cannella,usda_sr,171320,3,pezzo = una stecca
+cardamom|cardamom pods|ground cardamom,Cardamomo,cardamomo|bacche di cardamomo,usda_sr,170919,,
+cloves|whole cloves|ground cloves|clove,Chiodi di garofano,chiodi di garofano|chiodo di garofano|garofano,usda_sr,171321,0.1,
+onion powder,Cipolla in polvere,cipolla in polvere|cipolla granulare|cipolla disidratata,usda_sr,171327,,
+coriander seeds|ground coriander,Coriandolo in semi,semi di coriandolo|coriandolo in polvere|coriandolo macinato,usda_sr,170922,,
+cumin|ground cumin|cumin seeds,Cumino,cumino|cumino in polvere|semi di cumino,usda_sr,170923,,
+turmeric|ground turmeric,Curcuma,curcuma|curcuma in polvere,usda_sr,172231,,
+curry powder|curry|garam masala,Curry,curry|curry in polvere|garam masala,usda_sr,170924,,
+tarragon,Dragoncello,dragoncello|estragone,usda_sr,170937,,
+italian seasoning|mixed herbs|dried herbs|herbes de provence|poultry seasoning,Erbe aromatiche secche,erbe aromatiche|erbe aromatiche secche|erbe di provenza|mix di erbe|aromi misti|erbe miste,usda_sr,171331,,
+marjoram,Maggiorana,maggiorana,usda_sr,170928,,
+nutmeg|ground nutmeg,Noce moscata,noce moscata|noce moscata grattugiata,usda_sr,171326,,
+dried oregano|oregano,Origano,origano|origano secco|origano essiccato,usda_sr,171328,,
+paprika|sweet paprika|smoked paprika|hot paprika,Paprika,paprika|paprica|paprika dolce|paprika affumicata|paprika piccante,usda_sr,171329,,
+white pepper,Pepe bianco,pepe bianco,usda_sr,170933,,
+black pepper|pepper|ground black pepper|freshly ground pepper|peppercorns|ground pepper,Pepe nero,pepe|pepe nero|pepe macinato|pepe nero macinato|grani di pepe|pepe in grani|pepe macinato fresco,usda_sr,170931,,
+red pepper flakes|chili flakes|crushed red pepper|cayenne pepper|cayenne|chili powder|chilli powder|ground chili|chilli flakes,Peperoncino in polvere,peperoncino in polvere|peperoncino secco|peperoncino tritato|peperoncino in scaglie|cayenna|pepe di cayenna|peperoncino macinato|chili in polvere,usda_sr,170932,,
+allspice|juniper berries,Pimento,pimento|pepe garofanato|bacche di ginepro|ginepro,usda_sr,171315,,ginepro assente: pimento come approssimazione (peso trascurabile)
+dried parsley|parsley flakes,Prezzemolo secco,prezzemolo secco|prezzemolo essiccato,usda_sr,170930,,
+dried rosemary,Rosmarino secco,rosmarino secco|rosmarino essiccato,usda_sr,171333,,
+sage|sage leaves|fresh sage|dried sage,Salvia,salvia|foglie di salvia|salvia fresca|salvia secca,usda_sr,170935,1,salvia fresca assente: salvia essiccata (peso trascurabile); pezzo = foglia
+fennel seeds|fennel seed,Semi di finocchio,semi di finocchio|semi di finocchietto|finocchietto,usda_sr,171323,,
+mustard seeds|mustard powder|dry mustard,Senape in polvere,senape in polvere|semi di senape,usda_sr,170929,,
+dried thyme|thyme leaves dried,Timo secco,timo secco|timo essiccato,usda_sr,170938,,
+saffron|saffron threads|saffron powder,Zafferano,zafferano|pistilli di zafferano|bustina di zafferano|zafferano in polvere,usda_sr,170934,0.125,"pezzo = bustina (0,125 g)"
+ground ginger|ginger powder,Zenzero in polvere,zenzero in polvere,usda_sr,170926,,
+dill|fresh dill|dill weed,Aneto,aneto,usda_sr,172233,,
+basil|fresh basil|basil leaves|sweet basil,Basilico,basilico|foglie di basilico|basilico fresco|ciuffo di basilico|foglia di basilico,usda_sr,172232,0.5,pezzo = una foglia
+cilantro|coriander|fresh coriander|coriander leaves|fresh cilantro,Coriandolo fresco,coriandolo|coriandolo fresco|foglie di coriandolo|cilantro,usda_sr,169997,,
+chives|fresh chives,Erba cipollina,erba cipollina,usda_sr,169994,,
+mint|fresh mint|mint leaves|spearmint|peppermint,Menta,menta|foglie di menta|mentuccia|menta fresca|nepitella,usda_sr,173475,0.2,pezzo = una foglia
+parsley|fresh parsley|flat-leaf parsley|italian parsley|chopped parsley,Prezzemolo,prezzemolo|prezzemolo fresco|prezzemolo tritato|ciuffo di prezzemolo,usda_sr,170416,,
+rosemary|fresh rosemary|rosemary sprig|rosemary sprigs,Rosmarino,rosmarino|rametto di rosmarino|rametti di rosmarino|rosmarino fresco|aghi di rosmarino,usda_sr,173473,1,pezzo = un rametto
+thyme|fresh thyme|thyme sprigs|thyme leaves,Timo,timo|timo fresco|rametto di timo|rametti di timo|foglioline di timo|timo limonato,usda_sr,173470,0.5,pezzo = un rametto
+water|cold water|warm water|hot water|lukewarm water|sparkling water|ice|ice cubes,Acqua,acqua|acqua fredda|acqua tiepida|acqua calda|acqua frizzante|acqua bollente|ghiaccio|cubetti di ghiaccio|acqua gassata,usda_sr,173647,,
+almond milk|almond drink|unsweetened almond milk,Bevanda alla mandorla,latte di mandorla|bevanda alla mandorla|latte di mandorle|bevanda di mandorla,usda_sr,174832,,
+oat milk|oat drink,Bevanda d'avena,latte d'avena|bevanda d'avena|latte di avena|bevanda di avena|bevanda all'avena,ciqual,18899,,
+rice milk|rice drink,Bevanda di riso,latte di riso|bevanda di riso|bevanda al riso,usda_sr,171942,,
+soy milk|soymilk|soy drink,Bevanda di soia,latte di soia|bevanda di soia|bevanda alla soia,usda_sr,175215,,
+beer|lager|ale,Birra,birra|birra chiara|birra scura|birra bionda,usda_sr,168746,,
+beef broth|beef stock|meat broth,Brodo di carne,brodo di carne|brodo di manzo,usda_sr,171538,,
+chicken broth|chicken stock,Brodo di pollo,brodo di pollo,usda_sr,174536,,
+vegetable broth|vegetable stock|broth|stock,Brodo vegetale,brodo|brodo vegetale|brodo di verdure|brodo caldo,usda_sr,171583,,
+coffee|espresso|brewed coffee|strong coffee,Caffè espresso,caffe|caffe espresso|espresso|caffe forte|caffe della moka|tazzina di caffe,usda_sr,171891,30,pezzo = una tazzina (30 g)
+instant coffee|instant espresso powder|coffee powder,Caffè solubile,caffe solubile|caffe istantaneo|caffe in polvere,usda_sr,171893,,
+bouillon cube|stock cube|vegetable bouillon|bouillon|granulated bouillon,Dado da brodo,dado|dado da brodo|dado vegetale|dado di carne|brodo granulare|granulare|dado per brodo,ciqual,11041,10,pezzo = un dado da 10 g
+fish stock|fish broth|seafood stock,Fumetto di pesce,fumetto di pesce|fumetto|brodo di pesce,usda_sr,172885,,
+coffee liqueur|liqueur|amaretto liqueur|limoncello|orange liqueur|triple sec|cointreau|grand marnier|alchermes|maraschino,Liquore dolce,liquore al caffe|limoncello|amaretto di saronno|liquore all'amaretto|liquore all'arancia|cointreau|grand marnier|alchermes|maraschino|kahlua|liquore dolce,usda_sr,175097,,liquori dolci assimilati al liquore al caffè (unico disponibile)
+marsala|sweet wine|dessert wine|port|port wine|sherry|vin santo|madeira,Marsala,marsala|vino dolce|vin santo|vino liquoroso|porto|sherry|passito,usda_sr,173176,,
+rum|brandy|cognac|vodka|whisky|whiskey|gin|grappa|tequila|liquor|spirits,Rum,rum|brandy|cognac|vodka|whisky|gin|grappa|tequila|liquore|distillato,usda_sr,174815,,tutti i distillati a 40% vol.
+tea|black tea|green tea|brewed tea,Tè,te|te nero|te verde|infuso,usda_sr,173227,,
+white wine|dry white wine|wine,Vino bianco,vino bianco|vino|vino bianco secco|prosecco|spumante|champagne,usda_sr,174837,,
+red wine|dry red wine,Vino rosso,vino rosso|vino rosso secco,usda_sr,173190,,

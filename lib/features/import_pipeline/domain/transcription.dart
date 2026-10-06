@@ -36,7 +36,7 @@ abstract interface class AudioExtractor {
 
 /// Trascrizione del parlato in testo.
 abstract interface class Transcriber {
-  /// Trascrive in italiano il WAV [wav] con il modello [model]. Restituisce il
+  /// Trascrive nella lingua del parlato (D-53) il WAV [wav] con il modello [model]. Restituisce il
   /// testo senza timestamp, senza spazi ai bordi (può essere vuoto).
   ///
   /// **Non si può interrompere** (whisper.cpp, nessun abort): niente timeout,

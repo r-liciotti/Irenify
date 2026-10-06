@@ -31,7 +31,8 @@ Future<String> whisperGgmlCall({
   return response.text;
 }
 
-/// Trascrive in italiano con whisper.cpp sul telefono (parametri D-10).
+/// Trascrive con whisper.cpp sul telefono (parametri D-10), nella lingua
+/// del parlato riconosciuta da whisper.cpp (D-53).
 class WhisperTranscriber implements Transcriber {
   WhisperTranscriber({WhisperCall call = whisperGgmlCall}) : _call = call;
 
@@ -40,11 +41,18 @@ class WhisperTranscriber implements Transcriber {
   /// Un thread per core del Pixel 9 Pro (D-10).
   static const threads = 8;
 
-  /// Richiesta per whisper.cpp: italiano, senza timestamp e **senza
-  /// `initialPrompt`** (lo rallenta da 1,3 a 9 volte, D-10).
+  /// Lingua riconosciuta da whisper.cpp sui primi 30 s dell'audio (D-53).
+  /// Su Android `whisper_ggml` 2.6.0 accetta `'auto'` (salta il controllo
+  /// della lingua nota) e lo passa a `wparams.language`; whisper.cpp poi
+  /// riconosce la lingua e trascrive (`detect_language` resta false).
+  static const language = 'auto';
+
+  /// Richiesta per whisper.cpp: lingua riconosciuta, niente traduzione,
+  /// senza timestamp e **senza `initialPrompt`** (lo rallenta da 1,3 a 9
+  /// volte, D-10).
   static TranscribeRequest request(File wav) => TranscribeRequest(
     audio: wav.path,
-    language: 'it',
+    language: language,
     threads: threads,
     isNoTimestamps: true,
     splitOnWord: false,

@@ -135,6 +135,12 @@ rimaste dalla F1 (D-44).
 
 **2026-10-06, dall'utente:** la barra in basso avrà più avanti anche le schede **Piano pasti** e **Spesa** (D-52).
 
+**Per la F6 (decisione dell'utente, 2026-10-06):** saltare la trascrizione dei video **senza voce** (solo musica) con il
+rilevatore di voce Silero (VAD), già presente nel whisper.cpp 1.9.1 incluso ma non esposto da `whisper_ggml` 2.6.0.
+Serve copiare il pacchetto nel progetto e aggiungere un comando nativo "c'è voce?" (modello Silero da circa 1 MB, MIT).
+Così si possono trascrivere anche solo i tratti parlati. Esempio misurato: reel di 13,6 s di sola musica, 49 s di
+trascrizione inutile. Stima circa mezza giornata.
+
 Dagli screenshot di riferimento (2026-10-06), da valutare dopo l'MVP: raccolte / ricettari personali, lista della spesa,
 piano pasti, modalità cucina (schermo acceso, passo per passo), voto e note personali sulla ricetta, condivisione della
 ricetta. Lista della spesa e modalità cucina erano già nella "Fase 2 (fuori MVP)" del piano approvato.

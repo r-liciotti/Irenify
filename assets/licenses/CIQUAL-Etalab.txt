@@ -1,0 +1,19 @@
+ANSES-CIQUAL
+
+Questa app include valori nutrizionali tratti dalla tabella di composizione
+nutrizionale degli alimenti Ciqual, per alcuni prodotti assenti nelle fonti
+USDA (ad esempio pecorino e bresaola).
+
+Fonte: Anses. 2025. Table de composition nutritionnelle des aliments Ciqual
+2025. https://ciqual.anses.fr
+Dataset: https://doi.org/10.57745/RDMHWY (file XML del 2025-11-03)
+
+I dati sono riutilizzati con la Licence Ouverte / Open Licence versione 2.0
+di Etalab: https://www.etalab.gouv.fr/licence-ouverte-open-licence/
+(testo: https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf)
+
+Modifiche: sono stati estratti solo alcuni alimenti e alcuni costituenti
+(energia, proteine, carboidrati, zuccheri, grassi, acidi grassi saturi,
+fibre, sodio); i valori "tracce" sono stati letti come 0, quelli "< x" come
+x/2, e il sodio mancante è stato ricavato dal sale (sale / 2,5). I valori
+calcolati dall'app sono stime e non sono approvati dall'Anses.
