@@ -182,7 +182,12 @@ class RecipeRepository {
   }
 
   /// Elenco del ricettario, dalla più recente; si aggiorna da solo.
-  Stream<List<RecipeSummary>> watchSummaries() =>
+  ///
+  /// CONTRATTO F2: [filter], tag, piattaforma e autore li implementa la fase 2
+  /// (ricerca FTS5, D-47); per ora restituisce tutte le ricette.
+  Stream<List<RecipeSummary>> watchSummaries([
+    RecipeFilter filter = const RecipeFilter(),
+  ]) =>
       (_db.select(_db.recipes)..orderBy([
             (r) =>
                 OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc),
@@ -200,6 +205,18 @@ class RecipeRepository {
             ),
           )
           .watch();
+
+  /// Tag usati nel ricettario con il numero di ricette, dal più usato; per le
+  /// chip dei filtri.
+  Stream<List<TagCount>> watchTagCounts() => _db
+      .customSelect(
+        'SELECT t.name AS tag, count(*) AS n FROM recipe_tags rt '
+        'JOIN tags t ON t.id = rt.tag_id GROUP BY t.name '
+        'ORDER BY n DESC, t.name',
+        readsFrom: {_db.recipeTags, _db.tags},
+      )
+      .map((r) => (tag: r.read<String>('tag'), count: r.read<int>('n')))
+      .watch();
 
   /// Id della ricetta importata dal post [sourceKey], se c'è già (D-17).
   Future<String?> findIdBySourceKey(String sourceKey) async {

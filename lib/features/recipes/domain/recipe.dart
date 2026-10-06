@@ -51,8 +51,37 @@ abstract class RecipeSummary with _$RecipeSummary {
     required bool isFavorite,
     required bool needsReview,
     required DateTime createdAt,
+    int? restMinutes,
+    SourcePlatform? platform,
+    String? authorName,
+    @Default(<String>[]) List<String> tags,
   }) = _RecipeSummary;
 }
+
+/// Ricerca e filtri del ricettario (F2). Vuoto = tutte le ricette.
+@freezed
+abstract class RecipeFilter with _$RecipeFilter {
+  const factory RecipeFilter({
+    /// Testo cercato in titolo, ingredienti, tag e autore (D-47).
+    @Default('') String query,
+
+    /// Ricette che hanno **tutti** questi tag.
+    @Default(<String>{}) Set<String> tags,
+    @Default(false) bool favoritesOnly,
+    SourcePlatform? platform,
+  }) = _RecipeFilter;
+
+  const RecipeFilter._();
+
+  bool get isEmpty =>
+      query.trim().isEmpty &&
+      tags.isEmpty &&
+      !favoritesOnly &&
+      platform == null;
+}
+
+/// Un tag e quante ricette lo usano, per le chip dei filtri.
+typedef TagCount = ({String tag, int count});
 
 /// Da dove arriva la ricetta e cosa ne è stato ricavato.
 @freezed

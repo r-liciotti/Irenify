@@ -11,6 +11,32 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-47 — Altre decisioni della F2 (2026-10-06) — Attiva
+- **Decisione:** ricerca FTS5 su titolo, ingredienti, tag e autore (accenti ignorati, prefisso); scheda Nutrienti
+  nascosta fino alla F4; badge Importazioni = job in corso + falliti finché non eliminati o riprovati; "Aggiungi il
+  video" con `file_picker`, ripartendo dalla tappa video; flag del primo avvio in `shared_preferences`; "Elimina dati"
+  cancella ricette e importazioni, chiave e modello solo con caselle a parte; backup JSON resta in F6; la F3 è assorbita
+  nella F2 (`F2_PIANO.md`, decisioni 2 e 4–10).
+- **Deciso da:** utente ("va bene").
+
+## D-46 — Tag da un elenco guidato invece che liberi (2026-10-06) — Attiva
+- **Decisione:** i tag della ricetta li sceglie Gemini da un elenco fisso (portata, dieta, caratteristiche: es. primo,
+  secondo, dolce, vegetariano, veloce…) imposto dallo schema JSON; alla migrazione v2 i tag esistenti fuori elenco
+  vengono ricondotti o tolti. Elenco approvato il 2026-10-06 (`lib/features/recipes/domain/recipe_tags.dart`):
+  portata (antipasto, primo, secondo, contorno, piatto unico, dolce, colazione, pane e pizza, salsa, bevanda), dieta
+  (vegetariana, vegana, senza glutine, senza lattosio), caratteristiche (veloce < 30 min, al forno, senza cottura, per
+  bambini, da preparare in anticipo), ingrediente principale (carne, pesce, verdure, legumi, uova, formaggi); niente
+  stagioni.
+- **Perché:** oggi Gemini copia gli hashtag del post ("ricetteconlazucca", "ricettefacili"): come filtri non servono.
+- **Deciso da:** utente (resoconto della F2).
+
+## D-45 — Direzione visiva "Zafferano" con Manrope (2026-10-06) — Attiva
+- **Decisione:** tema scuro caffè con accento zafferano e variante chiara color farina; titoli in Gloock, testo in
+  Manrope; foto a tutta larghezza con foglio arrotondato, ingredienti con icona, barra porzioni fissa (spunti dagli
+  screenshot dell'utente). Font inclusi nell'app; chiaro/scuro segue il telefono, con scelta manuale.
+- **Alternative scartate:** A "Salvia di notte", B "Orto chiaro" (pagina di prova con le 3 direzioni sulle ricette reali).
+- **Deciso da:** utente ("Zafferano mi piace ma con il font del testo preferisco Manrope").
+
 ## D-44 — F1 chiusa con una prova completa ridotta (2026-10-06) — Attiva, da rivalutare all'inizio della F2
 - **Decisione:** la prova della fase 8 si chiude con 2 reel Instagram nuovi (2/2 ricette corrette) più i 9 job delle
   fasi 5–7 (2 ricette, 2 doppioni, 5 "non è una ricetta" corretti), invece dei 6–8 link previsti.

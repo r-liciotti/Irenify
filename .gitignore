@@ -53,3 +53,6 @@ WORKLOG.md
 # Chiavi/segreti: mai nel repo (vedi CLAUDE.md)
 .env
 .env.*
+
+# Copie isolate dei subagent (git worktree)
+.claude/worktrees/

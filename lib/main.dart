@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
+import 'app/licenses.dart';
 import 'app/providers.dart';
 import 'app/router.dart';
+import 'app/theme_mode.dart';
 import 'core/logging/app_log.dart';
 import 'features/import_pipeline/data/import_engine.dart';
 import 'features/share_intake/data/share_intake.dart';
 
-void main() {
+Future<void> main() async {
   // Serve prima di usare i plugin (path_provider) fuori da un widget.
   WidgetsFlutterBinding.ensureInitialized();
   final log = AppLog();
@@ -31,6 +33,11 @@ void main() {
     retry: noAutomaticRetry,
     overrides: [appLogProvider.overrideWithValue(log)],
   );
+  registerAppLicenses();
+  // Tema scelto dall'utente letto prima del primo fotogramma, per non mostrare
+  // per un attimo quello del telefono (una lettura locale, pochi ms).
+  container.read(themeModeProvider);
+  await container.read(themeModeProvider.notifier).loaded;
   // Motore e ricezione delle condivisioni partono da qui e non dall'app: i
   // widget test montano IrenefyApp senza avviarli. Prima la pulizia delle
   // cartelle, poi le condivisioni, poi la ripresa dei job (ImportEngine.start).

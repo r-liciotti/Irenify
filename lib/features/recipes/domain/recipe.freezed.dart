@@ -369,7 +369,7 @@ $RecipeSourceInfoCopyWith<$Res> get source {
 /// @nodoc
 mixin _$RecipeSummary {
 
- String get id; String get title; String? get thumbnailPath; int? get prepMinutes; int? get cookMinutes; bool get isFavorite; bool get needsReview; DateTime get createdAt;
+ String get id; String get title; String? get thumbnailPath; int? get prepMinutes; int? get cookMinutes; bool get isFavorite; bool get needsReview; DateTime get createdAt; int? get restMinutes; SourcePlatform? get platform; String? get authorName; List<String> get tags;
 /// Create a copy of RecipeSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -380,16 +380,16 @@ $RecipeSummaryCopyWith<RecipeSummary> get copyWith => _$RecipeSummaryCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RecipeSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.thumbnailPath, thumbnailPath) || other.thumbnailPath == thumbnailPath)&&(identical(other.prepMinutes, prepMinutes) || other.prepMinutes == prepMinutes)&&(identical(other.cookMinutes, cookMinutes) || other.cookMinutes == cookMinutes)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.needsReview, needsReview) || other.needsReview == needsReview)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RecipeSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.thumbnailPath, thumbnailPath) || other.thumbnailPath == thumbnailPath)&&(identical(other.prepMinutes, prepMinutes) || other.prepMinutes == prepMinutes)&&(identical(other.cookMinutes, cookMinutes) || other.cookMinutes == cookMinutes)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.needsReview, needsReview) || other.needsReview == needsReview)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.restMinutes, restMinutes) || other.restMinutes == restMinutes)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&const DeepCollectionEquality().equals(other.tags, tags));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,thumbnailPath,prepMinutes,cookMinutes,isFavorite,needsReview,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,thumbnailPath,prepMinutes,cookMinutes,isFavorite,needsReview,createdAt,restMinutes,platform,authorName,const DeepCollectionEquality().hash(tags));
 
 @override
 String toString() {
-  return 'RecipeSummary(id: $id, title: $title, thumbnailPath: $thumbnailPath, prepMinutes: $prepMinutes, cookMinutes: $cookMinutes, isFavorite: $isFavorite, needsReview: $needsReview, createdAt: $createdAt)';
+  return 'RecipeSummary(id: $id, title: $title, thumbnailPath: $thumbnailPath, prepMinutes: $prepMinutes, cookMinutes: $cookMinutes, isFavorite: $isFavorite, needsReview: $needsReview, createdAt: $createdAt, restMinutes: $restMinutes, platform: $platform, authorName: $authorName, tags: $tags)';
 }
 
 
@@ -400,7 +400,7 @@ abstract mixin class $RecipeSummaryCopyWith<$Res>  {
   factory $RecipeSummaryCopyWith(RecipeSummary value, $Res Function(RecipeSummary) _then) = _$RecipeSummaryCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String? thumbnailPath, int? prepMinutes, int? cookMinutes, bool isFavorite, bool needsReview, DateTime createdAt
+ String id, String title, String? thumbnailPath, int? prepMinutes, int? cookMinutes, bool isFavorite, bool needsReview, DateTime createdAt, int? restMinutes, SourcePlatform? platform, String? authorName, List<String> tags
 });
 
 
@@ -417,7 +417,7 @@ class _$RecipeSummaryCopyWithImpl<$Res>
 
 /// Create a copy of RecipeSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? thumbnailPath = freezed,Object? prepMinutes = freezed,Object? cookMinutes = freezed,Object? isFavorite = null,Object? needsReview = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? thumbnailPath = freezed,Object? prepMinutes = freezed,Object? cookMinutes = freezed,Object? isFavorite = null,Object? needsReview = null,Object? createdAt = null,Object? restMinutes = freezed,Object? platform = freezed,Object? authorName = freezed,Object? tags = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -427,7 +427,11 @@ as int?,cookMinutes: freezed == cookMinutes ? _self.cookMinutes : cookMinutes //
 as int?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,needsReview: null == needsReview ? _self.needsReview : needsReview // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,restMinutes: freezed == restMinutes ? _self.restMinutes : restMinutes // ignore: cast_nullable_to_non_nullable
+as int?,platform: freezed == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
+as SourcePlatform?,authorName: freezed == authorName ? _self.authorName : authorName // ignore: cast_nullable_to_non_nullable
+as String?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -512,10 +516,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? thumbnailPath,  int? prepMinutes,  int? cookMinutes,  bool isFavorite,  bool needsReview,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? thumbnailPath,  int? prepMinutes,  int? cookMinutes,  bool isFavorite,  bool needsReview,  DateTime createdAt,  int? restMinutes,  SourcePlatform? platform,  String? authorName,  List<String> tags)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RecipeSummary() when $default != null:
-return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that.cookMinutes,_that.isFavorite,_that.needsReview,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that.cookMinutes,_that.isFavorite,_that.needsReview,_that.createdAt,_that.restMinutes,_that.platform,_that.authorName,_that.tags);case _:
   return orElse();
 
 }
@@ -533,10 +537,10 @@ return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? thumbnailPath,  int? prepMinutes,  int? cookMinutes,  bool isFavorite,  bool needsReview,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? thumbnailPath,  int? prepMinutes,  int? cookMinutes,  bool isFavorite,  bool needsReview,  DateTime createdAt,  int? restMinutes,  SourcePlatform? platform,  String? authorName,  List<String> tags)  $default,) {final _that = this;
 switch (_that) {
 case _RecipeSummary():
-return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that.cookMinutes,_that.isFavorite,_that.needsReview,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that.cookMinutes,_that.isFavorite,_that.needsReview,_that.createdAt,_that.restMinutes,_that.platform,_that.authorName,_that.tags);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -553,10 +557,10 @@ return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? thumbnailPath,  int? prepMinutes,  int? cookMinutes,  bool isFavorite,  bool needsReview,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? thumbnailPath,  int? prepMinutes,  int? cookMinutes,  bool isFavorite,  bool needsReview,  DateTime createdAt,  int? restMinutes,  SourcePlatform? platform,  String? authorName,  List<String> tags)?  $default,) {final _that = this;
 switch (_that) {
 case _RecipeSummary() when $default != null:
-return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that.cookMinutes,_that.isFavorite,_that.needsReview,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that.cookMinutes,_that.isFavorite,_that.needsReview,_that.createdAt,_that.restMinutes,_that.platform,_that.authorName,_that.tags);case _:
   return null;
 
 }
@@ -568,7 +572,7 @@ return $default(_that.id,_that.title,_that.thumbnailPath,_that.prepMinutes,_that
 
 
 class _RecipeSummary implements RecipeSummary {
-  const _RecipeSummary({required this.id, required this.title, this.thumbnailPath, this.prepMinutes, this.cookMinutes, required this.isFavorite, required this.needsReview, required this.createdAt});
+  const _RecipeSummary({required this.id, required this.title, this.thumbnailPath, this.prepMinutes, this.cookMinutes, required this.isFavorite, required this.needsReview, required this.createdAt, this.restMinutes, this.platform, this.authorName, final  List<String> tags = const <String>[]}): _tags = tags;
   
 
 @override final  String id;
@@ -579,6 +583,16 @@ class _RecipeSummary implements RecipeSummary {
 @override final  bool isFavorite;
 @override final  bool needsReview;
 @override final  DateTime createdAt;
+@override final  int? restMinutes;
+@override final  SourcePlatform? platform;
+@override final  String? authorName;
+ final  List<String> _tags;
+@override@JsonKey() List<String> get tags {
+  if (_tags is EqualUnmodifiableListView) return _tags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_tags);
+}
+
 
 /// Create a copy of RecipeSummary
 /// with the given fields replaced by the non-null parameter values.
@@ -590,16 +604,16 @@ _$RecipeSummaryCopyWith<_RecipeSummary> get copyWith => __$RecipeSummaryCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RecipeSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.thumbnailPath, thumbnailPath) || other.thumbnailPath == thumbnailPath)&&(identical(other.prepMinutes, prepMinutes) || other.prepMinutes == prepMinutes)&&(identical(other.cookMinutes, cookMinutes) || other.cookMinutes == cookMinutes)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.needsReview, needsReview) || other.needsReview == needsReview)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RecipeSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.thumbnailPath, thumbnailPath) || other.thumbnailPath == thumbnailPath)&&(identical(other.prepMinutes, prepMinutes) || other.prepMinutes == prepMinutes)&&(identical(other.cookMinutes, cookMinutes) || other.cookMinutes == cookMinutes)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.needsReview, needsReview) || other.needsReview == needsReview)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.restMinutes, restMinutes) || other.restMinutes == restMinutes)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&const DeepCollectionEquality().equals(other._tags, _tags));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,thumbnailPath,prepMinutes,cookMinutes,isFavorite,needsReview,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,thumbnailPath,prepMinutes,cookMinutes,isFavorite,needsReview,createdAt,restMinutes,platform,authorName,const DeepCollectionEquality().hash(_tags));
 
 @override
 String toString() {
-  return 'RecipeSummary(id: $id, title: $title, thumbnailPath: $thumbnailPath, prepMinutes: $prepMinutes, cookMinutes: $cookMinutes, isFavorite: $isFavorite, needsReview: $needsReview, createdAt: $createdAt)';
+  return 'RecipeSummary(id: $id, title: $title, thumbnailPath: $thumbnailPath, prepMinutes: $prepMinutes, cookMinutes: $cookMinutes, isFavorite: $isFavorite, needsReview: $needsReview, createdAt: $createdAt, restMinutes: $restMinutes, platform: $platform, authorName: $authorName, tags: $tags)';
 }
 
 
@@ -610,7 +624,7 @@ abstract mixin class _$RecipeSummaryCopyWith<$Res> implements $RecipeSummaryCopy
   factory _$RecipeSummaryCopyWith(_RecipeSummary value, $Res Function(_RecipeSummary) _then) = __$RecipeSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String? thumbnailPath, int? prepMinutes, int? cookMinutes, bool isFavorite, bool needsReview, DateTime createdAt
+ String id, String title, String? thumbnailPath, int? prepMinutes, int? cookMinutes, bool isFavorite, bool needsReview, DateTime createdAt, int? restMinutes, SourcePlatform? platform, String? authorName, List<String> tags
 });
 
 
@@ -627,7 +641,7 @@ class __$RecipeSummaryCopyWithImpl<$Res>
 
 /// Create a copy of RecipeSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? thumbnailPath = freezed,Object? prepMinutes = freezed,Object? cookMinutes = freezed,Object? isFavorite = null,Object? needsReview = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? thumbnailPath = freezed,Object? prepMinutes = freezed,Object? cookMinutes = freezed,Object? isFavorite = null,Object? needsReview = null,Object? createdAt = null,Object? restMinutes = freezed,Object? platform = freezed,Object? authorName = freezed,Object? tags = null,}) {
   return _then(_RecipeSummary(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -637,7 +651,288 @@ as int?,cookMinutes: freezed == cookMinutes ? _self.cookMinutes : cookMinutes //
 as int?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,needsReview: null == needsReview ? _self.needsReview : needsReview // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,restMinutes: freezed == restMinutes ? _self.restMinutes : restMinutes // ignore: cast_nullable_to_non_nullable
+as int?,platform: freezed == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
+as SourcePlatform?,authorName: freezed == authorName ? _self.authorName : authorName // ignore: cast_nullable_to_non_nullable
+as String?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as List<String>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+mixin _$RecipeFilter {
+
+/// Testo cercato in titolo, ingredienti, tag e autore (D-47).
+ String get query;/// Ricette che hanno **tutti** questi tag.
+ Set<String> get tags; bool get favoritesOnly; SourcePlatform? get platform;
+/// Create a copy of RecipeFilter
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RecipeFilterCopyWith<RecipeFilter> get copyWith => _$RecipeFilterCopyWithImpl<RecipeFilter>(this as RecipeFilter, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RecipeFilter&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.favoritesOnly, favoritesOnly) || other.favoritesOnly == favoritesOnly)&&(identical(other.platform, platform) || other.platform == platform));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,query,const DeepCollectionEquality().hash(tags),favoritesOnly,platform);
+
+@override
+String toString() {
+  return 'RecipeFilter(query: $query, tags: $tags, favoritesOnly: $favoritesOnly, platform: $platform)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $RecipeFilterCopyWith<$Res>  {
+  factory $RecipeFilterCopyWith(RecipeFilter value, $Res Function(RecipeFilter) _then) = _$RecipeFilterCopyWithImpl;
+@useResult
+$Res call({
+ String query, Set<String> tags, bool favoritesOnly, SourcePlatform? platform
+});
+
+
+
+
+}
+/// @nodoc
+class _$RecipeFilterCopyWithImpl<$Res>
+    implements $RecipeFilterCopyWith<$Res> {
+  _$RecipeFilterCopyWithImpl(this._self, this._then);
+
+  final RecipeFilter _self;
+  final $Res Function(RecipeFilter) _then;
+
+/// Create a copy of RecipeFilter
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? query = null,Object? tags = null,Object? favoritesOnly = null,Object? platform = freezed,}) {
+  return _then(_self.copyWith(
+query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
+as Set<String>,favoritesOnly: null == favoritesOnly ? _self.favoritesOnly : favoritesOnly // ignore: cast_nullable_to_non_nullable
+as bool,platform: freezed == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
+as SourcePlatform?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [RecipeFilter].
+extension RecipeFilterPatterns on RecipeFilter {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _RecipeFilter value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _RecipeFilter() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _RecipeFilter value)  $default,){
+final _that = this;
+switch (_that) {
+case _RecipeFilter():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _RecipeFilter value)?  $default,){
+final _that = this;
+switch (_that) {
+case _RecipeFilter() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String query,  Set<String> tags,  bool favoritesOnly,  SourcePlatform? platform)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _RecipeFilter() when $default != null:
+return $default(_that.query,_that.tags,_that.favoritesOnly,_that.platform);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String query,  Set<String> tags,  bool favoritesOnly,  SourcePlatform? platform)  $default,) {final _that = this;
+switch (_that) {
+case _RecipeFilter():
+return $default(_that.query,_that.tags,_that.favoritesOnly,_that.platform);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String query,  Set<String> tags,  bool favoritesOnly,  SourcePlatform? platform)?  $default,) {final _that = this;
+switch (_that) {
+case _RecipeFilter() when $default != null:
+return $default(_that.query,_that.tags,_that.favoritesOnly,_that.platform);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _RecipeFilter extends RecipeFilter {
+  const _RecipeFilter({this.query = '', final  Set<String> tags = const <String>{}, this.favoritesOnly = false, this.platform}): _tags = tags,super._();
+  
+
+/// Testo cercato in titolo, ingredienti, tag e autore (D-47).
+@override@JsonKey() final  String query;
+/// Ricette che hanno **tutti** questi tag.
+ final  Set<String> _tags;
+/// Ricette che hanno **tutti** questi tag.
+@override@JsonKey() Set<String> get tags {
+  if (_tags is EqualUnmodifiableSetView) return _tags;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableSetView(_tags);
+}
+
+@override@JsonKey() final  bool favoritesOnly;
+@override final  SourcePlatform? platform;
+
+/// Create a copy of RecipeFilter
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$RecipeFilterCopyWith<_RecipeFilter> get copyWith => __$RecipeFilterCopyWithImpl<_RecipeFilter>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RecipeFilter&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.favoritesOnly, favoritesOnly) || other.favoritesOnly == favoritesOnly)&&(identical(other.platform, platform) || other.platform == platform));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,query,const DeepCollectionEquality().hash(_tags),favoritesOnly,platform);
+
+@override
+String toString() {
+  return 'RecipeFilter(query: $query, tags: $tags, favoritesOnly: $favoritesOnly, platform: $platform)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$RecipeFilterCopyWith<$Res> implements $RecipeFilterCopyWith<$Res> {
+  factory _$RecipeFilterCopyWith(_RecipeFilter value, $Res Function(_RecipeFilter) _then) = __$RecipeFilterCopyWithImpl;
+@override @useResult
+$Res call({
+ String query, Set<String> tags, bool favoritesOnly, SourcePlatform? platform
+});
+
+
+
+
+}
+/// @nodoc
+class __$RecipeFilterCopyWithImpl<$Res>
+    implements _$RecipeFilterCopyWith<$Res> {
+  __$RecipeFilterCopyWithImpl(this._self, this._then);
+
+  final _RecipeFilter _self;
+  final $Res Function(_RecipeFilter) _then;
+
+/// Create a copy of RecipeFilter
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? query = null,Object? tags = null,Object? favoritesOnly = null,Object? platform = freezed,}) {
+  return _then(_RecipeFilter(
+query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
+as Set<String>,favoritesOnly: null == favoritesOnly ? _self.favoritesOnly : favoritesOnly // ignore: cast_nullable_to_non_nullable
+as bool,platform: freezed == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
+as SourcePlatform?,
   ));
 }
 

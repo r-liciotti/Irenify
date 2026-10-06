@@ -2,7 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/import_pipeline/presentation/import_job_screen.dart';
 import '../features/import_pipeline/presentation/imports_screen.dart';
+import '../features/onboarding/presentation/welcome_screen.dart';
 import '../features/recipes/presentation/recipe_detail_screen.dart';
 import '../features/recipes/presentation/recipes_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
@@ -13,8 +15,14 @@ abstract final class Routes {
   static const imports = '/importazioni';
   static const settings = '/impostazioni';
 
+  /// Primo avvio (F2, fase 6), a schermo intero.
+  static const welcome = '/benvenuto';
+
   /// Dettaglio di una ricetta, a schermo intero sopra la barra in basso.
   static String recipe(String id) => '$recipes/$id';
+
+  /// Dettaglio di un'importazione (F2, fase 5), a schermo intero.
+  static String importJob(String id) => '$imports/$id';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -23,6 +31,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     navigatorKey: rootNavigatorKey,
     initialLocation: Routes.recipes,
     routes: [
+      GoRoute(
+        path: Routes.welcome,
+        builder: (context, state) => const WelcomeScreen(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => HomeShell(navigationShell: shell),
         branches: [
@@ -48,6 +60,14 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: Routes.imports,
                 builder: (context, state) => const ImportsScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) =>
+                        ImportJobScreen(jobId: state.pathParameters['id']!),
+                  ),
+                ],
               ),
             ],
           ),

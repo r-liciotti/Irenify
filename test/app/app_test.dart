@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:irenefy/app/app.dart';
 import 'package:irenefy/app/failure_presentation.dart';
 import 'package:irenefy/app/providers.dart';
+import 'package:irenefy/app/theme_mode.dart';
 import 'package:irenefy/core/errors/failure.dart';
 import 'package:irenefy/core/logging/app_log.dart';
 import 'package:irenefy/data/db/app_database.dart';
@@ -20,6 +21,7 @@ import 'package:irenefy/l10n/app_localizations.dart';
 import '../data/db/test_database.dart';
 import '../features/recipes/data/recipe_repository_test.dart' show sampleRecipe;
 import '../features/settings/fake_llm_settings.dart';
+import 'fake_theme_mode_store.dart';
 
 /// Widget test sull'app intera, con database in memoria.
 ///
@@ -52,6 +54,8 @@ void appTest(
             ),
             // Chiave e modello in memoria, mai nel secure storage.
             llmSettingsProvider.overrideWithValue(FakeLlmSettings()),
+            // Tema in memoria: nei test shared_preferences non c'è.
+            themeModeStoreProvider.overrideWithValue(FakeThemeModeStore()),
           ],
           child: const IrenefyApp(),
         ),

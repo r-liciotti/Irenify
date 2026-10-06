@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:irenefy/app/theme_mode.dart';
 import 'package:go_router/go_router.dart';
 import 'package:irenefy/app/app.dart';
 import 'package:irenefy/app/providers.dart';
@@ -21,6 +22,7 @@ import 'package:irenefy/features/settings/data/whisper_model_manager.dart';
 import '../../../data/db/test_database.dart';
 import '../../settings/fake_llm_settings.dart';
 import '../data/recipe_repository_test.dart' show sampleRecipe;
+import '../../../app/fake_theme_mode_store.dart';
 
 /// Ambiente di una prova: database in memoria e cartella dei file.
 typedef RecipesEnv = ({AppDatabase db, Directory support});
@@ -52,6 +54,7 @@ void recipesTest(
           retry: noAutomaticRetry,
           overrides: [
             appLogProvider.overrideWithValue(AppLog()),
+            themeModeStoreProvider.overrideWithValue(FakeThemeModeStore()),
             appDatabaseProvider.overrideWithValue(db),
             recipeFilesProvider.overrideWithValue(
               RecipeFiles(() async => support),
