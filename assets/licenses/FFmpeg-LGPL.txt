@@ -1,0 +1,27 @@
+FFmpeg
+
+Questa app usa FFmpeg (https://ffmpeg.org) per convertire l'audio dei video
+prima della trascrizione. FFmpeg è distribuito con licenza GNU Lesser General
+Public License (LGPL) versione 2.1 o successiva; la build usata ("min" di
+FFmpegKit) non include componenti GPL né non liberi.
+
+FFmpeg è incluso come libreria dinamica separata, caricata dall'app tramite
+il pacchetto ffmpeg_kit_flutter_new_min (LGPL v3) e la libreria Android
+ffmpeg-kit-min: può essere sostituita con una versione modificata.
+
+Sorgenti:
+- FFmpeg: https://ffmpeg.org/download.html
+- FFmpegKit per Flutter: https://github.com/sk3llo/ffmpeg_kit_flutter
+
+Testo completo della licenza LGPL v2.1: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+Testo completo della licenza LGPL v3: https://www.gnu.org/licenses/lgpl-3.0.html
+
+FFmpeg is free software; you can redistribute it and/or modify it under the
+terms of the GNU Lesser General Public License as published by the Free
+Software Foundation; either version 2.1 of the License, or (at your option)
+any later version.
+
+FFmpeg is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+details.

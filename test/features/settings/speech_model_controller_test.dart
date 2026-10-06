@@ -135,4 +135,30 @@ void main() {
       10,
     );
   });
+
+  test(
+    'annullato e poi eliminato: whenIdle attende la fine del download',
+    () async {
+      final chunks = StreamController<Uint8List>();
+      final c = container(RangeServer((_) => ResponseBody(chunks.stream, 200)));
+      final states = await start(c);
+      final controller = c.read(speechModelControllerProvider.notifier);
+
+      final download = controller.download();
+      chunks.add(Uint8List.fromList(payload.sublist(0, 10)));
+      await pumpEventQueue();
+      controller.cancel();
+      chunks.add(Uint8List.fromList(payload.sublist(10, 20)));
+
+      await controller.whenIdle();
+      await controller.delete();
+      await download;
+      await chunks.close();
+
+      expect(states.last, isA<SpeechModelMissing>());
+      expect(dir.listSync(), isEmpty, reason: 'anche il .part è eliminato');
+      // Senza download in corso si completa subito.
+      await controller.whenIdle();
+    },
+  );
 }

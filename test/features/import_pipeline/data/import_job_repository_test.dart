@@ -214,4 +214,32 @@ void main() {
     await sub.cancel();
     expect(seen, [ImportStatus.received, ImportStatus.normalized, null]);
   });
+
+  test(
+    'job non conclusi: conta quelli in corso, non falliti né completati',
+    () async {
+      expect(await repo.watchUnfinishedCount().first, 0);
+      final running = await repo.create(sharedText: 'https://vm.tiktok.com/a');
+      final failed = await repo.create(sharedText: 'https://vm.tiktok.com/b');
+      final done = await repo.create(sharedText: 'https://vm.tiktok.com/c');
+      await repo.save(running.copyWith(status: ImportStatus.transcribed));
+      await repo.save(failed.copyWith(status: ImportStatus.failed));
+      await repo.save(done.copyWith(status: ImportStatus.completed));
+      expect(await repo.watchUnfinishedCount().first, 1);
+
+      await repo.save(running.copyWith(status: ImportStatus.failed));
+      expect(await repo.watchUnfinishedCount().first, 0);
+    },
+  );
+
+  test('deleteAll elimina tutti i job', () async {
+    await repo.create(sharedText: 'https://vm.tiktok.com/a');
+    final done = await repo.create(sharedText: 'https://vm.tiktok.com/b');
+    await repo.save(done.copyWith(status: ImportStatus.completed));
+
+    await repo.deleteAll();
+
+    expect(await repo.watchRecent().first, isEmpty);
+    expect(await repo.watchUnfinishedCount().first, 0);
+  });
 }

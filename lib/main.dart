@@ -7,10 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'app/licenses.dart';
 import 'app/providers.dart';
-import 'app/router.dart';
 import 'app/theme_mode.dart';
 import 'core/logging/app_log.dart';
 import 'features/import_pipeline/data/import_engine.dart';
+import 'features/onboarding/presentation/onboarding_controller.dart';
 import 'features/share_intake/data/share_intake.dart';
 
 Future<void> main() async {
@@ -38,6 +38,9 @@ Future<void> main() async {
   // per un attimo quello del telefono (una lettura locale, pochi ms).
   container.read(themeModeProvider);
   await container.read(themeModeProvider.notifier).loaded;
+  // Primo avvio (D-50): il router sceglie la prima pagina da questo stato.
+  container.read(onboardingProvider);
+  await container.read(onboardingProvider.notifier).loaded;
   // Motore e ricezione delle condivisioni partono da qui e non dall'app: i
   // widget test montano IrenefyApp senza avviarli. Prima la pulizia delle
   // cartelle, poi le condivisioni, poi la ripresa dei job (ImportEngine.start).
@@ -48,7 +51,7 @@ Future<void> main() async {
         ready: engine.start(),
         onJobCreated: (_) {
           unawaited(engine.wake());
-          container.read(routerProvider).go(Routes.imports);
+          openImportsAfterShare(container);
         },
       );
   runApp(

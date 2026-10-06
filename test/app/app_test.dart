@@ -13,6 +13,7 @@ import 'package:irenefy/core/errors/failure.dart';
 import 'package:irenefy/core/logging/app_log.dart';
 import 'package:irenefy/data/db/app_database.dart';
 import 'package:irenefy/data/db/database_provider.dart';
+import 'package:irenefy/features/onboarding/data/onboarding_store.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/settings/data/llm_settings_store.dart';
 import 'package:irenefy/features/settings/data/whisper_model_manager.dart';
@@ -21,6 +22,7 @@ import 'package:irenefy/l10n/app_localizations.dart';
 import '../data/db/test_database.dart';
 import '../features/recipes/data/recipe_repository_test.dart' show sampleRecipe;
 import '../features/settings/fake_llm_settings.dart';
+import 'fake_onboarding_store.dart';
 import 'fake_theme_mode_store.dart';
 
 /// Widget test sull'app intera, con database in memoria.
@@ -56,6 +58,10 @@ void appTest(
             llmSettingsProvider.overrideWithValue(FakeLlmSettings()),
             // Tema in memoria: nei test shared_preferences non c'è.
             themeModeStoreProvider.overrideWithValue(FakeThemeModeStore()),
+            // Benvenuto già fatto: si parte dalle Ricette.
+            onboardingStoreProvider.overrideWithValue(
+              FakeOnboardingStore.done(),
+            ),
           ],
           child: const IrenefyApp(),
         ),
@@ -127,6 +133,13 @@ void main() {
     );
 
     await tester.tap(find.text('Impostazioni'));
+    await tester.pumpAndSettle();
+    // In fondo alle impostazioni: si scorre fino alla voce.
+    await tester.scrollUntilVisible(
+      find.text('Copia registro'),
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text('Copia registro'));
     await tester.pump();

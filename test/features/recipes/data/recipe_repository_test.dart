@@ -226,4 +226,43 @@ void main() {
     );
     await expectation;
   });
+
+  test(
+    'deleteAll svuota ricette, tabelle figlie, tag e indice (D-50)',
+    () async {
+      await repo.insert(sampleRecipe());
+      await repo.insert(
+        sampleRecipe(id: 'r2', sourceKey: 'tiktok:2', tags: ['primo']),
+      );
+      final jobs = ImportJobRepository(db);
+      final job = await jobs.create(sharedText: 'https://vm.tiktok.com/a');
+      await jobs.save(job.copyWith(recipeId: 'r1'));
+      Future<int> indexed() async =>
+          (await db
+                  .customSelect('SELECT count(*) AS c FROM recipe_search')
+                  .getSingle())
+              .read<int>('c');
+      expect(await indexed(), 2);
+
+      final counts = expectLater(repo.watchCount(), emitsThrough(0));
+      await repo.deleteAll();
+      await counts;
+
+      for (final table in <TableInfo<Table, Object?>>[
+        db.recipes,
+        db.recipeSources,
+        db.ingredientGroups,
+        db.ingredients,
+        db.recipeSteps,
+        db.recipeTags,
+        db.tags,
+      ]) {
+        expect(await count(table), 0, reason: table.actualTableName);
+      }
+      expect(await indexed(), 0);
+      expect(await repo.watchTagCounts().first, isEmpty);
+      // Il job resta (lo elimina ImportJobRepository), senza collegamento.
+      expect((await jobs.getById(job.id))!.recipeId, isNull);
+    },
+  );
 }

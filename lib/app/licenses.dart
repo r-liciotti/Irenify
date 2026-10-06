@@ -1,20 +1,26 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// Licenze OFL dei font inclusi nell'app (`assets/licenses/`), mostrate nella
-/// pagina delle licenze di Flutter. Da chiamare una volta, in `main`.
+/// Licenze dei componenti inclusi nell'app che non arrivano da un pacchetto
+/// Dart (`assets/licenses/`): font, whisper.cpp, modello Whisper e FFmpeg
+/// (D-50). Le mostra la pagina delle licenze di Flutter insieme a quelle dei
+/// pacchetti. Da chiamare una volta, in `main`.
 void registerAppLicenses() {
-  LicenseRegistry.addLicense(_fontLicenses);
+  LicenseRegistry.addLicense(_appLicenses);
 }
 
-const _fontLicenseFiles = {
+/// Nome mostrato nella pagina delle licenze → testo negli asset.
+const appLicenseFiles = {
   'Gloock': 'assets/licenses/Gloock-OFL.txt',
   'Manrope': 'assets/licenses/Manrope-OFL.txt',
+  'whisper.cpp': 'assets/licenses/whisper.cpp-MIT.txt',
+  'Whisper': 'assets/licenses/Whisper-model-MIT.txt',
+  'FFmpeg': 'assets/licenses/FFmpeg-LGPL.txt',
 };
 
-Stream<LicenseEntry> _fontLicenses() async* {
-  for (final MapEntry(key: font, value: path) in _fontLicenseFiles.entries) {
+Stream<LicenseEntry> _appLicenses() async* {
+  for (final MapEntry(key: name, value: path) in appLicenseFiles.entries) {
     final text = await rootBundle.loadString(path);
-    yield LicenseEntryWithLineBreaks([font], text);
+    yield LicenseEntryWithLineBreaks([name], text);
   }
 }

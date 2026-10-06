@@ -11,6 +11,21 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-50 — Primo avvio, elimina dati e versione (2026-10-06) — Attiva
+- **Decisione:**
+  - **Primo avvio:** benvenuto in 3 passi saltabili (come condividere, chiave Gemini, modello di trascrizione), con
+    un flag in `shared_preferences`. Si salta da solo se c'è già una chiave, il modello o una ricetta (utente
+    esistente dopo l'aggiornamento). Si rivede da Impostazioni → "Rivedi la guida". Niente redirect globale: una
+    condivisione in arrivo apre sempre Importazioni.
+  - **Elimina dati:** cancella ricette, tag e importazioni con le loro cartelle; chiave e modello di trascrizione
+    solo con le due caselle. Tema, flag del primo avvio e modello Gemini scelto restano. Il pulsante è disattivato
+    finché c'è un'importazione non conclusa (Whisper non si può interrompere e lascerebbe file orfani).
+  - **Versione** in Informazioni letta con `package_info_plus` (nuova dipendenza).
+  - **Licenze:** font, whisper.cpp (MIT), modello Whisper (MIT, OpenAI), FFmpeg (LGPL), più quelle dei pacchetti.
+- **Alternative scartate:** benvenuto mostrato una volta anche all'utente esistente; cancellare anche con
+  un'importazione in corso; versione scritta a mano.
+- **Deciso da:** utente ("ok vai alla prossima fase", proposte A).
+
 ## D-49 — "Aggiungi il video" solo sulle importazioni ferme; tempi delle tappe (2026-10-06) — Attiva
 - **Decisione:**
   - **Quando compare "Aggiungi il video":** solo sulle importazioni **ferme** di un link, se il video non è stato

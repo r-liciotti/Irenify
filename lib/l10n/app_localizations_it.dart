@@ -567,6 +567,117 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearance => 'Aspetto';
+
+  @override
+  String get settingsThemeSystem => 'Come il telefono';
+
+  @override
+  String get settingsThemeLight => 'Chiaro';
+
+  @override
+  String get settingsThemeDark => 'Scuro';
+
+  @override
+  String get settingsData => 'Dati';
+
+  @override
+  String get settingsEraseData => 'Elimina dati';
+
+  @override
+  String get settingsEraseDataSubtitle => 'Ricette e importazioni';
+
+  @override
+  String get settingsEraseTitle => 'Eliminare i dati?';
+
+  @override
+  String get settingsEraseBody =>
+      'Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono.';
+
+  @override
+  String get settingsEraseApiKey => 'Elimina anche la chiave Gemini';
+
+  @override
+  String get settingsEraseSpeechModel =>
+      'Elimina anche il modello di trascrizione';
+
+  @override
+  String get settingsEraseConfirm => 'Elimina';
+
+  @override
+  String get settingsErased => 'Dati eliminati';
+
+  @override
+  String get settingsEraseBusy => 'Attendi la fine dell\'importazione in corso';
+
+  @override
+  String get settingsGuide => 'Rivedi la guida';
+
+  @override
+  String get settingsGuideSubtitle =>
+      'Come importare, chiave Gemini e trascrizione';
+
+  @override
+  String get settingsAbout => 'Informazioni';
+
+  @override
+  String settingsVersion(String version) {
+    return 'Versione $version';
+  }
+
+  @override
+  String get settingsLicenses => 'Licenze';
+
+  @override
+  String get settingsLicensesSubtitle =>
+      'Font, whisper.cpp, modello Whisper, FFmpeg e librerie';
+
+  @override
+  String get welcomeTitle => 'Benvenuto in Irenefy';
+
+  @override
+  String get welcomeIntro =>
+      'Trasforma i reel di Instagram e TikTok in ricette da cucinare.';
+
+  @override
+  String get welcomeShareTitle => 'Come si importa una ricetta';
+
+  @override
+  String get welcomeShareBody =>
+      'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy. Al resto pensa l\'app.';
+
+  @override
+  String get welcomeKeyTitle => 'Collega Gemini';
+
+  @override
+  String get welcomeKeyBody =>
+      'Irenefy usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.';
+
+  @override
+  String get welcomeModelTitle => 'Trascrizione del parlato';
+
+  @override
+  String get welcomeModelBody =>
+      'Per capire anche le ricette dette a voce serve un modello di trascrizione (circa 260 MB, meglio con il Wi-Fi). Lavora sul telefono: l\'audio non viene inviato a nessuno.';
+
+  @override
+  String get welcomeNext => 'Avanti';
+
+  @override
+  String get welcomeBack => 'Indietro';
+
+  @override
+  String get welcomeSkip => 'Salta';
+
+  @override
+  String get welcomeDone => 'Inizia';
+
+  @override
+  String welcomeStep(int current, int total) {
+    return '$current di $total';
+  }
+
+  @override
   String get settingsDiagnostics => 'Diagnostica';
 
   @override

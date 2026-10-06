@@ -326,6 +326,50 @@
     }
   },
 
+  "settingsAppearance": "Aspetto",
+  "settingsThemeSystem": "Come il telefono",
+  "settingsThemeLight": "Chiaro",
+  "settingsThemeDark": "Scuro",
+  "settingsData": "Dati",
+  "settingsEraseData": "Elimina dati",
+  "settingsEraseDataSubtitle": "Ricette e importazioni",
+  "settingsEraseTitle": "Eliminare i dati?",
+  "settingsEraseBody": "Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono.",
+  "settingsEraseApiKey": "Elimina anche la chiave Gemini",
+  "settingsEraseSpeechModel": "Elimina anche il modello di trascrizione",
+  "settingsEraseConfirm": "Elimina",
+  "settingsErased": "Dati eliminati",
+  "settingsEraseBusy": "Attendi la fine dell'importazione in corso",
+  "settingsGuide": "Rivedi la guida",
+  "settingsGuideSubtitle": "Come importare, chiave Gemini e trascrizione",
+  "settingsAbout": "Informazioni",
+  "settingsVersion": "Versione {version}",
+  "@settingsVersion": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "settingsLicenses": "Licenze",
+  "settingsLicensesSubtitle": "Font, whisper.cpp, modello Whisper, FFmpeg e librerie",
+  "welcomeTitle": "Benvenuto in Irenefy",
+  "welcomeIntro": "Trasforma i reel di Instagram e TikTok in ricette da cucinare.",
+  "welcomeShareTitle": "Come si importa una ricetta",
+  "welcomeShareBody": "Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy. Al resto pensa l'app.",
+  "welcomeKeyTitle": "Collega Gemini",
+  "welcomeKeyBody": "Irenefy usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.",
+  "welcomeModelTitle": "Trascrizione del parlato",
+  "welcomeModelBody": "Per capire anche le ricette dette a voce serve un modello di trascrizione (circa 260 MB, meglio con il Wi-Fi). Lavora sul telefono: l'audio non viene inviato a nessuno.",
+  "welcomeNext": "Avanti",
+  "welcomeBack": "Indietro",
+  "welcomeSkip": "Salta",
+  "welcomeDone": "Inizia",
+  "welcomeStep": "{current} di {total}",
+  "@welcomeStep": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
   "settingsDiagnostics": "Diagnostica",
   "settingsCopyLog": "Copia registro",
   "settingsCopyLogSubtitle": "Ultimi eventi dell'app, da incollare in chat o nel worklog",

@@ -59,6 +59,13 @@ class RecipeFiles {
     if (await dir.exists()) await dir.delete(recursive: true);
   }
 
+  /// Elimina i file di tutte le ricette, cioè la cartella `recipes/` (D-50).
+  Future<void> deleteAll() async {
+    final base = await _base();
+    final dir = Directory([base.path, folder].join(Platform.pathSeparator));
+    if (await dir.exists()) await dir.delete(recursive: true);
+  }
+
   /// Estensione di [file] in minuscolo con il punto (`.jpg`); `.jpg` se
   /// manca.
   static String _extension(File file) {

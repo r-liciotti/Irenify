@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../features/import_pipeline/presentation/import_job_screen.dart';
 import '../features/import_pipeline/presentation/imports_screen.dart';
+import '../features/onboarding/presentation/onboarding_controller.dart';
 import '../features/onboarding/presentation/welcome_screen.dart';
 import '../features/recipes/presentation/recipe_detail_screen.dart';
 import '../features/recipes/presentation/recipes_screen.dart';
@@ -29,7 +30,11 @@ final routerProvider = Provider<GoRouter>((ref) {
   final rootNavigatorKey = GlobalKey<NavigatorState>();
   final router = GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: Routes.recipes,
+    // Letto una volta sola (`main` attende che il flag sia caricato): niente
+    // redirect globale, così una condivisione apre sempre Importazioni (D-50).
+    initialLocation: ref.read(onboardingProvider)
+        ? Routes.recipes
+        : Routes.welcome,
     routes: [
       GoRoute(
         path: Routes.welcome,

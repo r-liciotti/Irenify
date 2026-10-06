@@ -21,6 +21,13 @@ class JobStorage {
     if (await dir.exists()) await dir.delete(recursive: true);
   }
 
+  /// Elimina la cartella di tutti i job (D-50); si ricrea alla prossima
+  /// importazione.
+  Future<void> deleteAll() async {
+    final root = await _root();
+    if (await root.exists()) await root.delete(recursive: true);
+  }
+
   /// Id dei job che hanno una cartella.
   Future<List<String>> jobIds() async {
     final root = await _root();

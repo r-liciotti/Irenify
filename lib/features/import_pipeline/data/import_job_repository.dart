@@ -166,6 +166,22 @@ class ImportJobRepository {
         .watchSingle();
   }
 
+  /// Job non ancora conclusi (né completati né falliti); si aggiorna da
+  /// solo. Finché è maggiore di zero "Elimina dati" è disattivato (D-50).
+  Stream<int> watchUnfinishedCount() {
+    final count = _db.importJobs.id.count();
+    return (_db.selectOnly(_db.importJobs)
+          ..addColumns([count])
+          ..where(
+            _db.importJobs.status.isNotInValues([
+              ImportStatus.completed,
+              ImportStatus.failed,
+            ]),
+          ))
+        .map((row) => row.read(count) ?? 0)
+        .watchSingle();
+  }
+
   /// Esegue [action] in un'unica transazione, insieme alle scritture di altri
   /// repository sullo stesso database (es. la ricetta e il job completato).
   Future<T> transaction<T>(Future<T> Function() action) =>
@@ -173,6 +189,9 @@ class ImportJobRepository {
 
   Future<void> delete(String id) =>
       (_db.delete(_db.importJobs)..where((j) => j.id.equals(id))).go();
+
+  /// Elimina tutti i job (D-50); le loro cartelle le elimina `DataEraser`.
+  Future<void> deleteAll() => _db.delete(_db.importJobs).go();
 
   ImportJobsCompanion _toCompanion(ImportJob j) => ImportJobsCompanion.insert(
     id: j.id,

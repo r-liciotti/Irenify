@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F2 fase 5)
+## Stato (aggiornato al 2026-10-06, F2 fase 6)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -46,8 +46,9 @@ all'elenco guidato, filtri in `watchSummaries`. Fase 3 (2026-10-06): home a sche
 (`recipes/presentation/detail/`), mezze porzioni, conversioni e grassetto nei passi (D-48; regole in
 `recipes/domain/{servings,unit_conversion,step_highlight,ingredient_kind}.dart`, emoji degli ingredienti in `presentation/ingredient_emoji.dart`). Fase 5 (2026-10-06): dettaglio
 del job con tappe e tempi (`stepStartedAt`/`stepEndedAt` nel JSON del job), "Aggiungi il video" (D-49: `addVideo` del
-motore, `canAddVideo` in `domain/import_flow.dart`, `takeFile` in `job_storage.dart`). Prossima: fase 6 (primo avvio,
-impostazioni, prova completa). Prove dal vivo D-44 ancora aperte.
+motore, `canAddVideo` in `domain/import_flow.dart`, `takeFile` in `job_storage.dart`). Fase 6 (2026-10-06): primo
+avvio (`features/onboarding/`, D-50), impostazioni con tema, "Elimina dati" (`settings/data/data_eraser.dart`), guida,
+versione e licenze. Resta la prova completa con link reali (D-44), poi `/code-review` di fine F2. Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT
@@ -148,6 +149,8 @@ flutter run -d <device>             # telefono Android / iPhone reale
 - Rete: un solo client dio (`httpClientProvider`, UA Safari iPhone: **obbligatorio** per TikTok); nei test `FakeHttp`
   (`test/features/import_pipeline/data/fake_http.dart`) al posto della rete. Pagine reali per i test solo come
   estratti ridotti e anonimizzati in `test/fixtures/` (le pagine grezze contengono token e la città dell'utente).
+- Widget test con l'app intera: `appTest` sovrascrive anche `onboardingStoreProvider` (benvenuto già fatto); senza,
+  i test vedrebbero il benvenuto.
 - Prove sul telefono: copiare il DB con `adb exec-out run-as it.overside.irenefy cat files/irenefy.sqlite > db.sqlite`
   e interrogarlo con `sqlite3`; l'avvio dell'APK di debug impiega ~20 s prima che il motore parta.
 - **Mai cambiare impostazioni di sistema del telefono via adb** (tema scuro, display…) senza conferma dell'utente: il

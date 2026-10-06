@@ -58,6 +58,7 @@ dependencies:
   shared_preferences: ^2.5.6
   file_picker: ^13.1.0
   sqlite3: ^3.5.2
+  package_info_plus: ^10.2.2
 
 dev_dependencies:
   flutter_test:
@@ -88,8 +89,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # Font inclusi nell'app (D-45): funzionano offline. Licenze OFL in
-  # assets/licenses/, registrate in LicenseRegistry (lib/app/licenses.dart).
+  # Font inclusi nell'app (D-45): funzionano offline. Licenze dei font, di
+  # whisper.cpp, del modello Whisper e di FFmpeg (D-50) in assets/licenses/,
+  # registrate in LicenseRegistry (lib/app/licenses.dart).
   assets:
     - assets/licenses/
 

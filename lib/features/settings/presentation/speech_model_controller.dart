@@ -65,6 +65,10 @@ final class SpeechModelFailed extends SpeechModelState {
 class SpeechModelController extends Notifier<SpeechModelState> {
   CancelToken? _cancelToken;
 
+  /// Si completa quando il download in corso è finito (anche annullato o
+  /// fallito); `null` se non ce n'è uno.
+  Completer<void>? _running;
+
   WhisperModelManager get _manager => ref.read(whisperModelManagerProvider);
 
   @override
@@ -89,6 +93,7 @@ class SpeechModelController extends Notifier<SpeechModelState> {
   Future<void> download() async {
     if (_cancelToken != null) return;
     final cancelToken = _cancelToken = CancelToken();
+    final running = _running = Completer<void>();
     final log = ref.read(appLogProvider)..info('Modello Whisper: download');
     state = const SpeechModelDownloading(0);
     var lastPermille = -1;
@@ -121,6 +126,8 @@ class SpeechModelController extends Notifier<SpeechModelState> {
       }
     } finally {
       if (identical(_cancelToken, cancelToken)) _cancelToken = null;
+      if (identical(_running, running)) _running = null;
+      running.complete();
     }
   }
 
@@ -138,6 +145,11 @@ class SpeechModelController extends Notifier<SpeechModelState> {
 
   /// Interrompe il download; il file parziale resta per riprendere.
   void cancel() => _cancelToken?.cancel();
+
+  /// Attende la fine del download in corso, se c'è: dopo [cancel] serve
+  /// prima di [delete], che con un download ancora aperto non fa nulla
+  /// (anche la verifica dello sha256 non si interrompe).
+  Future<void> whenIdle() => _running?.future ?? Future.value();
 
   Future<void> delete() async {
     if (_cancelToken != null) return;

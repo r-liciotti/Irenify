@@ -850,6 +850,204 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{mazzetto} other{mazzetti}}'**
   String unitBunch(num count);
 
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In it, this message translates to:
+  /// **'Aspetto'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsThemeSystem.
+  ///
+  /// In it, this message translates to:
+  /// **'Come il telefono'**
+  String get settingsThemeSystem;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In it, this message translates to:
+  /// **'Chiaro'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In it, this message translates to:
+  /// **'Scuro'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsData.
+  ///
+  /// In it, this message translates to:
+  /// **'Dati'**
+  String get settingsData;
+
+  /// No description provided for @settingsEraseData.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina dati'**
+  String get settingsEraseData;
+
+  /// No description provided for @settingsEraseDataSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricette e importazioni'**
+  String get settingsEraseDataSubtitle;
+
+  /// No description provided for @settingsEraseTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Eliminare i dati?'**
+  String get settingsEraseTitle;
+
+  /// No description provided for @settingsEraseBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono.'**
+  String get settingsEraseBody;
+
+  /// No description provided for @settingsEraseApiKey.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina anche la chiave Gemini'**
+  String get settingsEraseApiKey;
+
+  /// No description provided for @settingsEraseSpeechModel.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina anche il modello di trascrizione'**
+  String get settingsEraseSpeechModel;
+
+  /// No description provided for @settingsEraseConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina'**
+  String get settingsEraseConfirm;
+
+  /// No description provided for @settingsErased.
+  ///
+  /// In it, this message translates to:
+  /// **'Dati eliminati'**
+  String get settingsErased;
+
+  /// No description provided for @settingsEraseBusy.
+  ///
+  /// In it, this message translates to:
+  /// **'Attendi la fine dell\'importazione in corso'**
+  String get settingsEraseBusy;
+
+  /// No description provided for @settingsGuide.
+  ///
+  /// In it, this message translates to:
+  /// **'Rivedi la guida'**
+  String get settingsGuide;
+
+  /// No description provided for @settingsGuideSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Come importare, chiave Gemini e trascrizione'**
+  String get settingsGuideSubtitle;
+
+  /// No description provided for @settingsAbout.
+  ///
+  /// In it, this message translates to:
+  /// **'Informazioni'**
+  String get settingsAbout;
+
+  /// No description provided for @settingsVersion.
+  ///
+  /// In it, this message translates to:
+  /// **'Versione {version}'**
+  String settingsVersion(String version);
+
+  /// No description provided for @settingsLicenses.
+  ///
+  /// In it, this message translates to:
+  /// **'Licenze'**
+  String get settingsLicenses;
+
+  /// No description provided for @settingsLicensesSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Font, whisper.cpp, modello Whisper, FFmpeg e librerie'**
+  String get settingsLicensesSubtitle;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Benvenuto in Irenefy'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeIntro.
+  ///
+  /// In it, this message translates to:
+  /// **'Trasforma i reel di Instagram e TikTok in ricette da cucinare.'**
+  String get welcomeIntro;
+
+  /// No description provided for @welcomeShareTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Come si importa una ricetta'**
+  String get welcomeShareTitle;
+
+  /// No description provided for @welcomeShareBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy. Al resto pensa l\'app.'**
+  String get welcomeShareBody;
+
+  /// No description provided for @welcomeKeyTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Collega Gemini'**
+  String get welcomeKeyTitle;
+
+  /// No description provided for @welcomeKeyBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Irenefy usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.'**
+  String get welcomeKeyBody;
+
+  /// No description provided for @welcomeModelTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Trascrizione del parlato'**
+  String get welcomeModelTitle;
+
+  /// No description provided for @welcomeModelBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Per capire anche le ricette dette a voce serve un modello di trascrizione (circa 260 MB, meglio con il Wi-Fi). Lavora sul telefono: l\'audio non viene inviato a nessuno.'**
+  String get welcomeModelBody;
+
+  /// No description provided for @welcomeNext.
+  ///
+  /// In it, this message translates to:
+  /// **'Avanti'**
+  String get welcomeNext;
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In it, this message translates to:
+  /// **'Indietro'**
+  String get welcomeBack;
+
+  /// No description provided for @welcomeSkip.
+  ///
+  /// In it, this message translates to:
+  /// **'Salta'**
+  String get welcomeSkip;
+
+  /// No description provided for @welcomeDone.
+  ///
+  /// In it, this message translates to:
+  /// **'Inizia'**
+  String get welcomeDone;
+
+  /// No description provided for @welcomeStep.
+  ///
+  /// In it, this message translates to:
+  /// **'{current} di {total}'**
+  String welcomeStep(int current, int total);
+
   /// No description provided for @settingsDiagnostics.
   ///
   /// In it, this message translates to:

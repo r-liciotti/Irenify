@@ -12,6 +12,7 @@ import 'package:irenefy/app/router.dart';
 import 'package:irenefy/core/logging/app_log.dart';
 import 'package:irenefy/data/db/app_database.dart';
 import 'package:irenefy/data/db/database_provider.dart';
+import 'package:irenefy/features/onboarding/data/onboarding_store.dart';
 import 'package:irenefy/features/recipes/data/recipe_files.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/recipes/domain/recipe.dart';
@@ -23,6 +24,7 @@ import 'package:irenefy/features/settings/data/whisper_model_manager.dart';
 import '../../../data/db/test_database.dart';
 import '../../settings/fake_llm_settings.dart';
 import '../data/recipe_repository_test.dart' show sampleRecipe;
+import '../../../app/fake_onboarding_store.dart';
 import '../../../app/fake_theme_mode_store.dart';
 
 /// Ambiente di una prova: database in memoria e cartella dei file.
@@ -56,6 +58,10 @@ void recipesTest(
           overrides: [
             appLogProvider.overrideWithValue(AppLog()),
             themeModeStoreProvider.overrideWithValue(FakeThemeModeStore()),
+            // Benvenuto già fatto: si parte dalle Ricette.
+            onboardingStoreProvider.overrideWithValue(
+              FakeOnboardingStore.done(),
+            ),
             appDatabaseProvider.overrideWithValue(db),
             recipeFilesProvider.overrideWithValue(
               RecipeFiles(() async => support),

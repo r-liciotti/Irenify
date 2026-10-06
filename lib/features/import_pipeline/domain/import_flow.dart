@@ -80,8 +80,9 @@ bool canAddVideo(ImportJob job) {
   // Solo se un video c'è ma non si è potuto usare: non per i post di foto
   // (`notAVideo`) né per i video troppo lunghi, che fallirebbero di nuovo.
   return switch (job.data.skippedSteps[ImportStatus.media]?.reason) {
-    SkipReason.videoBlocked || SkipReason.failed || SkipReason.captionOnly =>
-      true,
+    SkipReason.videoBlocked ||
+    SkipReason.failed ||
+    SkipReason.captionOnly => true,
     _ => false,
   };
 }

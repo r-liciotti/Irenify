@@ -116,11 +116,18 @@ motore che aggancia il file e fa ripartire il job).
 - **Prove:** 597 test. Sul Pixel il dettaglio è verificato su job reali. "Aggiungi il video" è coperto da un test
   dall'inizio alla fine ma non è ancora provato con un file vero.
 
-## Fase 6 — Primo avvio, impostazioni e prova (≈ 0,75 gg)
+## Fase 6 — Primo avvio, impostazioni e prova (≈ 0,75 gg) — ✅ sviluppo completato il 2026-10-06 (prova completa con link reali da fare)
 
 Primo avvio (come condividere, chiave Gemini, modello Whisper, ognuno saltabile), scelta del tema, elimina dati,
 informazioni e licenze (whisper.cpp, modello Whisper, FFmpeg LGPL, font). Prova completa sul Pixel, comprese le prove
 rimaste dalla F1 (D-44).
+
+**Come è stata fatta:**
+- **D-50:** benvenuto saltato da solo per chi usa già l'app; elimina dati disattivato durante un'importazione;
+  `package_info_plus` per la versione.
+- **Contratto e subagent:** testi e dipendenza dell'agente principale; un subagent sul primo avvio e uno su
+  impostazioni, elimina dati e licenze.
+- **Prove:** 636 test. Sul Pixel benvenuto saltato, tema chiaro dall'app, guida, licenze.
 
 **Uscita della F2:** l'app si installa e si usa da zero sul Pixel, con l'aspetto scelto.
 

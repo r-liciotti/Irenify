@@ -324,6 +324,21 @@ class RecipeRepository {
     return count > 0;
   }
 
+  /// Elimina tutte le ricette con i loro dati (a cascata), i tag e l'indice
+  /// di ricerca, in un'unica transazione (D-50). I file li elimina
+  /// `DataEraser`.
+  Future<void> deleteAll() => _db.transaction(() async {
+    await _db.delete(_db.recipes).go();
+    await _db.delete(_db.tags).go();
+    // Il trigger toglie dall'indice una ricetta alla volta: qui lo si svuota
+    // comunque, così non resta nulla anche se una riga fosse rimasta orfana.
+    await _db.customUpdate(
+      'DELETE FROM recipe_search',
+      updates: {_db.recipeSearch},
+      updateKind: UpdateKind.delete,
+    );
+  });
+
   Future<int> _tagId(String name) async {
     await _db
         .into(_db.tags)
