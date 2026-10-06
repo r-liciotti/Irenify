@@ -68,7 +68,9 @@ const ciqualFiles = [
 const sourcesDescription =
     'USDA FoodData Central SR Legacy 2018-04 (CC0); '
     'USDA FoodData Central Foundation Foods 2025-12-18 (CC0); '
-    'ANSES-CIQUAL 2025 (Licence Ouverte / Open Licence Etalab 2.0)';
+    'ANSES-CIQUAL 2025 (Licence Ouverte / Open Licence Etalab 2.0); '
+    'valori manuali: mediane delle etichette dei produttori da Open Food Facts '
+    '(ODbL 1.0 / DbCL 1.0)';
 
 /// Scarica [dataset] in [cache] se manca o ha una dimensione diversa da
 /// quella attesa, poi lo estrae (zip) se la cartella non c'è.

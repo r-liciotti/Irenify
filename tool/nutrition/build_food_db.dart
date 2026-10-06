@@ -1,10 +1,11 @@
 /// Costruisce `assets/nutrition/foods.sqlite` (F4, D-54) da USDA SR Legacy,
-/// USDA Foundation, CIQUAL 2025 e dalla tabella curata. Vedi
-/// `tool/nutrition/README.md`.
+/// USDA Foundation, CIQUAL 2025, dai valori manuali e dalla tabella curata. Vedi
+/// `tool/nutrition/README.md`. Scrive anche il file della versione accanto
+/// al database (`foods.version`).
 ///
 /// ```sh
 /// dart run tool/nutrition/build_food_db.dart [--cache <dir>]
-///     [--curated <csv>] [--out <file>] [--built-at <data>]
+///     [--curated <csv>] [--manual <csv>] [--out <file>] [--built-at <data>]
 /// ```
 library;
 
@@ -20,6 +21,7 @@ Future<void> main(List<String> args) async {
   final options = <String, String>{
     'cache': 'tool/nutrition/.cache',
     'curated': CuratedFoodsCsv.path,
+    'manual': ManualFoodsCsv.path,
     'out': FoodDb.assetPath,
     // Solo la data (UTC): due costruzioni nello stesso giorno con gli
     // stessi dati danno lo stesso file, byte per byte.
@@ -30,7 +32,8 @@ Future<void> main(List<String> args) async {
     if (name == null || !options.containsKey(name) || i + 1 >= args.length) {
       stderr.writeln(
         'Uso: dart run tool/nutrition/build_food_db.dart '
-        '[--cache <dir>] [--curated <csv>] [--out <file>] [--built-at <data>]',
+        '[--cache <dir>] [--curated <csv>] [--manual <csv>] [--out <file>] '
+        '[--built-at <data>]',
       );
       exitCode = 64;
       return;
@@ -48,12 +51,15 @@ Future<void> main(List<String> args) async {
       foundationDir: Directory('${cache.path}/${usdaFoundation.extractTo}'),
       ciqualDir: Directory('${cache.path}/$ciqualDir'),
       curatedCsv: File(options['curated']!).readAsStringSync(),
+      manualCsv: File(options['manual']!).readAsStringSync(),
       outPath: options['out']!,
       builtAt: options['built-at']!,
       sources: sourcesDescription,
     );
     stdout
-      ..writeln('Scritto ${options['out']}')
+      ..writeln(
+        'Scritti ${options['out']} e ${versionPathFor(options['out']!)}',
+      )
       ..writeln(summary);
   } on FoodDbBuildException catch (e) {
     stderr.writeln(e);

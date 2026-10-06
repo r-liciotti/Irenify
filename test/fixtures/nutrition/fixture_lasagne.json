@@ -1,0 +1,35 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Lasagne alla bolognese",
+  "description": null,
+  "servings": 6,
+  "servingsUnit": "persone",
+  "prepMinutes": 40,
+  "cookMinutes": 40,
+  "restMinutes": 10,
+  "difficulty": "medium",
+  "tags": ["primo", "carne", "al forno"],
+  "ingredients": [
+    {"group": "Per la lasagna", "name": "sfoglie per lasagne", "quantity": 250, "quantityMax": null, "unit": "gram", "gramsEstimate": 250, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "lasagna sheets"},
+    {"group": "Per la lasagna", "name": "Parmigiano Reggiano grattugiato", "quantity": 80, "quantityMax": null, "unit": "gram", "gramsEstimate": 80, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "parmesan cheese"},
+    {"group": "Per il ragù", "name": "macinato di manzo", "quantity": 300, "quantityMax": null, "unit": "gram", "gramsEstimate": 300, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "ground beef"},
+    {"group": "Per il ragù", "name": "macinato di maiale", "quantity": 200, "quantityMax": null, "unit": "gram", "gramsEstimate": 200, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "ground pork"},
+    {"group": "Per il ragù", "name": "passata di pomodoro", "quantity": 700, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 700, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "tomato puree"},
+    {"group": "Per il ragù", "name": "cipolla", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "onion"},
+    {"group": "Per il ragù", "name": "carota", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 60, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "carrot"},
+    {"group": "Per il ragù", "name": "sedano", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 40, "isEstimated": false, "note": "una costa", "scalingRule": "integer", "canonicalNameEn": "celery"},
+    {"group": "Per il ragù", "name": "olio extravergine d'oliva", "quantity": 3, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 30, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "extra virgin olive oil"},
+    {"group": "Per il ragù", "name": "vino rosso", "quantity": 1, "quantityMax": null, "unit": "glass", "gramsEstimate": 125, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "red wine"},
+    {"group": "Per la besciamella", "name": "latte intero", "quantity": 1, "quantityMax": null, "unit": "liter", "gramsEstimate": 1030, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "whole milk"},
+    {"group": "Per la besciamella", "name": "burro", "quantity": 80, "quantityMax": null, "unit": "gram", "gramsEstimate": 80, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "butter"},
+    {"group": "Per la besciamella", "name": "farina 00", "quantity": 80, "quantityMax": null, "unit": "gram", "gramsEstimate": 80, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "wheat flour"},
+    {"group": "Per la besciamella", "name": "noce moscata", "quantity": 1, "quantityMax": null, "unit": "pinch", "gramsEstimate": 0.5, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "nutmeg"},
+    {"group": "Per la besciamella", "name": "sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"}
+  ],
+  "steps": [
+    {"text": "Preparate il ragù con il soffritto, la carne, il vino e la passata.", "durationMinutes": 120, "temperatureC": null},
+    {"text": "Preparate la besciamella con burro, farina e latte.", "durationMinutes": 10, "temperatureC": null},
+    {"text": "Alternate sfoglie, ragù, besciamella e parmigiano e cuocete in forno.", "durationMinutes": 40, "temperatureC": 180}
+  ]
+}

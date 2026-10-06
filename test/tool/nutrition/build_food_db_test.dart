@@ -9,7 +9,9 @@ import '../../../tool/nutrition/src/ciqual.dart';
 import '../../../tool/nutrition/src/csv.dart';
 import '../../../tool/nutrition/src/curated.dart';
 import '../../../tool/nutrition/src/food_db_builder.dart';
+import '../../../tool/nutrition/src/manual.dart';
 import '../../../tool/nutrition/src/model.dart';
+import '../../../tool/nutrition/src/portions.dart';
 import 'mini_datasets.dart';
 
 void main() {
@@ -28,6 +30,7 @@ void main() {
 
   Future<FoodDbSummary> build({
     String curated = miniCurated,
+    String manual = miniManual,
     String name = 'foods.sqlite',
     String builtAt = '2026-10-06',
   }) => buildFoodDb(
@@ -35,6 +38,7 @@ void main() {
     foundationDir: data.foundation,
     ciqualDir: data.ciqual,
     curatedCsv: curated,
+    manualCsv: manual,
     outPath: '${out.path}/$name',
     builtAt: builtAt,
     sources: 'test',
@@ -66,6 +70,7 @@ void main() {
           FoodDb.sourceUsdaSr: 8,
           FoodDb.sourceUsdaFoundation: 2,
           FoodDb.sourceCiqual: 2,
+          FoodDb.sourceManual: 2,
         });
         final egg = food(db, 100001);
         expect(egg['source'], FoodDb.sourceUsdaSr);
@@ -163,6 +168,37 @@ void main() {
         expect(food(db, 100002)['density_g_per_ml'], isNull);
       },
     );
+
+    test('porzioni montate solo per gli alimenti montati', () {
+      RawPortion portion(int id, String modifier, double grams) => RawPortion(
+        id: id,
+        seqNum: id,
+        amount: 1,
+        unitName: null,
+        description: '',
+        modifier: modifier,
+        gramWeight: grams,
+      );
+      // Come "Cream, fluid, heavy whipping" (SR Legacy 170859).
+      final cream = [
+        portion(1, 'cup, whipped', 120),
+        portion(2, 'cup, fluid (yields 2 cups whipped)', 238),
+        portion(3, 'tbsp', 15),
+      ];
+      final liquid = classifyPortions(
+        cream,
+        foodName: 'Cream, fluid, heavy whipping',
+      );
+      expect(liquid, {'cup': 238, 'tbsp': 15});
+      expect(densityFromPortions(liquid), closeTo(1.006, 1e-3));
+      // Panna già montata: la tazza montata è quella giusta.
+      expect(
+        classifyPortions([
+          portion(1, 'cup, whipped', 60),
+        ], foodName: 'Cream substitute, whipped'),
+        {'cup': 60},
+      );
+    });
 
     test('piece_g del CSV curato sostituisce il pezzo USDA', () async {
       await build();
@@ -278,7 +314,9 @@ void main() {
     expect(search('bread'), isEmpty); // "KRAFT"
     expect(search('pears'), [100008]); // "USDA's" non è un marchio
     expect(search('pecorino'), [FoodDb.ciqualIdOffset + 12122]);
-    expect(summary.searchable, 10);
+    // Valori manuali: stessa regola delle altre fonti.
+    expect(search('guanciale'), [FoodDb.manualIdOffset + 1]);
+    expect(summary.searchable, 12);
   });
 
   test('determinismo: stessi dati → stesso file e stessa versione', () async {
@@ -309,6 +347,143 @@ void main() {
       curated: miniCurated.replaceFirst('garlic,Aglio', 'garlic,Aglio fresco'),
     );
     expect(d.version, isNot(a.version));
+  });
+
+  group('valori manuali', () {
+    const offset = FoodDb.manualIdOffset;
+    const curatedWithManual =
+        '$miniCurated'
+        'guanciale|pork jowl,Guanciale,guanciale|guancia,manual,1,30,\n'
+        'balsamic glaze,Glassa balsamica,glassa balsamica,manual,2,,\n';
+
+    test('tutte le righe, con fonte, id, NULL e densità', () async {
+      await build();
+      final db = open();
+      addTearDown(db.close);
+
+      final guanciale = food(db, offset + 1);
+      expect(guanciale['source'], FoodDb.sourceManual);
+      expect(guanciale['source_id'], '1');
+      expect(guanciale['name_en'], 'Guanciale (cured pork cheek)');
+      expect(guanciale['name_it'], 'Guanciale');
+      expect(guanciale['category'], isNull);
+      expect(guanciale['kcal'], 600);
+      expect(guanciale['fat_g'], 62);
+      expect(guanciale['saturated_fat_g'], 22.5);
+      expect(guanciale['sodium_mg'], 1200);
+      expect(guanciale['density_g_per_ml'], isNull);
+      expect(portions(db, offset + 1), isEmpty);
+
+      final glaze = food(db, offset + 2);
+      expect(glaze['sugars_g'], isNull);
+      expect(glaze['fiber_g'], isNull);
+      expect(glaze['density_g_per_ml'], 1.25);
+    });
+
+    test('la tabella curata li usa: alias, nome e pezzo da piece_g', () async {
+      final summary = await build(curated: curatedWithManual);
+      final db = open();
+      addTearDown(db.close);
+
+      final aliases = {
+        for (final r in db.select(
+          'SELECT alias, lang, food_id FROM food_alias '
+          'JOIN food ON food.id = food_id WHERE source = ?',
+          [FoodDb.sourceManual],
+        ))
+          '${r['lang']}:${r['alias']}': r['food_id'] as int,
+      };
+      expect(aliases, {
+        'en:guanciale': offset + 1,
+        'en:pork jowl': offset + 1,
+        'it:guanciale': offset + 1,
+        'it:guancia': offset + 1,
+        'en:balsamic glaze': offset + 2,
+        'it:glassa balsamica': offset + 2,
+      });
+      expect(food(db, offset + 2)['name_it'], 'Glassa balsamica');
+      expect(portions(db, offset + 1), {'piece': 30});
+      expect(summary.foodsBySource[FoodDb.sourceManual], 2);
+    });
+
+    test('alimento manuale inesistente ferma la costruzione', () async {
+      await expectLater(
+        build(
+          curated:
+              '$miniCurated'
+              'ghost,Fantasma,,manual,99,,\n',
+        ),
+        throwsA(
+          isA<FoodDbBuildException>().having(
+            (e) => e.problems.join(),
+            'problemi',
+            contains('alimento manual 99 assente'),
+          ),
+        ),
+      );
+    });
+
+    test('righe sbagliate: tutte elencate', () {
+      const manual =
+          '$manualHeader\n'
+          '1,guanciale,Guanciale,Guanciale,600,10,0.5,,62,,,,,,\n'
+          '1,guanciale,Doppio,Doppio,600,10,0.5,,62,,,,,,\n'
+          'x,Chiave Strana,,,abc,,1,-2,5,,,,0,,\n'
+          '0,zero,Zero,Zero,1,1,1,,1,,,,,,\n';
+      expect(
+        () => parseManualFoods(manual),
+        throwsA(
+          isA<FoodDbBuildException>().having(
+            (e) => e.problems.join('\n'),
+            'problemi',
+            allOf([
+              contains('riga 3: id 1 già usato alla riga 2'),
+              contains('key "guanciale" già usata alla riga 2'),
+              contains('riga 4: id "x" non valido'),
+              contains('key "Chiave Strana" non valida'),
+              contains('name_en vuoto'),
+              contains('kcal "abc" non valido'),
+              contains('protein_g vuoto'),
+              contains('sugars_g "-2" non valido'),
+              contains('density_g_per_ml deve essere > 0'),
+              contains('riga 5: id "0" non valido'),
+            ]),
+          ),
+        ),
+      );
+      expect(
+        () => parseManualFoods('id,key\n1,a\n'),
+        throwsA(isA<FoodDbBuildException>()),
+      );
+    });
+
+    test('il CSV vero è valido', () {
+      final foods = parseManualFoods(
+        File(ManualFoodsCsv.path).readAsStringSync(),
+      );
+      expect(foods, hasLength(greaterThanOrEqualTo(14)));
+      expect(foods.every((f) => f.source == FoodDb.sourceManual), isTrue);
+    });
+  });
+
+  test('file della versione accanto al database', () async {
+    final summary = await build();
+    final version = File('${out.path}/foods.version');
+    expect(version.readAsStringSync(), summary.version);
+    expect(versionPathFor('a/b/foods.sqlite'), 'a/b/foods.version');
+    expect(versionPathFor('a/db'), 'a/db.version');
+
+    // Tabella sbagliata: database e versione di prima restano intatti.
+    await expectLater(
+      build(
+        curated:
+            '$miniCurated'
+            'ghost,Fantasma,,manual,99,,\n',
+      ),
+      throwsA(isA<FoodDbBuildException>()),
+    );
+    expect(version.readAsStringSync(), summary.version);
+    expect(File('${out.path}/foods.sqlite').existsSync(), isTrue);
   });
 
   group('lettori', () {

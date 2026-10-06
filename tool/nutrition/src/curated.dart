@@ -31,15 +31,18 @@ class CuratedFood {
   final double? pieceG;
 
   /// `id` della tabella `food`.
-  int get foodId => source == FoodDb.sourceCiqual
-      ? FoodDb.ciqualIdOffset + sourceId
-      : sourceId;
+  int get foodId => switch (source) {
+    FoodDb.sourceCiqual => FoodDb.ciqualIdOffset + sourceId,
+    FoodDb.sourceManual => FoodDb.manualIdOffset + sourceId,
+    _ => sourceId,
+  };
 }
 
 const _sources = {
   FoodDb.sourceUsdaSr,
   FoodDb.sourceUsdaFoundation,
   FoodDb.sourceCiqual,
+  FoodDb.sourceManual,
 };
 
 List<String> _list(String cell) => [

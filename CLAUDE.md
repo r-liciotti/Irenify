@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F4 fase 1)
+## Stato (aggiornato al 2026-10-06, F4 fase 2)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -53,8 +53,10 @@ Piano pasti e Spesa), Importazioni dentro le Impostazioni (`/impostazioni/import
 `/importazione/:id` aperta da ogni condivisione. Prova dal vivo completa rimandata (D-51). D-53: ricette sempre in italiano (tradotte da Gemini), Whisper con lingua `auto` (su iOS va corretto il
 codice nativo prima della F5). F4 in corso (piano in `F4_PIANO.md`, D-54): fase 1 (2026-10-06) database degli alimenti
 `assets/nutrition/foods.sqlite` generato da `dart run tool/nutrition/build_food_db.dart` (USDA SR Legacy + CIQUAL, tabella
-curata `tool/nutrition/curated_foods.csv`, contratto in `lib/features/nutrition/data/food_db_schema.dart`). Prossima:
-fase 2 (calcolo). Prove dal vivo D-44 ancora aperte.
+curata `tool/nutrition/curated_foods.csv`, contratto in `lib/features/nutrition/data/food_db_schema.dart`). Fase 2 (2026-10-06): calcolo in
+`lib/features/nutrition/domain/nutrition_service.dart` (contratto `nutrition.dart`, regole D-57), lettura e copia del database in
+`data/food_db.dart` (`foodLookupProvider`), valori manuali in `tool/nutrition/manual_foods.csv` (Open Food Facts), 21 ricette di
+prova in `test/fixtures/nutrition/` (copertura 100%). Prossima: fase 3 (tappa reale e salvataggio). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT
@@ -179,7 +181,8 @@ flutter run -d <device>             # telefono Android / iPhone reale
   per nome: mai rinominarli (D-18). Test: `newTestDatabase()` in `test/data/db/`; widget test con DB tramite
   `appTest(...)` in `test/app/app_test.dart` (smonta l'app e chiude il DB dentro il test, altrimenti si blocca).
 - Database degli alimenti (F4): mai modificarlo a mano; si rigenera con lo script, che è deterministico (la versione
-  è l'hash del contenuto). Per cambiare un abbinamento si corregge `tool/nutrition/curated_foods.csv`: lo script si
+  è l'hash del contenuto). I prodotti assenti dalle fonti hanno valori manuali in
+  `tool/nutrition/manual_foods.csv` (id stabili, mai riusati). Per cambiare un abbinamento si corregge `tool/nutrition/curated_foods.csv`: lo script si
   ferma su alias o alimenti doppi e su alimenti inesistenti o incompleti. Non eseguire mai `'rebuild'` su
   `food_search` (indice a contenuto esterno: reindicizzerebbe anche gli alimenti esclusi).
 - Registro interno `AppLog` (`appLogProvider`): oscura le chiavi `AIza…` e `AQ.…`; mai loggare segreti in altro modo.

@@ -1,0 +1,23 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Piadina con stracchino e speck",
+  "description": null,
+  "servings": 2,
+  "servingsUnit": "persone",
+  "prepMinutes": 5,
+  "cookMinutes": 5,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["piatto unico", "veloce"],
+  "ingredients": [
+    {"group": null, "name": "piadine", "quantity": 2, "quantityMax": null, "unit": "piece", "gramsEstimate": 240, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "flatbread"},
+    {"group": null, "name": "stracchino", "quantity": 150, "quantityMax": null, "unit": "gram", "gramsEstimate": 150, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "stracchino cheese"},
+    {"group": null, "name": "speck", "quantity": 6, "quantityMax": null, "unit": "slice", "gramsEstimate": 90, "isEstimated": true, "note": null, "scalingRule": "integer", "canonicalNameEn": "speck"},
+    {"group": null, "name": "rucola", "quantity": 1, "quantityMax": null, "unit": "bunch", "gramsEstimate": 40, "isEstimated": true, "note": null, "scalingRule": "fixed", "canonicalNameEn": "arugula"}
+  ],
+  "steps": [
+    {"text": "Scaldate la piadina in padella.", "durationMinutes": 2, "temperatureC": null},
+    {"text": "Farcitela con stracchino, speck e rucola e chiudetela a metà.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

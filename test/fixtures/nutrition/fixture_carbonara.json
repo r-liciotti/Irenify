@@ -1,0 +1,27 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Spaghetti alla carbonara",
+  "description": null,
+  "servings": 4,
+  "servingsUnit": "persone",
+  "prepMinutes": 10,
+  "cookMinutes": 12,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["primo", "uova", "veloce"],
+  "ingredients": [
+    {"group": null, "name": "spaghetti", "quantity": 320, "quantityMax": null, "unit": "gram", "gramsEstimate": 320, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "spaghetti"},
+    {"group": null, "name": "guanciale", "quantity": 150, "quantityMax": null, "unit": "gram", "gramsEstimate": 150, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "guanciale"},
+    {"group": null, "name": "tuorli", "quantity": 4, "quantityMax": null, "unit": "piece", "gramsEstimate": 72, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "egg yolk"},
+    {"group": null, "name": "uovo intero", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 55, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "egg"},
+    {"group": null, "name": "pecorino romano grattugiato", "quantity": 50, "quantityMax": null, "unit": "gram", "gramsEstimate": 50, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pecorino romano cheese"},
+    {"group": null, "name": "pepe nero", "quantity": 1, "quantityMax": null, "unit": "teaspoon", "gramsEstimate": 2, "isEstimated": true, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "black pepper"},
+    {"group": null, "name": "sale grosso", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "per l'acqua della pasta", "scalingRule": "toTaste", "canonicalNameEn": "salt"}
+  ],
+  "steps": [
+    {"text": "Rosolate il guanciale a listarelle finché è croccante.", "durationMinutes": 8, "temperatureC": null},
+    {"text": "Sbattete tuorli, uovo, pecorino e pepe.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Scolate la pasta al dente e mantecatela fuori dal fuoco con la crema e il guanciale.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

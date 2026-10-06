@@ -1,0 +1,27 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Risoni con zucca e feta",
+  "description": null,
+  "servings": 2,
+  "servingsUnit": "persone",
+  "prepMinutes": null,
+  "cookMinutes": null,
+  "restMinutes": null,
+  "difficulty": "unknown",
+  "tags": ["primo"],
+  "ingredients": [
+    {"group": null, "name": "risoni", "quantity": 250, "quantityMax": null, "unit": "gram", "gramsEstimate": 250, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pasta"},
+    {"group": null, "name": "zucca", "quantity": 400, "quantityMax": null, "unit": "gram", "gramsEstimate": 400, "isEstimated": false, "note": "già pulita", "scalingRule": "linear", "canonicalNameEn": "pumpkin"},
+    {"group": null, "name": "feta", "quantity": 150, "quantityMax": null, "unit": "gram", "gramsEstimate": 150, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "feta cheese"},
+    {"group": null, "name": "brodo vegetale o acqua calda", "quantity": 700, "quantityMax": 800, "unit": "milliliter", "gramsEstimate": 750, "isEstimated": false, "note": "da aggiungere secondo necessità", "scalingRule": "linear", "canonicalNameEn": "vegetable broth"},
+    {"group": null, "name": "olio extravergine d’oliva", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "extra virgin olive oil"},
+    {"group": null, "name": "sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"},
+    {"group": null, "name": "pepe", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "pepper"}
+  ],
+  "steps": [
+    {"text": "Grattugiate la zucca e ammorbiditela in padella con olio, sale e pepe.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Aggiungete i risoni e cuoceteli con il brodo poco alla volta, come un risotto.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Unite la feta sbriciolata e un filo d'olio.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

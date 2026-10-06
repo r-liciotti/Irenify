@@ -1,0 +1,27 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Pancake americani",
+  "description": null,
+  "servings": 4,
+  "servingsUnit": "persone",
+  "prepMinutes": 10,
+  "cookMinutes": 15,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["colazione", "dolce", "veloce"],
+  "ingredients": [
+    {"group": null, "name": "farina 00", "quantity": 1.5, "quantityMax": null, "unit": "cup", "gramsEstimate": 190, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "all-purpose flour"},
+    {"group": null, "name": "latte", "quantity": 1.25, "quantityMax": null, "unit": "cup", "gramsEstimate": 300, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "milk"},
+    {"group": null, "name": "uovo", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 50, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "egg"},
+    {"group": null, "name": "burro fuso", "quantity": 3, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 42, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "butter"},
+    {"group": null, "name": "zucchero", "quantity": 1, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 12, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "sugar"},
+    {"group": null, "name": "lievito per dolci", "quantity": 3.5, "quantityMax": null, "unit": "teaspoon", "gramsEstimate": 14, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "baking powder"},
+    {"group": null, "name": "sale", "quantity": 0.25, "quantityMax": null, "unit": "teaspoon", "gramsEstimate": 1.5, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "salt"},
+    {"group": null, "name": "sciroppo d'acero", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "per servire", "scalingRule": "toTaste", "canonicalNameEn": "maple syrup"}
+  ],
+  "steps": [
+    {"text": "Mescolate gli ingredienti secchi, poi unite latte, uovo e burro fuso.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Cuocete un mestolo di pastella per volta in una padella calda, girandoli quando fanno le bolle.", "durationMinutes": 15, "temperatureC": null}
+  ]
+}

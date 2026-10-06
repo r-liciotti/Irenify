@@ -1,0 +1,28 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Trofie al pesto genovese",
+  "description": null,
+  "servings": 4,
+  "servingsUnit": "persone",
+  "prepMinutes": 15,
+  "cookMinutes": 12,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["primo", "vegetariana"],
+  "ingredients": [
+    {"group": null, "name": "trofie", "quantity": 350, "quantityMax": null, "unit": "gram", "gramsEstimate": 350, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "trofie pasta"},
+    {"group": null, "name": "basilico fresco", "quantity": 50, "quantityMax": null, "unit": "gram", "gramsEstimate": 50, "isEstimated": false, "note": "solo le foglie", "scalingRule": "linear", "canonicalNameEn": "fresh basil"},
+    {"group": null, "name": "olio extravergine d'oliva", "quantity": 100, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 92, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "extra virgin olive oil"},
+    {"group": null, "name": "Parmigiano Reggiano grattugiato", "quantity": 60, "quantityMax": null, "unit": "gram", "gramsEstimate": 60, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "parmesan cheese"},
+    {"group": null, "name": "pecorino sardo grattugiato", "quantity": 30, "quantityMax": null, "unit": "gram", "gramsEstimate": 30, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pecorino cheese"},
+    {"group": null, "name": "pinoli", "quantity": 2, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 20, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pine nuts"},
+    {"group": null, "name": "aglio", "quantity": 1, "quantityMax": null, "unit": "clove", "gramsEstimate": 4, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "garlic"},
+    {"group": null, "name": "sale grosso", "quantity": 1, "quantityMax": null, "unit": "pinch", "gramsEstimate": 1, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "salt"}
+  ],
+  "steps": [
+    {"text": "Pestate aglio, sale e basilico nel mortaio, poi i pinoli.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Unite i formaggi e l'olio a filo.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Condite le trofie con il pesto allungato con poca acqua di cottura.", "durationMinutes": 12, "temperatureC": null}
+  ]
+}

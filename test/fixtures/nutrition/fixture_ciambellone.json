@@ -1,0 +1,28 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Ciambellone della nonna",
+  "description": null,
+  "servings": 10,
+  "servingsUnit": "persone",
+  "prepMinutes": 15,
+  "cookMinutes": 45,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["dolce", "colazione", "al forno"],
+  "ingredients": [
+    {"group": null, "name": "farina 00", "quantity": 3, "quantityMax": null, "unit": "cup", "gramsEstimate": 375, "isEstimated": true, "note": "tazze da colazione", "scalingRule": "linear", "canonicalNameEn": "all-purpose flour"},
+    {"group": null, "name": "zucchero", "quantity": 1, "quantityMax": null, "unit": "cup", "gramsEstimate": 200, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "sugar"},
+    {"group": null, "name": "uova", "quantity": 3, "quantityMax": null, "unit": "piece", "gramsEstimate": 165, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "egg"},
+    {"group": null, "name": "latte", "quantity": 1, "quantityMax": null, "unit": "glass", "gramsEstimate": 200, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "milk"},
+    {"group": null, "name": "olio di semi", "quantity": 0.5, "quantityMax": null, "unit": "glass", "gramsEstimate": 90, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "sunflower oil"},
+    {"group": null, "name": "lievito per dolci", "quantity": 1, "quantityMax": null, "unit": "packet", "gramsEstimate": 16, "isEstimated": false, "note": null, "scalingRule": "fixed", "canonicalNameEn": "baking powder"},
+    {"group": null, "name": "scorza di limone", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 5, "isEstimated": false, "note": "grattugiata", "scalingRule": "fixed", "canonicalNameEn": "lemon zest"},
+    {"group": null, "name": "zucchero a velo", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "per decorare", "scalingRule": "toTaste", "canonicalNameEn": "powdered sugar"}
+  ],
+  "steps": [
+    {"text": "Montate le uova con lo zucchero, unite latte, olio e scorza.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Aggiungete farina e lievito setacciati.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Cuocete nello stampo a ciambella.", "durationMinutes": 45, "temperatureC": 180}
+  ]
+}

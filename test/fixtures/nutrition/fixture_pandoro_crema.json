@@ -1,0 +1,27 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Torta di pandoro con crema al mascarpone",
+  "description": null,
+  "servings": 8,
+  "servingsUnit": "persone",
+  "prepMinutes": 25,
+  "cookMinutes": null,
+  "restMinutes": 120,
+  "difficulty": "easy",
+  "tags": ["dolce", "senza cottura"],
+  "ingredients": [
+    {"group": null, "name": "pandoro", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 750, "isEstimated": false, "note": null, "scalingRule": "fixed", "canonicalNameEn": "pandoro"},
+    {"group": "Per la crema", "name": "mascarpone", "quantity": 250, "quantityMax": null, "unit": "gram", "gramsEstimate": 250, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "mascarpone cheese"},
+    {"group": "Per la crema", "name": "panna fresca da montare", "quantity": 200, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 200, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "heavy cream"},
+    {"group": "Per la crema", "name": "zucchero a velo", "quantity": 60, "quantityMax": null, "unit": "gram", "gramsEstimate": 60, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "powdered sugar"},
+    {"group": "Per la bagna", "name": "latte", "quantity": 150, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 155, "isEstimated": false, "note": "con un cucchiaio di liquore facoltativo", "scalingRule": "linear", "canonicalNameEn": "milk"},
+    {"group": "Per la decorazione", "name": "gocce di cioccolato fondente", "quantity": 80, "quantityMax": null, "unit": "gram", "gramsEstimate": 80, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "dark chocolate chips"},
+    {"group": "Per la decorazione", "name": "cacao amaro", "quantity": 1, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 6, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "unsweetened cocoa powder"}
+  ],
+  "steps": [
+    {"text": "Tagliate il pandoro a fette orizzontali.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Montate mascarpone, panna e zucchero a velo.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Alternate fette bagnate nel latte e crema, decorate e lasciate in frigo.", "durationMinutes": 120, "temperatureC": null}
+  ]
+}

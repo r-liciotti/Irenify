@@ -1,0 +1,27 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Bucatini all'amatriciana",
+  "description": null,
+  "servings": 4,
+  "servingsUnit": "persone",
+  "prepMinutes": 10,
+  "cookMinutes": 25,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["primo", "carne"],
+  "ingredients": [
+    {"group": null, "name": "bucatini", "quantity": 360, "quantityMax": null, "unit": "gram", "gramsEstimate": 360, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "bucatini pasta"},
+    {"group": null, "name": "guanciale", "quantity": 125, "quantityMax": null, "unit": "gram", "gramsEstimate": 125, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "guanciale"},
+    {"group": null, "name": "pomodori pelati", "quantity": 400, "quantityMax": null, "unit": "gram", "gramsEstimate": 400, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "canned peeled tomatoes"},
+    {"group": null, "name": "pecorino romano", "quantity": 60, "quantityMax": null, "unit": "gram", "gramsEstimate": 60, "isEstimated": false, "note": "grattugiato", "scalingRule": "linear", "canonicalNameEn": "pecorino romano cheese"},
+    {"group": null, "name": "vino bianco", "quantity": 0.5, "quantityMax": null, "unit": "glass", "gramsEstimate": 60, "isEstimated": true, "note": null, "scalingRule": "linear", "canonicalNameEn": "white wine"},
+    {"group": null, "name": "peperoncino", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 2, "isEstimated": false, "note": "facoltativo", "scalingRule": "fixed", "canonicalNameEn": "chili pepper"},
+    {"group": null, "name": "sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"}
+  ],
+  "steps": [
+    {"text": "Rosolate il guanciale e sfumate con il vino.", "durationMinutes": 8, "temperatureC": null},
+    {"text": "Aggiungete i pelati schiacciati e il peperoncino e cuocete.", "durationMinutes": 15, "temperatureC": null},
+    {"text": "Condite i bucatini con il sugo e il pecorino.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

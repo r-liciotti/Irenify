@@ -1,0 +1,23 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Crêpes alla zucca",
+  "description": null,
+  "servings": null,
+  "servingsUnit": null,
+  "prepMinutes": null,
+  "cookMinutes": null,
+  "restMinutes": null,
+  "difficulty": "unknown",
+  "tags": ["piatto unico", "veloce", "verdure"],
+  "ingredients": [
+    {"group": null, "name": "purea di zucca", "quantity": 100, "quantityMax": null, "unit": "gram", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pumpkin puree"},
+    {"group": null, "name": "uovo", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 55, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "egg"},
+    {"group": null, "name": "latte", "quantity": 80, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 80, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "milk"},
+    {"group": null, "name": "farina 00 o di farro", "quantity": 60, "quantityMax": null, "unit": "gram", "gramsEstimate": 60, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "flour"}
+  ],
+  "steps": [
+    {"text": "Mescolate tutti gli ingredienti in una ciotola.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Cuocete il composto poco per volta in una padella unta e calda.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

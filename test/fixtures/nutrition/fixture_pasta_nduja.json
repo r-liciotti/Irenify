@@ -1,0 +1,27 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Pasta con 'nduja e pomodorini",
+  "description": null,
+  "servings": 3,
+  "servingsUnit": "persone",
+  "prepMinutes": 5,
+  "cookMinutes": 15,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["primo", "veloce"],
+  "ingredients": [
+    {"group": null, "name": "mezze maniche", "quantity": 270, "quantityMax": null, "unit": "gram", "gramsEstimate": 270, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pasta"},
+    {"group": null, "name": "'nduja", "quantity": 60, "quantityMax": null, "unit": "gram", "gramsEstimate": 60, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "nduja"},
+    {"group": null, "name": "pomodorini", "quantity": 250, "quantityMax": null, "unit": "gram", "gramsEstimate": 250, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "cherry tomatoes"},
+    {"group": null, "name": "cipolla rossa di Tropea", "quantity": 0.5, "quantityMax": null, "unit": "piece", "gramsEstimate": 50, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "red onion"},
+    {"group": null, "name": "olio extravergine d'oliva", "quantity": 2, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 20, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "extra virgin olive oil"},
+    {"group": null, "name": "ricotta salata", "quantity": 40, "quantityMax": null, "unit": "gram", "gramsEstimate": 40, "isEstimated": false, "note": "grattugiata", "scalingRule": "linear", "canonicalNameEn": "ricotta salata cheese"},
+    {"group": null, "name": "basilico", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "fresh basil"},
+    {"group": null, "name": "sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"}
+  ],
+  "steps": [
+    {"text": "Soffriggete la cipolla, sciogliete la 'nduja e aggiungete i pomodorini.", "durationMinutes": 10, "temperatureC": null},
+    {"text": "Saltate la pasta nel sugo e completate con ricotta salata e basilico.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

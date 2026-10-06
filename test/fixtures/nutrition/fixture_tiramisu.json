@@ -1,0 +1,26 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Tiramisù classico",
+  "description": null,
+  "servings": 8,
+  "servingsUnit": "persone",
+  "prepMinutes": 30,
+  "cookMinutes": null,
+  "restMinutes": 240,
+  "difficulty": "easy",
+  "tags": ["dolce", "senza cottura", "da preparare in anticipo"],
+  "ingredients": [
+    {"group": null, "name": "mascarpone", "quantity": 500, "quantityMax": null, "unit": "gram", "gramsEstimate": 500, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "mascarpone cheese"},
+    {"group": null, "name": "uova", "quantity": 4, "quantityMax": null, "unit": "piece", "gramsEstimate": 220, "isEstimated": false, "note": "freschissime", "scalingRule": "integer", "canonicalNameEn": "egg"},
+    {"group": null, "name": "zucchero", "quantity": 100, "quantityMax": null, "unit": "gram", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "sugar"},
+    {"group": null, "name": "savoiardi", "quantity": 300, "quantityMax": null, "unit": "gram", "gramsEstimate": 300, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "ladyfingers"},
+    {"group": null, "name": "caffè espresso", "quantity": 300, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 300, "isEstimated": false, "note": "freddo", "scalingRule": "linear", "canonicalNameEn": "brewed coffee"},
+    {"group": null, "name": "cacao amaro in polvere", "quantity": 2, "quantityMax": null, "unit": "teaspoon", "gramsEstimate": 5, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "unsweetened cocoa powder"}
+  ],
+  "steps": [
+    {"text": "Montate i tuorli con lo zucchero, unite il mascarpone e poi gli albumi montati.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Inzuppate i savoiardi nel caffè e alternateli alla crema.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Spolverate di cacao e lasciate riposare in frigo.", "durationMinutes": 240, "temperatureC": null}
+  ]
+}

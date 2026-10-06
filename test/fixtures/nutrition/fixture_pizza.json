@@ -1,0 +1,29 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Pizza margherita in teglia",
+  "description": null,
+  "servings": 4,
+  "servingsUnit": "persone",
+  "prepMinutes": 20,
+  "cookMinutes": 20,
+  "restMinutes": 240,
+  "difficulty": "medium",
+  "tags": ["pane e pizza", "al forno"],
+  "ingredients": [
+    {"group": "Per l'impasto", "name": "farina 0", "quantity": 500, "quantityMax": null, "unit": "gram", "gramsEstimate": 500, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "wheat flour"},
+    {"group": "Per l'impasto", "name": "acqua", "quantity": 350, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 350, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "water"},
+    {"group": "Per l'impasto", "name": "lievito di birra fresco", "quantity": 7, "quantityMax": null, "unit": "gram", "gramsEstimate": 7, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "fresh yeast"},
+    {"group": "Per l'impasto", "name": "sale", "quantity": 10, "quantityMax": null, "unit": "gram", "gramsEstimate": 10, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "salt"},
+    {"group": "Per l'impasto", "name": "olio extravergine d'oliva", "quantity": 2, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 20, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "extra virgin olive oil"},
+    {"group": "Per condire", "name": "passata di pomodoro", "quantity": 300, "quantityMax": null, "unit": "gram", "gramsEstimate": 300, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "tomato puree"},
+    {"group": "Per condire", "name": "mozzarella", "quantity": 250, "quantityMax": null, "unit": "gram", "gramsEstimate": 250, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "mozzarella cheese"},
+    {"group": "Per condire", "name": "origano secco", "quantity": 1, "quantityMax": null, "unit": "teaspoon", "gramsEstimate": 1, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "dried oregano"},
+    {"group": "Per condire", "name": "basilico", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "fresh basil"}
+  ],
+  "steps": [
+    {"text": "Impastate farina, acqua, lievito, sale e olio e lasciate lievitare.", "durationMinutes": 240, "temperatureC": null},
+    {"text": "Stendete in teglia e condite con passata e origano.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Cuocete, aggiungete la mozzarella e finite la cottura.", "durationMinutes": 20, "temperatureC": 250}
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Minestrone di verdure",
+  "description": null,
+  "servings": 6,
+  "servingsUnit": "persone",
+  "prepMinutes": 30,
+  "cookMinutes": 60,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["primo", "vegana", "verdure"],
+  "ingredients": [
+    {"group": null, "name": "carote", "quantity": 2, "quantityMax": 3, "unit": "piece", "gramsEstimate": 150, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "carrot"},
+    {"group": null, "name": "patate", "quantity": 2, "quantityMax": null, "unit": "piece", "gramsEstimate": 300, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "potato"},
+    {"group": null, "name": "zucchine", "quantity": 2, "quantityMax": 3, "unit": "piece", "gramsEstimate": 400, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "zucchini"},
+    {"group": null, "name": "coste di sedano", "quantity": 2, "quantityMax": null, "unit": "piece", "gramsEstimate": 80, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "celery"},
+    {"group": null, "name": "cipolla", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "onion"},
+    {"group": null, "name": "fagioli borlotti lessati", "quantity": 240, "quantityMax": null, "unit": "gram", "gramsEstimate": 240, "isEstimated": false, "note": "sgocciolati", "scalingRule": "linear", "canonicalNameEn": "canned borlotti beans"},
+    {"group": null, "name": "piselli surgelati", "quantity": 150, "quantityMax": null, "unit": "gram", "gramsEstimate": 150, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "frozen peas"},
+    {"group": null, "name": "fagiolini", "quantity": 100, "quantityMax": 150, "unit": "gram", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "green beans"},
+    {"group": null, "name": "cavolo verza", "quantity": 0.25, "quantityMax": null, "unit": "piece", "gramsEstimate": 200, "isEstimated": true, "note": null, "scalingRule": "linear", "canonicalNameEn": "savoy cabbage"},
+    {"group": null, "name": "pomodori pelati", "quantity": 200, "quantityMax": null, "unit": "gram", "gramsEstimate": 200, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "canned peeled tomatoes"},
+    {"group": null, "name": "acqua", "quantity": 2, "quantityMax": 2.5, "unit": "liter", "gramsEstimate": 2000, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "water"},
+    {"group": null, "name": "olio extravergine d'oliva", "quantity": 3, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 30, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "extra virgin olive oil"},
+    {"group": null, "name": "sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"},
+    {"group": null, "name": "pepe", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "black pepper"},
+    {"group": null, "name": "Parmigiano Reggiano", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "facoltativo, per servire", "scalingRule": "toTaste", "canonicalNameEn": "parmesan cheese"}
+  ],
+  "steps": [
+    {"text": "Tagliate tutte le verdure a cubetti e soffriggete la cipolla nell'olio.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Unite le verdure, i pelati e l'acqua e cuocete a fuoco basso.", "durationMinutes": 50, "temperatureC": null},
+    {"text": "Aggiungete i fagioli negli ultimi 10 minuti e regolate di sale.", "durationMinutes": 10, "temperatureC": null}
+  ]
+}

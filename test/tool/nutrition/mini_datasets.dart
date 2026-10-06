@@ -312,3 +312,14 @@ const miniCurated =
     'broccoli,Broccoli,broccolo,usda_foundation,200001,,\n'
     'pecorino,Pecorino,pecorino romano,ciqual,12122,,\n'
     'bresaola,Bresaola,,ciqual,28503,,\n';
+
+const manualHeader =
+    'id,key,name_en,name_it,kcal,protein_g,carbs_g,sugars_g,fat_g,'
+    'saturated_fat_g,fiber_g,sodium_mg,density_g_per_ml,sources,note';
+
+const miniManual =
+    '$manualHeader\n'
+    '1,guanciale,Guanciale (cured pork cheek),Guanciale,600,10.5,0.5,0.2,62,'
+    '22.5,0,1200,,"Etichette: A, B",grassi variabili\n'
+    '2,glassa_balsamica,Balsamic glaze,Glassa di aceto balsamico,220,1,52,,0,'
+    '0,,40,1.25,Etichette,\n';

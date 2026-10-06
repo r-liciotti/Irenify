@@ -1,0 +1,20 @@
+Open Food Facts
+
+Per alcuni prodotti italiani assenti nelle fonti USDA e CIQUAL (ad esempio
+guanciale, 'nduja, stracchino, piadina, scamorza, speck, pandoro), questa app
+include valori nutrizionali per 100 g ricavati come mediana dei dati in
+etichetta dichiarati dai produttori, consultati su Open Food Facts
+(https://world.openfoodfacts.org) il 2026-10-06.
+
+Fonte: Open Food Facts contributors, https://world.openfoodfacts.org
+
+Il database di Open Food Facts è disponibile con la Open Database License
+(ODbL) versione 1.0: https://opendatacommons.org/licenses/odbl/1-0/
+I singoli contenuti del database sono disponibili con la Database Contents
+License (DbCL) versione 1.0: https://opendatacommons.org/licenses/dbcl/1-0/
+
+Modifiche: non è incluso alcun estratto del database; per ogni prodotto sono
+state calcolate a mano le mediane di energia, proteine, carboidrati, zuccheri,
+grassi, acidi grassi saturi, fibre e sale (convertito in sodio: sale / 2,5)
+su più etichette, in alcuni casi confrontate con le tabelle CREA. I valori
+calcolati dall'app sono stime e non sono approvati da Open Food Facts.

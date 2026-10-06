@@ -1,0 +1,30 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Risotto ai funghi porcini",
+  "description": null,
+  "servings": 4,
+  "servingsUnit": "persone",
+  "prepMinutes": 20,
+  "cookMinutes": 20,
+  "restMinutes": null,
+  "difficulty": "medium",
+  "tags": ["primo", "vegetariana"],
+  "ingredients": [
+    {"group": null, "name": "riso Carnaroli", "quantity": 320, "quantityMax": null, "unit": "gram", "gramsEstimate": 320, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "arborio rice"},
+    {"group": null, "name": "funghi porcini secchi", "quantity": 30, "quantityMax": null, "unit": "gram", "gramsEstimate": 30, "isEstimated": false, "note": "ammollati in acqua tiepida", "scalingRule": "linear", "canonicalNameEn": "dried porcini mushrooms"},
+    {"group": null, "name": "brodo vegetale", "quantity": 1.2, "quantityMax": null, "unit": "liter", "gramsEstimate": 1200, "isEstimated": false, "note": "caldo", "scalingRule": "linear", "canonicalNameEn": "vegetable broth"},
+    {"group": null, "name": "scalogno", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 30, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "shallot"},
+    {"group": null, "name": "vino bianco secco", "quantity": 100, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "dry white wine"},
+    {"group": null, "name": "burro", "quantity": 40, "quantityMax": null, "unit": "gram", "gramsEstimate": 40, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "butter"},
+    {"group": null, "name": "Parmigiano Reggiano grattugiato", "quantity": 50, "quantityMax": null, "unit": "gram", "gramsEstimate": 50, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "parmesan cheese"},
+    {"group": null, "name": "prezzemolo tritato", "quantity": 1, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 4, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "fresh parsley"},
+    {"group": null, "name": "sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"},
+    {"group": null, "name": "pepe", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "black pepper"}
+  ],
+  "steps": [
+    {"text": "Ammollate i porcini e tritate lo scalogno.", "durationMinutes": 20, "temperatureC": null},
+    {"text": "Tostate il riso, sfumate con il vino e cuocete con il brodo e i funghi.", "durationMinutes": 18, "temperatureC": null},
+    {"text": "Mantecate con burro e parmigiano.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

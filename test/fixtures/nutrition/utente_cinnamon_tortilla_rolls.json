@@ -1,0 +1,27 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Easy Cinnamon Tortilla Rolls",
+  "description": null,
+  "servings": null,
+  "servingsUnit": null,
+  "prepMinutes": null,
+  "cookMinutes": 10,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["al forno", "dolce", "veloce"],
+  "ingredients": [
+    {"group": null, "name": "large flour tortilla", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 60, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "flour tortilla"},
+    {"group": null, "name": "softened butter", "quantity": 1, "quantityMax": 2, "unit": "tablespoon", "gramsEstimate": 21, "isEstimated": false, "note": "softened", "scalingRule": "linear", "canonicalNameEn": "butter"},
+    {"group": null, "name": "melted butter", "quantity": 1, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 14, "isEstimated": false, "note": "melted", "scalingRule": "linear", "canonicalNameEn": "butter"},
+    {"group": null, "name": "ground cinnamon", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "ground cinnamon"},
+    {"group": null, "name": "granulated sugar", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "granulated sugar"},
+    {"group": null, "name": "powdered sugar", "quantity": 2, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 16, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "powdered sugar"},
+    {"group": null, "name": "milk", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "A splash", "scalingRule": "toTaste", "canonicalNameEn": "milk"}
+  ],
+  "steps": [
+    {"text": "Spread the butter on the tortilla, add cinnamon and sugar, roll and slice.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Drizzle with melted butter and bake until golden.", "durationMinutes": 10, "temperatureC": 230},
+    {"text": "Mix powdered sugar with milk and drizzle over the rolls.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

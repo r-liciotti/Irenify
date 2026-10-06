@@ -1,0 +1,27 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Lingue di pizza senza lievito",
+  "description": null,
+  "servings": null,
+  "servingsUnit": null,
+  "prepMinutes": null,
+  "cookMinutes": 20,
+  "restMinutes": 20,
+  "difficulty": "unknown",
+  "tags": ["pane e pizza", "veloce"],
+  "ingredients": [
+    {"group": null, "name": "farina 00", "quantity": 1, "quantityMax": null, "unit": "kilogram", "gramsEstimate": 1000, "isEstimated": false, "note": "si consiglia una farina forte con W tra 280 e 320", "scalingRule": "linear", "canonicalNameEn": "wheat flour"},
+    {"group": null, "name": "acqua", "quantity": 670, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 670, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "water"},
+    {"group": null, "name": "sale", "quantity": 25, "quantityMax": null, "unit": "gram", "gramsEstimate": 25, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "salt"},
+    {"group": null, "name": "Semola", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "per la spianatoia", "scalingRule": "toTaste", "canonicalNameEn": "semolina"},
+    {"group": "Per il condimento", "name": "passata di pomodoro", "quantity": 1.5, "quantityMax": null, "unit": "kilogram", "gramsEstimate": 1500, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "tomato puree"},
+    {"group": "Per il condimento", "name": "Sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"},
+    {"group": "Per il condimento", "name": "Olio", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "oil"}
+  ],
+  "steps": [
+    {"text": "Impastate farina, acqua e sale e lasciate riposare il panetto.", "durationMinutes": 20, "temperatureC": null},
+    {"text": "Dividete in porzioni da 85 g e stendetele sottili sulla semola.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Condite con il sugo e cuocete in forno statico.", "durationMinutes": 20, "temperatureC": 230}
+  ]
+}

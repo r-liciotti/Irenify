@@ -13,6 +13,9 @@
 ///   "large" viene prima di "medium": l'uovo large USDA (50 g senza guscio)
 ///   corrisponde all'uovo medio europeo. Porzioni in peso o confezioni
 ///   ("oz", "serving", "package"…) non sono mai un pezzo;
+/// - le porzioni montate ("cup, whipped" della panna liquida) valgono solo
+///   per gli alimenti già montati (nome con "whipped"): altrimenti darebbero
+///   metà della densità vera;
 /// - a parità, la porzione con `seq_num` più basso (quella che USDA mette
 ///   prima), poi l'`id` più basso;
 /// - grammi per unità = `gram_weight / amount`;
@@ -82,6 +85,15 @@ final _large = RegExp(r'\blarge\b');
 final _extraLarge = RegExp(r'\b(extra|x)[- ]?large\b');
 final _small = RegExp(r'\bsmall\b');
 final _egg = RegExp(r'^eggs?\b', caseSensitive: false);
+final _whipped = RegExp(r'\bwhipped\b', caseSensitive: false);
+
+/// `true` se la porzione è montata ma l'alimento no ("Cream, fluid, heavy
+/// whipping": "cup, whipped" = 120 g contro i 238 g della tazza liquida).
+/// "(yields 2 cups whipped)" descrive la porzione liquida: non conta.
+bool _aeratedPortion(String text, String foodName) {
+  final withoutYield = text.replaceAll(RegExp(r'\(yields?[^)]*\)'), '');
+  return _whipped.hasMatch(withoutYield) && !_whipped.hasMatch(foodName);
+}
 
 /// Grammi per unità ricavati dalle porzioni USDA di un alimento.
 Map<String, double> classifyPortions(
@@ -92,6 +104,7 @@ Map<String, double> classifyPortions(
   final best = <String, (int, int, int, double)>{};
   for (final p in portions) {
     if (p.amount <= 0 || p.gramWeight <= 0) continue;
+    if (_aeratedPortion(p.text, foodName)) continue;
     final match = _classify(p.text, isEgg: isEgg);
     if (match == null) continue;
     final (unit, priority) = match;

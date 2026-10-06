@@ -391,6 +391,11 @@ void main() {
     );
     expect(text('ANSES-CIQUAL'), contains('Etalab'));
     expect(text('ANSES-CIQUAL'), contains('Ciqual'));
+    expect(text('Open Food Facts'), contains('ODbL'));
+    expect(
+      text('Open Food Facts'),
+      contains('https://world.openfoodfacts.org'),
+    );
     for (final font in ['Gloock', 'Manrope']) {
       expect(text(font), contains('SIL Open Font License'), reason: font);
     }

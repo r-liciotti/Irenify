@@ -1,0 +1,26 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Insalata con halloumi grigliato",
+  "description": null,
+  "servings": 2,
+  "servingsUnit": "persone",
+  "prepMinutes": 15,
+  "cookMinutes": 5,
+  "restMinutes": null,
+  "difficulty": "easy",
+  "tags": ["piatto unico", "vegetariana", "veloce"],
+  "ingredients": [
+    {"group": null, "name": "halloumi", "quantity": 200, "quantityMax": null, "unit": "gram", "gramsEstimate": 200, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "halloumi cheese"},
+    {"group": null, "name": "insalata mista", "quantity": 150, "quantityMax": null, "unit": "gram", "gramsEstimate": 150, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "mixed salad greens"},
+    {"group": null, "name": "pomodorini", "quantity": 10, "quantityMax": null, "unit": "piece", "gramsEstimate": 150, "isEstimated": true, "note": null, "scalingRule": "integer", "canonicalNameEn": "cherry tomatoes"},
+    {"group": null, "name": "cetriolo", "quantity": 0.5, "quantityMax": null, "unit": "piece", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "cucumber"},
+    {"group": null, "name": "olio extravergine d'oliva", "quantity": 2, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 20, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "extra virgin olive oil"},
+    {"group": null, "name": "glassa di aceto balsamico", "quantity": 1, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 15, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "balsamic glaze"},
+    {"group": null, "name": "sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"}
+  ],
+  "steps": [
+    {"text": "Grigliate le fette di halloumi in padella.", "durationMinutes": 4, "temperatureC": null},
+    {"text": "Componete l'insalata con verdure e halloumi e condite con olio e glassa.", "durationMinutes": null, "temperatureC": null}
+  ]
+}

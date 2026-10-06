@@ -1,0 +1,29 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Polpette di zucca al forno",
+  "description": null,
+  "servings": 12,
+  "servingsUnit": "polpette",
+  "prepMinutes": null,
+  "cookMinutes": 45,
+  "restMinutes": null,
+  "difficulty": "unknown",
+  "tags": ["secondo", "vegetariana"],
+  "ingredients": [
+    {"group": null, "name": "zucca Delica, già pulita", "quantity": 500, "quantityMax": null, "unit": "gram", "gramsEstimate": 500, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pumpkin"},
+    {"group": null, "name": "uovo", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 55, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "egg"},
+    {"group": null, "name": "pangrattato", "quantity": 50, "quantityMax": null, "unit": "gram", "gramsEstimate": 50, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "breadcrumbs"},
+    {"group": null, "name": "Parmigiano Reggiano grattugiato", "quantity": 20, "quantityMax": null, "unit": "gram", "gramsEstimate": 20, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "parmesan cheese"},
+    {"group": null, "name": "Pecorino grattugiato", "quantity": 20, "quantityMax": null, "unit": "gram", "gramsEstimate": 20, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pecorino cheese"},
+    {"group": null, "name": "Sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"},
+    {"group": null, "name": "Pepe", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "pepper"},
+    {"group": null, "name": "Aglio", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "garlic"},
+    {"group": null, "name": "Olio extravergine d’oliva", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "extra virgin olive oil"}
+  ],
+  "steps": [
+    {"text": "Cuocete la zucca in forno e schiacciatela.", "durationMinutes": 15, "temperatureC": 180},
+    {"text": "Unite uovo, pangrattato, formaggi e aromi e formate le polpette.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Cuocete in forno ventilato fino a doratura.", "durationMinutes": 30, "temperatureC": 180}
+  ]
+}

@@ -72,16 +72,20 @@ gorgonzola|gorgonzola cheese|gorgonzola dolce|gorgonzola piccante,Gorgonzola,gor
 gouda|edam,Gouda,gouda|edamer|edam,usda_sr,171241,,
 grana padano|grana padano cheese|grana,Grana Padano,grana|grana padano|grana grattugiato|grana padano grattugiato,ciqual,12123,,
 gruyere|comte,Gruyère,gruyere|gruviera|comte,ciqual,12114,,
-halloumi,Halloumi,halloumi,usda_sr,170845,,halloumi assente: mozzarella intera USDA (bassa umidità) come approssimazione
+halloumi|halloumi cheese|grilling cheese,Halloumi,halloumi|formaggio halloumi,manual,13,,valori manuali (Open Food Facts); prima: mozzarella USDA come approssimazione
 mascarpone|mascarpone cheese,Mascarpone,mascarpone,ciqual,19584,,
 mozzarella|fresh mozzarella|mozzarella cheese|fior di latte|bocconcini|mozzarella balls|cherry mozzarella,Mozzarella,mozzarella|fior di latte|mozzarella fior di latte|mozzarelline|bocconcini|ciliegine|ciliegine di mozzarella|mozzarella vaccina,ciqual,19590,125,pezzo = una mozzarella da 125 g; CIQUAL (fresca) invece di USDA (a bassa umidità)
 buffalo mozzarella|mozzarella di bufala,Mozzarella di bufala,mozzarella di bufala|bufala|mozzarella di bufala campana,ciqual,19591,125,
 low-moisture mozzarella|shredded mozzarella|pizza mozzarella|part-skim mozzarella|grated mozzarella,Mozzarella per pizza,mozzarella per pizza|mozzarella grattugiata|mozzarella a cubetti|mozzarella julienne|mozzarella in cubetti,usda_sr,171244,,
 parmesan|parmesan cheese|parmigiano reggiano|parmigiano|grated parmesan|parmigiano-reggiano|hard cheese|grated cheese,Parmigiano Reggiano,parmigiano|parmigiano reggiano|parmigiano grattugiato|formaggio grattugiato|parmigiano reggiano grattugiato|scaglie di parmigiano,ciqual,12120,,"CIQUAL «Parmesan» più vicino al Parmigiano reale di «Cheese, parmesan, hard» USDA; «formaggio grattugiato» = parmigiano"
 pecorino|pecorino romano|pecorino cheese|romano cheese|pecorino sardo,Pecorino,pecorino|pecorino romano|pecorino sardo|pecorino toscano|pecorino grattugiato|pecorino siciliano,ciqual,12122,,
-provolone|scamorza|smoked scamorza|provola|smoked provola|caciocavallo|smoked cheese,Provolone,provolone|scamorza|scamorza affumicata|provola|provola affumicata|caciocavallo|formaggio affumicato|provolone dolce|provolone piccante,ciqual,12716,,"scamorza, provola e caciocavallo (pasta filata stagionata) assenti nelle fonti: provolone CIQUAL ha composizione molto vicina"
+provolone|provolone cheese,Provolone,provolone|provolone dolce|provolone piccante|provolone valpadana,ciqual,12716,,
+scamorza|provola|scamorza cheese|white scamorza,Scamorza,scamorza|provola|scamorza bianca|provola bianca|provola dolce,manual,5,,valori manuali (Open Food Facts); prima: provolone CIQUAL
+smoked scamorza|smoked scamorza cheese|smoked provola|smoked provola cheese|smoked cheese,Scamorza affumicata,scamorza affumicata|provola affumicata|formaggio affumicato,manual,6,,valori manuali (Open Food Facts); prima: provolone CIQUAL
+caciocavallo|caciocavallo cheese,Caciocavallo,caciocavallo|caciocavallo silano,manual,7,,valori manuali (Open Food Facts); prima: provolone CIQUAL
 ricotta|ricotta cheese|whole milk ricotta|sheep ricotta,Ricotta,ricotta|ricotta vaccina|ricotta fresca|ricotta di pecora|ricotta di mucca,usda_sr,170851,,USDA: la ricotta CIQUAL non ha le kcal
-stracchino|crescenza|robiola|squacquerone,Stracchino,stracchino|crescenza|robiola|squacquerone,ciqual,12003,,stracchino assente nelle fonti: formaggio a pasta molle tipo camembert come approssimazione (kcal e grassi simili)
+ricotta salata|ricotta salata cheese|salted ricotta|dry ricotta,Ricotta salata,ricotta salata|ricotta stagionata,manual,9,,valori manuali (Open Food Facts); nessuna voce CREA
+stracchino|stracchino cheese|crescenza|robiola|squacquerone,Stracchino,stracchino|crescenza|robiola|squacquerone,manual,3,,valori manuali (Open Food Facts e CREA); prima: formaggio a pasta molle CIQUAL
 taleggio|taleggio cheese|washed-rind cheese,Taleggio,taleggio|quartirolo,ciqual,12041,,"taleggio assente: formaggio a pasta molle a crosta lavata (CIQUAL), composizione molto vicina"
 egg white|egg whites|albumen,Albume,albume|albumi|chiara d'uovo|chiare d'uovo|bianco d'uovo|albume d'uovo,usda_sr,172183,33,
 egg yolk|egg yolks|yolk|yolks,Tuorlo d'uovo,tuorlo|tuorli|tuorlo d'uovo|tuorli d'uovo|rosso d'uovo,usda_sr,172184,17,
@@ -110,16 +114,17 @@ veal|veal cutlet|veal scallopini|veal escalope,Vitello,vitello|fettine di vitell
 frankfurter|hot dog|wurstel|wiener|frankfurters,Würstel,wurstel|hot dog|frankfurter,usda_sr,172968,50,
 bacon|streaky bacon|bacon strips,Bacon,bacon,usda_sr,168277,25,pezzo = una fetta (~25 g cruda)
 bresaola,Bresaola,bresaola,ciqual,28503,10,pezzo = una fetta (~10 g)
-chorizo|nduja|spicy salami spread,Chorizo,chorizo|nduja,usda_sr,173859,,'nduja assente nelle fonti: chorizo USDA (salume piccante di maiale) come approssimazione
+chorizo,Chorizo,chorizo,usda_sr,173859,,
+nduja|'nduja|spicy salami spread|spreadable salami,'Nduja,nduja|salame spalmabile|salame piccante spalmabile,manual,2,,valori manuali (Open Food Facts); prima: chorizo USDA
 coppa|capicola|capocollo,Coppa,coppa|capocollo|capicollo,ciqual,28850,,
-guanciale|cured pork cheek|pork jowl,Guanciale,guanciale,usda_sr,167812,,guanciale assente in USDA e CIQUAL: pancia di maiale cruda USDA (~53% grassi) come approssimazione; sodio sottostimato
+guanciale|cured pork cheek|pork jowl,Guanciale,guanciale|guancia di maiale stagionata,manual,1,,valori manuali (Open Food Facts); prima: pancia di maiale USDA
 mortadella,Mortadella,mortadella,ciqual,30789,20,
 pancetta|diced pancetta|cubed pancetta|pancetta cubes,Pancetta,pancetta|pancetta tesa|pancetta arrotolata|pancetta dolce|cubetti di pancetta|dadini di pancetta|pancetta a cubetti|pancetta a dadini,ciqual,28858,,
 smoked pancetta,Pancetta affumicata,pancetta affumicata|cubetti di pancetta affumicata|dadini di pancetta affumicata,ciqual,28502,,
 ham|cooked ham|sliced ham|boiled ham,Prosciutto cotto,prosciutto cotto|cotto|fesa di prosciutto cotto,ciqual,28910,25,pezzo = una fetta (~25 g)
 prosciutto|prosciutto crudo|parma ham|cured ham|dry-cured ham|serrano ham,Prosciutto crudo,prosciutto crudo|crudo|prosciutto di parma|prosciutto san daniele|prosciutto|jamon serrano,ciqual,28800,15,pezzo = una fetta (~15 g); «prosciutto» generico = crudo
 salami|salame|pepperoni|milano salami,Salame,salame|salame milano|salamino|salamino piccante|salame ungherese|salame napoli,ciqual,30350,8,pezzo = una fetta (~8 g)
-speck|smoked ham|smoked prosciutto,Speck,speck|prosciutto affumicato,ciqual,28801,15,speck assente: prosciutto crudo affumicato CIQUAL
+speck|smoked ham|smoked prosciutto,Speck,speck|prosciutto affumicato|speck alto adige,manual,8,15,pezzo = una fetta (~15 g); valori manuali (Open Food Facts); prima: prosciutto crudo affumicato CIQUAL
 anchovies|anchovy|anchovy fillets|canned anchovies|anchovies in oil,Acciughe sott'olio,acciughe|acciuga|filetti di acciuga|acciughe sott'olio|alici sott'olio|filetti di alici|pasta d'acciughe|alici sotto sale|acciughe sotto sale,usda_sr,174183,4,pezzo = un filetto (~4 g)
 fresh anchovies,Alici fresche,alici|alici fresche|acciughe fresche,usda_sr,174182,,
 lobster,Astice,astice|aragosta,usda_sr,174208,,
@@ -171,7 +176,7 @@ fennel|fennel bulb,Finocchio,finocchio|finocchi,usda_sr,169385,250,
 zucchini flowers|squash blossoms|courgette flowers,Fiori di zucca,fiori di zucca|fiori di zucchina,usda_sr,170487,5,fiori assenti: zucchina estiva generica
 mushrooms|mushroom|button mushrooms|white mushrooms|champignon mushrooms|cremini mushrooms,Funghi champignon,funghi|fungo|champignon|funghi champignon|funghi coltivati|funghi prataioli|funghi misti,usda_sr,169251,,
 porcini|porcini mushrooms|cep|boletus,Funghi porcini,porcini|funghi porcini|porcino,ciqual,20160,,
-dried porcini|dried mushrooms|dried porcini mushrooms,Funghi porcini secchi,funghi secchi|porcini secchi|funghi porcini secchi,usda_sr,168436,,porcini secchi assenti: shiitake secchi USDA come approssimazione
+dried porcini|dried mushrooms|dried porcini mushrooms,Funghi porcini secchi,funghi secchi|porcini secchi|funghi porcini secchi,manual,10,,valori manuali (Open Food Facts); prima: shiitake secchi USDA
 shiitake|shiitake mushrooms,Funghi shiitake,shiitake|funghi shiitake,usda_sr,169242,,
 bean sprouts|mung bean sprouts|sprouts,Germogli di soia,germogli|germogli di soia,usda_sr,169957,,
 jalapeno|jalapenos,Jalapeño,jalapeno|jalapenos,usda_sr,168576,14,
@@ -189,7 +194,7 @@ yellow bell pepper|yellow pepper,Peperone giallo,peperone giallo|peperoni gialli
 bell pepper|red bell pepper|red pepper|sweet pepper|peppers|bell peppers|capsicum,Peperone rosso,peperone|peperoni|peperone rosso|peperoni rossi|peperoni misti,usda_sr,170108,160,
 green bell pepper|green pepper|friggitelli,Peperone verde,peperone verde|peperoni verdi|friggitelli|friarielli napoletani,usda_sr,170427,160,
 peas|green peas|frozen peas|garden peas|sweet peas,Piselli,piselli|pisellini|piselli surgelati|piselli freschi|piselli fini,usda_sr,170419,,
-canned tomatoes|peeled tomatoes|whole peeled tomatoes|diced tomatoes|chopped tomatoes|crushed tomatoes|san marzano tomatoes|canned whole tomatoes|tinned tomatoes,Pomodori pelati,pelati|pomodori pelati|polpa di pomodoro|pomodori in scatola|pomodoro a pezzi|pomodori a pezzetti|polpa|pomodori san marzano|polpa di pomodoro a pezzi,usda_sr,170051,,
+canned tomatoes|tomato pulp|peeled tomatoes|whole peeled tomatoes|diced tomatoes|chopped tomatoes|crushed tomatoes|san marzano tomatoes|canned whole tomatoes|tinned tomatoes,Pomodori pelati,pelati|pomodori pelati|polpa di pomodoro|pomodori in scatola|pomodoro a pezzi|pomodori a pezzetti|polpa|pomodori san marzano|polpa di pomodoro a pezzi,usda_sr,170051,,
 sun-dried tomatoes|sundried tomatoes|dried tomatoes,Pomodori secchi,pomodori secchi|pomodori essiccati,usda_sr,168567,,
 sun-dried tomatoes in oil,Pomodori secchi sott'olio,pomodori secchi sott'olio,usda_sr,169384,,
 cherry tomatoes|cherry tomato|grape tomatoes|datterini,Pomodorini,pomodorini|pomodorino|pomodorini ciliegino|datterini|pomodori datterini|pomodorini pachino|pachino|ciliegini,ciqual,20172,15,pomodorini assenti in SR Legacy (Foundation incompleto): CIQUAL
@@ -325,7 +330,8 @@ pancakes|pancake,Pancake,pancake,usda_sr,175009,40,
 white bread|sandwich bread|sliced bread|toast bread|white sandwich bread|brioche bread,Pancarrè,pancarre|pan carre|pane in cassetta|pane per tramezzini|pane da toast|fette di pancarre|pan bauletto,usda_sr,174924,25,pezzo = una fetta
 bread|italian bread|crusty bread|stale bread|day-old bread|country bread|ciabatta,Pane,pane|pane raffermo|pane casereccio|pane toscano|ciabatta|filone|pagnotta|fette di pane|fetta di pane|pane comune|mollica|mollica di pane,usda_sr,174913,30,pezzo = una fetta (~30 g)
 whole wheat bread|wholemeal bread|whole grain bread,Pane integrale,pane integrale|pane di segale|pane ai cereali,usda_sr,172688,30,
-pita|pita bread|flatbread|naan,Pane pita,pita|pane pita|piadina|piadine|pane arabo|naan,usda_sr,174915,60,piadina assente: pita USDA come approssimazione (la piadina è più grassa)
+pita|pita bread|naan,Pane pita,pita|pane pita|pane arabo|naan,usda_sr,174915,60,
+piadina|piadina romagnola|flatbread|italian flatbread,Piadina,piadina|piadine|piadina romagnola,manual,4,110,pezzo = una piadina (~110 g); valori manuali (Open Food Facts); prima: pita USDA
 breadcrumbs|bread crumbs|panko|dried breadcrumbs,Pangrattato,pangrattato|pan grattato|pane grattugiato|panko|pangrattato tostato,usda_sr,174928,,
 hamburger bun|burger bun|burger buns|buns,Panino per hamburger,panino per hamburger|panini per hamburger|bun|buns|panino|panini,usda_sr,172796,50,
 pie crust|pie dough|savory shortcrust pastry|brisee|pate brisee,Pasta brisée,pasta brisee|brisee|pasta brise|rotolo di pasta brisee,ciqual,23414,230,pezzo = rotolo pronto da 230 g
@@ -344,7 +350,9 @@ custard|pastry cream|vanilla pudding,Crema pasticcera,crema pasticcera|crema|bud
 gelatin|gelatin sheets|gelatine|gelatine leaves|gelatin powder|isinglass,Gelatina in fogli,colla di pesce|gelatina in fogli|gelatina|fogli di gelatina|gelatina alimentare|gelatina in polvere,usda_sr,169599,2,pezzo = un foglio (2 g)
 ice cream|vanilla ice cream,Gelato,gelato|gelato alla vaniglia|gelato fiordilatte,usda_sr,167575,,
 sponge cake|pan di spagna|genoise,Pan di Spagna,pan di spagna|pandispagna|base per torte,usda_sr,172706,,
-panettone|pandoro,Panettone,panettone|pandoro|colomba,ciqual,7719,,pandoro e colomba assegnati al panettone (pandoro assente in CIQUAL)
+panettone,Panettone,panettone,ciqual,7719,,
+pandoro,Pandoro,pandoro,manual,11,,valori manuali (Open Food Facts); prima: panettone CIQUAL
+colomba|colomba cake|easter dove cake,Colomba,colomba|colomba pasquale,manual,12,,valori manuali (Open Food Facts); prima: panettone CIQUAL
 chocolate syrup|chocolate sauce,Salsa al cioccolato,salsa al cioccolato|topping al cioccolato,usda_sr,168835,,
 ladyfingers|savoiardi|sponge fingers|lady fingers,Savoiardi,savoiardi|savoiardo|pavesini,ciqual,24430,11,
 cocoa butter|cacao butter,Burro di cacao,burro di cacao,usda_sr,171421,,
@@ -354,7 +362,8 @@ white chocolate|white chocolate chips,Cioccolato bianco,cioccolato bianco|gocce 
 extra dark chocolate|85% dark chocolate|70% dark chocolate,Cioccolato extra fondente,cioccolato extra fondente|extra fondente|cioccolato fondente 85%|cioccolato 85%,usda_sr,170273,,
 dark chocolate|bittersweet chocolate|chocolate|baking chocolate,Cioccolato fondente,cioccolato fondente|fondente|cioccolato|cioccolato fondente al 70%|cioccolato da copertura|copertura al cioccolato,usda_sr,170272,,
 chocolate chips|semisweet chocolate|semi-sweet chocolate chips|chocolate chunks,Gocce di cioccolato,gocce di cioccolato|gocce di cioccolato fondente|cioccolato semidolce|scaglie di cioccolato|cioccolato a pezzi,usda_sr,167976,,
-balsamic vinegar|balsamic|balsamic glaze|balsamic reduction,Aceto balsamico,aceto balsamico|balsamico|aceto balsamico di modena|glassa di aceto balsamico|glassa balsamica|crema di balsamico,usda_sr,172241,,la glassa è più zuccherina: approssimazione
+balsamic vinegar|balsamic,Aceto balsamico,aceto balsamico|balsamico|aceto balsamico di modena,usda_sr,172241,,
+balsamic glaze|balsamic reduction|balsamic cream,Glassa di aceto balsamico,glassa di aceto balsamico|glassa balsamica|crema di balsamico|crema di aceto balsamico|riduzione di aceto balsamico,manual,14,,valori manuali (Open Food Facts); densità stimata; prima: aceto balsamico USDA
 white vinegar|distilled vinegar|rice vinegar|rice wine vinegar,Aceto di alcol,aceto di alcol|aceto di riso|aceto distillato,usda_sr,172237,,
 apple cider vinegar|cider vinegar,Aceto di mele,aceto di mele|aceto di sidro,usda_sr,173469,,
 red wine vinegar|wine vinegar|vinegar|white wine vinegar,Aceto di vino,aceto|aceto di vino|aceto di vino rosso|aceto di vino bianco|aceto bianco,usda_sr,172240,,«vinegar» generico = aceto di vino

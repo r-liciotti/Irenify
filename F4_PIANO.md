@@ -39,12 +39,27 @@ nelle Licenze dell'app.
 - **Lacune:** guanciale, scamorza, taleggio e 'nduja sono assenti dalle fonti aperte, quindi approssimati e annotati.
 - **Copertura:** 100% del peso abbinato per alias sulle 6 ricette del telefono.
 
-## Fase 2 — Calcolo (≈ 0,75 gg)
+## Fase 2 — Calcolo (≈ 0,75 gg) — ✅ completata il 2026-10-06
 
 `NutritionService` in Dart puro: abbinamento (alias curati → FTS filtrato → nessuno), grammi per ingrediente (D-54 punto
-2), totali, per porzione e per 100 g, copertura sul peso, q.b. esclusi, sale = sodio × 2,5.
+2), totali, per porzione e per 100 g, copertura sul peso, q.b. esclusi, sale = sodio × 2,5. Nello script: fonte `manual`
+da `tool/nutrition/manual_foods.csv` (14 prodotti italiani, valori ricercati il 2026-10-06) al posto delle
+approssimazioni della tabella curata, con rigenerazione del database.
 
 **Uscita:** test su 20 ricette (le 5 dell'utente + 15 delle fixture) con copertura ≥ 80% del peso.
+
+**Com'è andata:**
+- **Sviluppo:** contratto `lib/features/nutrition/domain/nutrition.dart`, poi 3 subagent in parallelo:
+  - calcolo in `domain/nutrition_service.dart`;
+  - dati in `data/food_db.dart`, con fonte `manual` e database `72b9ca61caa0081b`;
+  - 21 ricette di prova in `test/fixtures/nutrition/`.
+- **Copertura:** 100% del peso su tutte le ricette.
+- **Regole:** in D-57.
+- **Corretti strada facendo:**
+  - densità della panna, che veniva dalla panna montata (0,51 → 1,0 g/ml);
+  - alias inglesi mancanti;
+  - taglio delle parole limitato a quelle descrittive.
+- **Aperto:** l'olio per friggere viene contato tutto.
 
 ## Fase 3 — Integrazione (≈ 0,5 gg)
 

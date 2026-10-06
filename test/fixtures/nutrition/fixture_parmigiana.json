@@ -1,0 +1,29 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Parmigiana di melanzane",
+  "description": null,
+  "servings": 6,
+  "servingsUnit": "persone",
+  "prepMinutes": 40,
+  "cookMinutes": 45,
+  "restMinutes": 30,
+  "difficulty": "medium",
+  "tags": ["secondo", "vegetariana", "al forno"],
+  "ingredients": [
+    {"group": null, "name": "melanzane", "quantity": 3, "quantityMax": null, "unit": "piece", "gramsEstimate": 1000, "isEstimated": false, "note": "circa 1 kg", "scalingRule": "integer", "canonicalNameEn": "eggplant"},
+    {"group": null, "name": "passata di pomodoro", "quantity": 700, "quantityMax": null, "unit": "gram", "gramsEstimate": 700, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "tomato puree"},
+    {"group": null, "name": "scamorza affumicata", "quantity": 250, "quantityMax": null, "unit": "gram", "gramsEstimate": 250, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "smoked scamorza cheese"},
+    {"group": null, "name": "provola", "quantity": 150, "quantityMax": null, "unit": "gram", "gramsEstimate": 150, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "provolone cheese"},
+    {"group": null, "name": "Parmigiano Reggiano grattugiato", "quantity": 100, "quantityMax": null, "unit": "gram", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "parmesan cheese"},
+    {"group": null, "name": "olio di semi di arachide", "quantity": 500, "quantityMax": null, "unit": "milliliter", "gramsEstimate": 460, "isEstimated": true, "note": "per friggere", "scalingRule": "linear", "canonicalNameEn": "peanut oil"},
+    {"group": null, "name": "basilico", "quantity": 10, "quantityMax": null, "unit": "leaf", "gramsEstimate": 5, "isEstimated": false, "note": null, "scalingRule": "sublinear", "canonicalNameEn": "fresh basil"},
+    {"group": null, "name": "aglio", "quantity": 1, "quantityMax": null, "unit": "clove", "gramsEstimate": 4, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "garlic"},
+    {"group": null, "name": "sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"}
+  ],
+  "steps": [
+    {"text": "Friggete le fette di melanzane e asciugatele.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Cuocete la passata con aglio e basilico.", "durationMinutes": 20, "temperatureC": null},
+    {"text": "Alternate melanzane, sugo e formaggi e cuocete in forno.", "durationMinutes": 45, "temperatureC": 180}
+  ]
+}

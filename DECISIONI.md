@@ -11,6 +11,34 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-57 — Calcolo nutrizionale: abbinamento, grammi e valori manuali (2026-10-06) — Attiva
+- **Decisione:**
+  - **Abbinamento** (`NutritionService`), primo che trova:
+    1. `canonicalNameEn` tra gli alias inglesi curati, anche togliendo le parole iniziali descrittive ("softened
+       butter" → "butter"; mai "peanut butter" → "butter");
+    2. nome italiano tra gli alias italiani, anche la parte prima di " o " o della virgola e accorciato dalla fine,
+       ma mai se contiene una preposizione ("farina di mandorle" non diventa "farina");
+    3. ricerca di ripiego (FTS5) sulle descrizioni USDA;
+    4. nessuno.
+  - **Grammi** (completa D-54 punto 2):
+    - **intervalli:** si usa la media;
+    - **ml:** con la densità dell'alimento; senza densità vale 1 g/ml solo per acqua e brodi;
+    - **bicchiere, fetta, pizzico, bustina, mazzetto, rametto, foglia:** sempre la stima di Gemini;
+    - **porzioni e volumi:** se il peso differisce di oltre 3 volte dalla stima di Gemini, vale la stima (la
+      porzione del database è probabilmente di un'altra forma dell'alimento). g e kg non si toccano mai.
+  - **Per 100 g:** calcolato sul peso a crudo degli ingredienti abbinati.
+  - **Fonte `manual`:** 14 prodotti italiani (guanciale, 'nduja, stracchino, piadina, scamorza, caciocavallo, speck,
+    ricotta salata, porcini secchi, pandoro, colomba, halloumi, glassa balsamica…) in
+    `tool/nutrition/manual_foods.csv`. I valori sono la mediana delle etichette dei produttori su Open Food Facts,
+    citato nelle Licenze. Sostituiscono le approssimazioni della tabella curata.
+  - **Database nell'app:** copiato da asset in `Application Support/nutrition/foods-<versione>.sqlite`, solo quando
+    cambia `assets/nutrition/foods.version`; aperto in sola lettura.
+- **Aperto:** l'olio per friggere viene contato tutto (500 ml ≈ 4.000 kcal nella parmigiana di prova). Da decidere
+  con l'utente nella fase 3 o 4: escluderlo, contarne una quota assorbita, o chiederlo a Gemini.
+- **Perché:** sulle 21 ricette di prova (6 dell'utente e 15 inventate) la copertura del peso è del 100%. Il taglio
+  libero delle parole avrebbe dato abbinamenti sbagliati con affidabilità piena.
+- **Deciso da:** utente (via alla fase 2 e ricerca dei valori manuali); regole di dettaglio proposte da Claude.
+
 ## D-54 — Valori nutrizionali: fonti, grammi, q.b., visualizzazione (2026-10-06) — Attiva
 - **Decisione:**
   - **Fonti:**

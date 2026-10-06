@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 
 /// Licenze dei componenti inclusi nell'app che non arrivano da un pacchetto
 /// Dart (`assets/licenses/`): font, whisper.cpp, modello Whisper e FFmpeg
-/// (D-50), dati nutrizionali USDA e CIQUAL (D-54). Le mostra la pagina delle licenze di Flutter insieme a quelle dei
-/// pacchetti. Da chiamare una volta, in `main`.
+/// (D-50), dati nutrizionali USDA, CIQUAL e Open Food Facts (D-54). Le
+/// mostra la pagina delle licenze di Flutter insieme a quelle dei pacchetti.
+/// Da chiamare una volta, in `main`.
 void registerAppLicenses() {
   LicenseRegistry.addLicense(_appLicenses);
 }
@@ -18,6 +19,7 @@ const appLicenseFiles = {
   'FFmpeg': 'assets/licenses/FFmpeg-LGPL.txt',
   'USDA FoodData Central': 'assets/licenses/USDA-FoodData-Central.txt',
   'ANSES-CIQUAL': 'assets/licenses/CIQUAL-Etalab.txt',
+  'Open Food Facts': 'assets/licenses/OpenFoodFacts.txt',
 };
 
 Stream<LicenseEntry> _appLicenses() async* {

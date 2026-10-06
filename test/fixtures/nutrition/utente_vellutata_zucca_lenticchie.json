@@ -1,0 +1,34 @@
+{
+  "isRecipe": true,
+  "notRecipeReason": null,
+  "title": "Vellutata di zucca e lenticchie rosse",
+  "description": null,
+  "servings": 3,
+  "servingsUnit": "persone",
+  "prepMinutes": null,
+  "cookMinutes": null,
+  "restMinutes": null,
+  "difficulty": "unknown",
+  "tags": ["primo"],
+  "ingredients": [
+    {"group": null, "name": "scalogno", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 40, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "shallot"},
+    {"group": null, "name": "carote", "quantity": 2, "quantityMax": null, "unit": "piece", "gramsEstimate": 120, "isEstimated": false, "note": null, "scalingRule": "integer", "canonicalNameEn": "carrot"},
+    {"group": null, "name": "patata", "quantity": 1, "quantityMax": null, "unit": "piece", "gramsEstimate": 200, "isEstimated": false, "note": "grande", "scalingRule": "integer", "canonicalNameEn": "potato"},
+    {"group": null, "name": "zucca", "quantity": 250, "quantityMax": null, "unit": "gram", "gramsEstimate": 250, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "pumpkin"},
+    {"group": null, "name": "lenticchie rosse", "quantity": 100, "quantityMax": null, "unit": "gram", "gramsEstimate": 100, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "red lentils"},
+    {"group": null, "name": "polpa di pomodoro", "quantity": 2, "quantityMax": null, "unit": "tablespoon", "gramsEstimate": 30, "isEstimated": false, "note": null, "scalingRule": "linear", "canonicalNameEn": "tomato pulp"},
+    {"group": null, "name": "Brodo vegetale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "vegetable broth"},
+    {"group": null, "name": "Timo fresco", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "fresh thyme"},
+    {"group": null, "name": "Sale", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "salt"},
+    {"group": null, "name": "pepe", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "pepper"},
+    {"group": null, "name": "Peperoncino", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "facoltativo", "scalingRule": "toTaste", "canonicalNameEn": "chili pepper"},
+    {"group": null, "name": "Olio extravergine d’oliva", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": null, "scalingRule": "toTaste", "canonicalNameEn": "extra virgin olive oil"},
+    {"group": null, "name": "Semi di zucca", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "per decorare", "scalingRule": "toTaste", "canonicalNameEn": "pumpkin seeds"},
+    {"group": null, "name": "panna fresca", "quantity": null, "quantityMax": null, "unit": "none", "gramsEstimate": null, "isEstimated": false, "note": "per decorare", "scalingRule": "toTaste", "canonicalNameEn": "fresh cream"}
+  ],
+  "steps": [
+    {"text": "Insaporite lo scalogno nell'olio e aggiungete le verdure a pezzi.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Unite lenticchie, pomodoro e brodo e cuocete fino a quando tutto è morbido.", "durationMinutes": null, "temperatureC": null},
+    {"text": "Frullate e completate con semi di zucca, olio e panna.", "durationMinutes": null, "temperatureC": null}
+  ]
+}
