@@ -18,6 +18,7 @@
 library;
 
 import '../../recipes/domain/recipe_enums.dart';
+import '../../recipes/domain/recipe_tags.dart';
 
 /// Chiavi del JSON, usate da prompt, validatore e convertitore.
 abstract final class RecipeJson {
@@ -178,9 +179,12 @@ final Map<String, Object?> recipeResponseSchema = _object({
   ], 'Difficoltà; "unknown" se non si può dire.'),
   RecipeJson.tags: {
     'type': 'array',
-    'items': {'type': 'string'},
+    'items': {'type': 'string', 'enum': RecipeTags.all},
+    'maxItems': RecipeTags.maxPerRecipe,
     'description':
-        'Da 0 a 5 etichette brevi in minuscolo ("primo", "vegetariano").',
+        'Da 0 a ${RecipeTags.maxPerRecipe} etichette dall\'elenco (D-46): la '
+        'portata, poi dieta, caratteristiche e ingrediente principale se '
+        'evidenti. "veloce" solo se in tutto serve meno di 30 minuti.',
   },
   RecipeJson.ingredients: {'type': 'array', 'items': _ingredient},
   RecipeJson.steps: {'type': 'array', 'items': _step},

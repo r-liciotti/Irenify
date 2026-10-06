@@ -9,6 +9,12 @@ targets:
         options:
           # Date in ISO-8601 con millisecondi, leggibili nel file (D-18).
           store_date_time_values_as_text: true
+          # Ricerca full-text del ricettario (`search.drift`, D-47).
+          sql:
+            dialect: sqlite
+            options:
+              version: "3.45"
+              modules: [fts5]
           # Schema salvato e test di migrazione: `dart run drift_dev make-migrations` (D-19).
           databases:
             irenefy: lib/data/db/app_database.dart

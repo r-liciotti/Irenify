@@ -49,7 +49,7 @@ all'avvio); tema di un subagent (Gloock + Manrope inclusi, schemi chiaro e scuro
 preferenza del tema). Nel chiaro l'accento è `#965a0a` invece di `#b77712` per la leggibilità. 441 test; verificato sul
 Pixel in chiaro e scuro.
 
-## Fase 2 — Database v2: ricerca e tag guidati (≈ 0,75 gg)
+## Fase 2 — Database v2: ricerca e tag guidati (≈ 0,75 gg) — ✅ completata il 2026-10-06
 
 1. `search.drift` con tabella FTS5 (`unicode61 remove_diacritics 2`) e trigger di cancellazione; riga di ricerca scritta
    dal repository nella stessa transazione del salvataggio.
@@ -59,6 +59,14 @@ Pixel in chiaro e scuro.
 4. Query: ricerca, filtri (tag, preferite, piattaforma), conteggio dei tag.
 
 **Uscita:** test di migrazione e di ricerca verdi ("caffe" trova "caffè", "farin" trova la farina).
+
+**Come è stata fatta:** subagent sul database (`search.drift` con FTS5 e trigger, migrazione v1→v2 in transazione che
+converte i tag con gli alias di `recipe_tag_aliases.dart` e popola l'indice, `watchSummaries` con ricerca ripulita,
+tag, preferite e piattaforma, 29 test); agente principale su schema, validatore e prompt di Gemini (tag solo
+dall'elenco, alias ricondotti, fuori elenco scartati senza secondo tentativo). Sul Pixel il primo avvio ha dato
+"database is locked" sulla transazione della migrazione (annullata, dati intatti): rimedio `PRAGMA busy_timeout = 5000`;
+con il database v1 ripristinato da una copia la migrazione è poi riuscita al primo colpo (5 ricette, tag convertiti,
+ricerche "zucc", "farin", autore e tag corrette sull'indice del telefono). 471 test.
 
 ## Fase 3 — Home ricettario (≈ 0,75 gg)
 

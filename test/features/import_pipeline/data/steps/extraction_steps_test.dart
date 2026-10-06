@@ -373,7 +373,8 @@ void main() {
       expect(recipe.ingredientGroups[1].ingredients[1].isEstimated, isTrue);
       expect(recipe.steps.map((s) => s.durationMinutes), [20, null, 12]);
       expect(recipe.steps.first.temperatureC, 200);
-      expect(recipe.tags, ['autunno', 'primo']);
+      // "autunno" non è nell'elenco guidato (D-46).
+      expect(recipe.tags, ['primo']);
       expect(recipe.extractionModel, FakeLlmProvider.model);
       expect(recipe.createdAt, now);
       expect(recipe.thumbnailPath, isNull);

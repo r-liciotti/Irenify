@@ -1,0 +1,10 @@
+import 'tables.dart';
+
+-- Indice di ricerca del ricettario (D-47): accenti ignorati, una riga per
+-- ricetta scritta dal repository nella stessa transazione del salvataggio.
+CREATE VIRTUAL TABLE recipe_search USING fts5(recipe_id UNINDEXED, title, ingredients, tags, author, tokenize = 'unicode61 remove_diacritics 2');
+
+-- Eliminando una ricetta sparisce anche dall'indice.
+CREATE TRIGGER recipe_search_delete AFTER DELETE ON recipes BEGIN
+  DELETE FROM recipe_search WHERE recipe_id = old.id;
+END;

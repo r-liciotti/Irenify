@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/db/app_database.dart';
 import '../../../data/db/database_provider.dart';
+import '../../../data/db/search_index.dart';
 import '../domain/recipe.dart';
+import '../domain/recipe_enums.dart';
+import 'recipe_search_query.dart';
 
 final recipeRepositoryProvider = Provider<RecipeRepository>(
   (ref) => RecipeRepository(ref.watch(appDatabaseProvider)),
@@ -91,7 +94,19 @@ class RecipeRepository {
               RecipeTagsCompanion.insert(recipeId: recipe.id, tagId: tagId),
             );
       }
+      await _index(recipe.id);
     });
+  }
+
+  /// Riscrive la riga della ricetta [recipeId] nell'indice di ricerca; va
+  /// chiamato dentro la transazione che salva o modifica la ricetta.
+  Future<void> _index(String recipeId) async {
+    await _db.customStatement('DELETE FROM recipe_search WHERE recipe_id = ?', [
+      recipeId,
+    ]);
+    await _db.customStatement(recipeSearchInsertSql(where: 'r.id = ?'), [
+      recipeId,
+    ]);
   }
 
   /// Ricetta completa, o `null` se non esiste.
@@ -181,30 +196,86 @@ class RecipeRepository {
     );
   }
 
-  /// Elenco del ricettario, dalla più recente; si aggiorna da solo.
+  /// Elenco del ricettario filtrato da [filter]; si aggiorna da solo.
   ///
-  /// CONTRATTO F2: [filter], tag, piattaforma e autore li implementa la fase 2
-  /// (ricerca FTS5, D-47); per ora restituisce tutte le ricette.
+  /// Con un testo cercato (FTS5, accenti ignorati, per prefisso: D-47) le
+  /// ricette sono in ordine di pertinenza, altrimenti dalla più recente. I
+  /// tag del filtro devono esserci **tutti**.
   Stream<List<RecipeSummary>> watchSummaries([
     RecipeFilter filter = const RecipeFilter(),
-  ]) =>
-      (_db.select(_db.recipes)..orderBy([
-            (r) =>
-                OrderingTerm(expression: r.createdAt, mode: OrderingMode.desc),
-          ]))
-          .map(
-            (r) => RecipeSummary(
-              id: r.id,
-              title: r.title,
-              thumbnailPath: r.thumbnailPath,
-              prepMinutes: r.prepMinutes,
-              cookMinutes: r.cookMinutes,
-              isFavorite: r.isFavorite,
-              needsReview: r.needsReview,
-              createdAt: r.createdAt,
-            ),
-          )
-          .watch();
+  ]) {
+    final match = ftsQueryFromUserText(filter.query);
+    final where = <String>[];
+    final variables = <Variable<Object>>[];
+    if (match != null) {
+      where.add('recipe_search MATCH ?');
+      variables.add(Variable.withString(match));
+    }
+    if (filter.favoritesOnly) where.add('r.is_favorite = 1');
+    if (filter.platform case final platform?) {
+      where.add('s.platform = ?');
+      variables.add(Variable.withString(platform.name));
+    }
+    if (filter.tags.isNotEmpty) {
+      final marks = List.filled(filter.tags.length, '?').join(', ');
+      where.add(
+        '(SELECT count(DISTINCT t.name) FROM recipe_tags rt '
+        'JOIN tags t ON t.id = rt.tag_id '
+        'WHERE rt.recipe_id = r.id AND t.name IN ($marks)) = ?',
+      );
+      variables
+        ..addAll(filter.tags.map(Variable.withString))
+        ..add(Variable.withInt(filter.tags.length));
+    }
+
+    final sql =
+        'SELECT r.id, r.title, r.thumbnail_path, r.prep_minutes, '
+        'r.cook_minutes, r.rest_minutes, r.is_favorite, r.needs_review, '
+        'r.created_at, s.platform, s.author_name, '
+        '(SELECT group_concat(t.name, char(31)) FROM recipe_tags rt '
+        'JOIN tags t ON t.id = rt.tag_id WHERE rt.recipe_id = r.id) AS tags '
+        'FROM recipes r '
+        'LEFT JOIN recipe_sources s ON s.recipe_id = r.id '
+        '${match != null ? 'JOIN recipe_search ON recipe_search.recipe_id = r.id ' : ''}'
+        '${where.isEmpty ? '' : 'WHERE ${where.join(' AND ')} '}'
+        // Pesi per colonna (recipe_id, titolo, ingredienti, tag, autore): il
+        // titolo conta più del resto.
+        'ORDER BY ${match != null ? 'bm25(recipe_search, 0, 10, 2, 4, 2), ' : ''}'
+        'r.created_at DESC, r.id';
+
+    return _db
+        .customSelect(
+          sql,
+          variables: variables,
+          readsFrom: {
+            _db.recipes,
+            _db.recipeSources,
+            _db.recipeTags,
+            _db.tags,
+            _db.recipeSearch,
+          },
+        )
+        .map(
+          (row) => RecipeSummary(
+            id: row.read<String>('id'),
+            title: row.read<String>('title'),
+            thumbnailPath: row.read<String?>('thumbnail_path'),
+            prepMinutes: row.read<int?>('prep_minutes'),
+            cookMinutes: row.read<int?>('cook_minutes'),
+            restMinutes: row.read<int?>('rest_minutes'),
+            isFavorite: row.read<bool>('is_favorite'),
+            needsReview: row.read<bool>('needs_review'),
+            createdAt: row.read<DateTime>('created_at'),
+            platform: switch (row.read<String?>('platform')) {
+              final name? => SourcePlatform.values.byName(name),
+              null => null,
+            },
+            authorName: row.read<String?>('author_name'),
+            tags: [...?row.read<String?>('tags')?.split('\u001f')]..sort(),
+          ),
+        )
+        .watch();
+  }
 
   /// Tag usati nel ricettario con il numero di ricette, dal più usato; per le
   /// chip dei filtri.

@@ -42,13 +42,9 @@ void main() {
       expect(json[RecipeJson.cookMinutes], isA<int>());
       expect(json[RecipeJson.restMinutes], isNull);
       expect(json[RecipeJson.difficulty], 'easy');
-      expect(json[RecipeJson.tags], [
-        'primo',
-        'vegetariano',
-        'siciliana',
-        'estate',
-        'pasta',
-      ]);
+      // Solo i tag dell'elenco guidato (D-46), con gli alias ricondotti
+      // ("vegetariano", "pasta"); gli altri si scartano.
+      expect(json[RecipeJson.tags], ['primo', 'vegetariana']);
 
       final steps = stepsOf(json);
       expect(steps[0][RecipeJson.temperatureC], 170);
@@ -161,10 +157,24 @@ void main() {
       expect((result as ValidRecipeJson).notRecipeReason, isNull);
     });
 
-    test('i tag sono al massimo cinque', () {
+    test('i tag sono al massimo cinque, solo dall\'elenco guidato', () {
       final json = fixture('risoni_zucca_feta')
-        ..[RecipeJson.tags] = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
-      expect(valid(json)[RecipeJson.tags], ['a', 'b', 'c', 'd', 'e']);
+        ..[RecipeJson.tags] = [
+          'primo',
+          'ricetteconlazucca',
+          'vegetariana',
+          'Veloce',
+          'verdure',
+          'al forno',
+          'legumi',
+        ];
+      expect(valid(json)[RecipeJson.tags], [
+        'primo',
+        'vegetariana',
+        'veloce',
+        'verdure',
+        'al forno',
+      ]);
     });
   });
 
@@ -332,7 +342,7 @@ void main() {
         expect(recipe.needsReview, isTrue);
         expect(recipe.createdAt, now);
         expect(recipe.updatedAt, now);
-        expect(recipe.tags, hasLength(5));
+        expect(recipe.tags, ['primo', 'vegetariana']);
 
         expect(recipe.ingredientGroups, hasLength(1));
         final group = recipe.ingredientGroups.single;

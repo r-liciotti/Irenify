@@ -10,6 +10,8 @@ library;
 
 import '../../recipes/domain/recipe.dart';
 import '../../recipes/domain/recipe_enums.dart';
+import '../../recipes/domain/recipe_tag_aliases.dart';
+import '../../recipes/domain/recipe_tags.dart';
 import 'import_job.dart';
 import 'recipe_schema.dart';
 
@@ -43,7 +45,7 @@ final class InvalidRecipeJson extends RecipeValidation {
 }
 
 /// Etichette tenute al massimo per ricetta.
-const maxRecipeTags = 5;
+const maxRecipeTags = RecipeTags.maxPerRecipe;
 
 /// Errori riportati al massimo: il prompt del secondo tentativo resta corto.
 const maxReportedErrors = 20;
@@ -353,8 +355,11 @@ class _Validator {
         _error('$key[$index]', 'deve essere un testo');
         continue;
       }
-      final text = _text(tag.toLowerCase());
-      if (text != null) tags.add(text);
+      // Ricondotto all'elenco guidato ("vegetariano" → "vegetariana");
+      // fuori elenco si scarta senza errore: non vale un secondo tentativo
+      // (D-46).
+      final canonical = canonicalRecipeTag(tag);
+      if (canonical != null) tags.add(canonical);
     }
     return tags.take(maxRecipeTags).toList();
   }

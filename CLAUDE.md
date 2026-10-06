@@ -8,7 +8,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F1 conclusa)
+## Stato (aggiornato al 2026-10-06, F2 fase 2)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -36,8 +36,12 @@ acceso (D-34). Sul Pixel: 0,89 s per secondo di audio (build di debug), picco ~9
 **Fase 8 (interfaccia provvisoria) completata il 2026-10-06**: Importazioni con azioni (`presentation/import_job_tile.dart`,
 `import_actions.dart`), elenco e dettaglio ricetta (`recipes/presentation/`, scalatura in `recipes/domain/scaling.dart`,
 formattazione in `quantity_format.dart`), job in attesa del modello Whisper (D-40), limite di durata per i file (D-41).
-`lib/spike/` eliminato. Prossimo passo: prova dal vivo di reel parlato / TikTok / video dalla galleria (D-44), poi la F2
-del piano approvato.
+`lib/spike/` eliminato.
+**F2 in corso** (piano in `F2_PIANO.md`, 6 fasi; decisioni D-45…D-47). Fase 1 (2026-10-06): tema "Zafferano" chiaro e
+scuro (`lib/app/theme*`, font Gloock + Manrope in `assets/fonts/`), preferenza del tema, tag guidati
+(`recipes/domain/recipe_tags.dart`), `RecipeFilter`, rotte `/benvenuto` e dettaglio del job (segnaposto). Fase 2
+(2026-10-06): database **v2** con ricerca FTS5 (`lib/data/db/search.drift`, `search_index.dart`), tag convertiti
+all'elenco guidato, filtri in `watchSummaries`. Prossima: fase 3 (home ricettario). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT
@@ -140,9 +144,17 @@ flutter run -d <device>             # telefono Android / iPhone reale
   estratti ridotti e anonimizzati in `test/fixtures/` (le pagine grezze contengono token e la città dell'utente).
 - Prove sul telefono: copiare il DB con `adb exec-out run-as it.overside.irenefy cat files/irenefy.sqlite > db.sqlite`
   e interrogarlo con `sqlite3`; l'avvio dell'APK di debug impiega ~20 s prima che il motore parta.
+- **Mai cambiare impostazioni di sistema del telefono via adb** (tema scuro, display…) senza conferma dell'utente: il
+  tema dell'app si prova dalle Impostazioni di Irenefy. Prima di ogni `adb shell input tap` controllare che Irenefy sia
+  in primo piano (`dumpsys window | grep mCurrentFocus`). Prima di provare una migrazione sul telefono, copiare il DB.
 - Prove della condivisione senza toccare il telefono: `adb shell am start -a android.intent.action.SEND -t text/plain
   --es android.intent.extra.TEXT '<testo>' -n it.overside.irenefy/.MainActivity` (con `-f 0x00100000` simula la
   riapertura dalle app recenti).
+- Ricerca FTS5 (D-47): tabella virtuale e trigger in `lib/data/db/search.drift` (opzioni `sql` in `build.yaml`).
+  **drift_dev 2.34.0 non mette i trigger negli schemi versionati**: ogni trigger va creato in SQL nella migrazione e
+  coperto da un test nostro (`test/data/db/migration_v2_test.dart`), perché `migrateAndValidate` non lo vede. La riga
+  dell'indice la scrive il repository nella stessa transazione del salvataggio; il testo dell'utente passa sempre da
+  `ftsQueryFromUserText`. Il database usa `busy_timeout` 5 s (lock transitori all'avvio dopo un aggiornamento).
 - Database: righe drift `*Row`, entità di dominio freezed separate; conversioni solo nei repository. Enum salvati
   per nome: mai rinominarli (D-18). Test: `newTestDatabase()` in `test/data/db/`; widget test con DB tramite
   `appTest(...)` in `test/app/app_test.dart` (smonta l'app e chiude il DB dentro il test, altrimenti si blocca).
