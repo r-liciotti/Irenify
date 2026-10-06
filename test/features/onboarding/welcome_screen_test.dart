@@ -116,7 +116,7 @@ Future<void> tapText(WidgetTester tester, String text) async {
 void main() {
   welcomeTest('al primo avvio si apre il benvenuto', (tester, env) async {
     expect(find.byType(WelcomeScreen), findsOneWidget);
-    expect(find.text('Benvenuto in Irenefy'), findsOneWidget);
+    expect(find.text('Benvenuto da Mirtilla'), findsOneWidget);
     expect(find.text('1 di 3'), findsOneWidget);
     expect(find.text('Salta'), findsOneWidget);
     expect(find.text('Indietro'), findsNothing);

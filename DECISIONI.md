@@ -11,6 +11,19 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-59 — F6: backup zip, APK per altri telefoni, attesa automatica di rete e quota (2026-10-06) — Attiva
+- **Decisione:**
+  - **Backup:** un file `.zip` con le ricette in JSON (versionato) e le miniature, salvato dove sceglie l'utente;
+    l'importazione salta le ricette già presenti (stessa fonte).
+  - **Altri telefoni:** l'APK firmato deve funzionare anche fuori dal Pixel 9 Pro: la libreria di Whisper si sceglie a
+    runtime in base al processore, al posto delle istruzioni fisse per il Pixel.
+  - **Offline e quote:** senza rete o con la quota giornaliera di Gemini finita, il job resta in attesa e riparte da
+    solo, alla riconnessione o al rinnovo della quota (mezzanotte del Pacifico, le 9 in Italia). "Riprova" resta.
+  - **Piano:** 5 fasi in `F6_PIANO.md`. Si aggiunge il rilevatore di voce (VAD), deciso in F2.
+- **Alternative scartate:** backup solo JSON (ricette senza foto dopo il ripristino); APK solo per il Pixel (crash
+  di Whisper sui processori senza i8mm); job che fallisce con "Riprova" (come prima).
+- **Deciso da:** utente ("si poi f6"; scelte consigliate su backup, altri telefoni, offline).
+
 ## D-58 — Scheda Nutrienti: contenuti e comportamento (2026-10-06) — Attiva
 - **Decisione:**
   - **Contenuto della scheda:** è la terza del dettaglio. Mostra solo i totali: kcal, proteine, carboidrati (di cui
@@ -59,6 +72,44 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 - **Perché:** sulle 21 ricette di prova (6 dell'utente e 15 inventate) la copertura del peso è del 100%. Il taglio
   libero delle parole avrebbe dato abbinamenti sbagliati con affidabilità piena.
 - **Deciso da:** utente (via alla fase 2 e ricerca dei valori manuali); regole di dettaglio proposte da Claude.
+
+## D-56 — Nome dell'app: "Da Mirtilla" (2026-10-06) — Da rivalutare prima degli store
+- **Decisione:** l'app si chiamerà **"Da Mirtilla"** (sul modello delle trattorie, "Da Mario"); Mirtilla resta la
+  mascotte (D-55). Per ora è solo annotato: nel codice resta "Irenefy" finché l'utente non chiede il cambio.
+- **Perché:** i concorrenti (ReciMe, Flavorish, CookNest, FoodiePrep, SAVY, Inspo, Recipe Notes, Pluck…) hanno quasi
+  tutti nomi inglesi simili tra loro; un nome italiano, caldo e con un personaggio si distingue. Corto abbastanza da
+  stare sotto l'icona.
+- **Alternative scartate:** "Dispensa" (categoria affollata di app per l'inventario della dispensa, parola non
+  proteggibile); "Dispensa di Mirtilla" (troppo lungo, Android lo tronca); "Mollica" e altri nomi uguali alla
+  mascotte; Ricettiera, Pizzico, Reelcetta.
+- **Da rivalutare:** omonimia con mirtilla.org (piattaforma italiana di AI per trascrivere riunioni) e marchi su EUIPO
+  prima degli store.
+- **Applicato il 2026-10-06** (richiesta dell'utente "utilizza il logo mirtilla e cambia nome all'app"): nome visibile
+  "Da Mirtilla" in `AndroidManifest.xml`, `ios/Runner/Info.plist` (anche il permesso foto), `appTitle` e testi dell'ARB
+  ("Benvenuto da Mirtilla", "Scegli Da Mirtilla"), scorciatoia di condivisione "Porta la ricetta da Mirtilla".
+  `applicationId`, package, nome del pacchetto Dart e nomi delle classi (`IrenefyApp`, `IrenefyColors`) restano.
+- **Quando si applica:** prima solo il nome visibile (`android:label` in `AndroidManifest.xml`,
+  `CFBundleDisplayName`/`CFBundleName` in `ios/Runner/Info.plist`, testo del permesso foto); `applicationId`,
+  package `it.overside.irenefy`, `name:` in `pubspec.yaml` e repo `r-liciotti/Irenify` una sola volta prima degli
+  store (cambiare l'`applicationId` = app nuova, dati persi).
+
+## D-55 — Mascotte "Mirtilla" e logo dal concept 2 (2026-10-06) — Attiva
+- **Decisione:**
+  - mascotte: una topolina di nome **Mirtilla**;
+  - logo e illustrazioni partono dal **concept 2** (Mirtilla che sbuca da un bordo, sfondo zafferano, cornice marrone)
+    di `design/logo/proposte-logo-topolina-v2-2026-10-06.png`;
+  - l'app avrà un nome **diverso** da quello della mascotte (nome ancora da scegliere: per ora resta "Irenefy").
+- **Alternative scartate:** concept 1 (testa frontale) e concept 4 (acciambellata) come logo principale; app e
+  mascotte con lo stesso nome (es. "Mollica"): all'utente suona strano come nome di un'app.
+- **Applicato il 2026-10-06:** icona adattiva Android (`mipmap-anydpi-v26/ic_launcher.xml`: sfondo zafferano `#EFAC54`
+  campionato dal disegno, primo piano `ic_launcher_foreground.png` ritagliato dal concept 2 senza la cornice, con il
+  bordo marrone in basso esteso a tutta la larghezza), icone classiche `ic_launcher.png` con la cornice, logo
+  nell'app (`assets/branding/mirtilla.png`, widget `MirtillaLogo`: benvenuto, voce dell'app e pagina Licenze nelle
+  Impostazioni). Ricavati dal PNG del concept: niente vettoriale, niente icona monocromatica a tema (Android 13); il
+  ridisegno "con meno dettagli" resta da fare prima degli store. Icona iOS da fare in F5.
+- **Da fare (originale):** icona Android adattiva senza la cornice disegnata (la forma la dà il sistema) e con meno dettagli;
+  nome dell'app; cambio del solo nome visibile, mentre `applicationId` e package si cambiano una volta sola prima
+  degli store.
 
 ## D-54 — Valori nutrizionali: fonti, grammi, q.b., visualizzazione (2026-10-06) — Attiva
 - **Decisione:**

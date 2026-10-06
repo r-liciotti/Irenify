@@ -1,7 +1,7 @@
 {
   "@@locale": "it",
 
-  "appTitle": "Irenefy",
+  "appTitle": "Da Mirtilla",
 
   "navRecipes": "Ricette",
   "navImports": "Importazioni",
@@ -14,10 +14,10 @@
   },
 
   "recipesEmptyTitle": "Nessuna ricetta",
-  "recipesEmptyBody": "Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy.",
+  "recipesEmptyBody": "Apri un reel su Instagram o TikTok, tocca Condividi e scegli Da Mirtilla.",
   "recipesEmptyStepOpen": "Apri un reel su Instagram o TikTok",
   "recipesEmptyStepShare": "Tocca Condividi",
-  "recipesEmptyStepChoose": "Scegli Irenefy",
+  "recipesEmptyStepChoose": "Scegli Da Mirtilla",
   "recipesSearchHint": "{count, plural, =0{Cerca nel ricettario} =1{Cerca tra 1 ricetta} other{Cerca tra {count} ricette}}",
   "@recipesSearchHint": {
     "placeholders": {
@@ -431,12 +431,12 @@
   },
   "settingsLicenses": "Licenze",
   "settingsLicensesSubtitle": "Font, whisper.cpp, modello Whisper, FFmpeg e librerie",
-  "welcomeTitle": "Benvenuto in Irenefy",
+  "welcomeTitle": "Benvenuto da Mirtilla",
   "welcomeIntro": "Trasforma i reel di Instagram e TikTok in ricette da cucinare.",
   "welcomeShareTitle": "Come si importa una ricetta",
-  "welcomeShareBody": "Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy. Al resto pensa l'app.",
+  "welcomeShareBody": "Apri un reel su Instagram o TikTok, tocca Condividi e scegli Da Mirtilla. Al resto pensa l'app.",
   "welcomeKeyTitle": "Collega Gemini",
-  "welcomeKeyBody": "Irenefy usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.",
+  "welcomeKeyBody": "Da Mirtilla usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.",
   "welcomeModelTitle": "Trascrizione del parlato",
   "welcomeModelBody": "Per capire anche le ricette dette a voce serve un modello di trascrizione (circa 260 MB, meglio con il Wi-Fi). Lavora sul telefono: l'audio non viene inviato a nessuno.",
   "welcomeNext": "Avanti",

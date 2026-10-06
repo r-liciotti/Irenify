@@ -9,7 +9,7 @@ class AppLocalizationsIt extends AppLocalizations {
   AppLocalizationsIt([String locale = 'it']) : super(locale);
 
   @override
-  String get appTitle => 'Irenefy';
+  String get appTitle => 'Da Mirtilla';
 
   @override
   String get navRecipes => 'Ricette';
@@ -36,7 +36,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get recipesEmptyBody =>
-      'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy.';
+      'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Da Mirtilla.';
 
   @override
   String get recipesEmptyStepOpen => 'Apri un reel su Instagram o TikTok';
@@ -45,7 +45,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get recipesEmptyStepShare => 'Tocca Condividi';
 
   @override
-  String get recipesEmptyStepChoose => 'Scegli Irenefy';
+  String get recipesEmptyStepChoose => 'Scegli Da Mirtilla';
 
   @override
   String recipesSearchHint(int count) {
@@ -778,7 +778,7 @@ class AppLocalizationsIt extends AppLocalizations {
       'Font, whisper.cpp, modello Whisper, FFmpeg e librerie';
 
   @override
-  String get welcomeTitle => 'Benvenuto in Irenefy';
+  String get welcomeTitle => 'Benvenuto da Mirtilla';
 
   @override
   String get welcomeIntro =>
@@ -789,14 +789,14 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get welcomeShareBody =>
-      'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy. Al resto pensa l\'app.';
+      'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Da Mirtilla. Al resto pensa l\'app.';
 
   @override
   String get welcomeKeyTitle => 'Collega Gemini';
 
   @override
   String get welcomeKeyBody =>
-      'Irenefy usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.';
+      'Da Mirtilla usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.';
 
   @override
   String get welcomeModelTitle => 'Trascrizione del parlato';

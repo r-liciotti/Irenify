@@ -1,5 +1,8 @@
 # Irenefy
 
+Nome visibile **"Da Mirtilla"** (D-56), mascotte e icona dalla topolina Mirtilla (D-55); nel codice, nel package e
+nell'`applicationId` resta "Irenefy" fino a prima degli store.
+
 App Flutter (iOS + Android) che importa ricette condivise da Instagram/TikTok:
 didascalia + trascrizione Whisper on-device → LLM (Gemini) → ricetta strutturata salvata in locale,
 con porzioni scalabili e valori nutrizionali. Uso personale per ora; store in futuro.
@@ -61,7 +64,8 @@ salvataggio con la ricetta (`RecipeRepository.insert(…, nutrition:)`, `saveNut
 `nutrition/data/nutrition_refresher.dart` (versione in `nutrition.foodDbVersion`), olio per friggere al 15% (D-57). Fase 4 (2026-10-06): scheda
 Nutrienti nel dettaglio (`nutrition/presentation/recipe_nutrition_tab.dart`, D-58; valori ricalcolati all'apertura con
 `recipeNutritionProvider`). **F4 conclusa.** Nei widget test il database degli alimenti si apre dall'asset con
-`assetFoodLookupOverride()` (`test/app/test_food_lookup.dart`). Prove dal vivo D-44 ancora aperte.
+`assetFoodLookupOverride()` (`test/app/test_food_lookup.dart`). **F6 pianificata** (`F6_PIANO.md`, D-59: VAD, offline e
+quote con attesa automatica, backup zip, Whisper per altri telefoni e APK firmato, prova su 30 link). Prossima: fase 1. Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

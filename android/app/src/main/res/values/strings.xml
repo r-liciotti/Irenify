@@ -2,5 +2,5 @@
 <resources>
     <!-- Scorciatoia nel menu di condivisione di Android. -->
     <string name="share_shortcut_label">Importa ricetta</string>
-    <string name="share_shortcut_long_label">Importa la ricetta in Irenefy</string>
+    <string name="share_shortcut_long_label">Porta la ricetta da Mirtilla</string>
 </resources>

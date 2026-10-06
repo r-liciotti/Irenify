@@ -267,13 +267,13 @@ void main() {
     expect(find.text('Nessuna ricetta'), findsOneWidget);
     expect(find.text('Apri un reel su Instagram o TikTok'), findsOneWidget);
     expect(find.text('Tocca Condividi'), findsOneWidget);
-    expect(find.text('Scegli Irenefy'), findsOneWidget);
+    expect(find.text('Scegli Da Mirtilla'), findsOneWidget);
     // Passi in ordine, dall'alto.
     final open = tester.getTopLeft(
       find.text('Apri un reel su Instagram o TikTok'),
     );
     final share = tester.getTopLeft(find.text('Tocca Condividi'));
-    final choose = tester.getTopLeft(find.text('Scegli Irenefy'));
+    final choose = tester.getTopLeft(find.text('Scegli Da Mirtilla'));
     expect(open.dy, lessThan(share.dy));
     expect(share.dy, lessThan(choose.dy));
     expect(find.byType(TextField), findsNothing);
@@ -373,7 +373,7 @@ void main() {
     _,
   ) async {
     await useScreen(tester, size: const Size(360, 640), textScale: 1.3);
-    expect(find.text('Scegli Irenefy'), findsOneWidget);
+    expect(find.text('Scegli Da Mirtilla'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/providers.dart';
 import '../../../app/router.dart';
 import '../../../app/theme_mode.dart';
+import '../../../app/widgets/mirtilla_logo.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../import_pipeline/presentation/imports_screen.dart';
 import 'erase_data_tile.dart';
@@ -142,7 +143,7 @@ class _AboutTiles extends ConsumerWidget {
     return Column(
       children: [
         ListTile(
-          leading: const Icon(Icons.info_outline),
+          leading: const MirtillaLogo(size: 40),
           title: Text(l10n.appTitle),
           subtitle: version == null
               ? null
@@ -156,13 +157,9 @@ class _AboutTiles extends ConsumerWidget {
             context: context,
             applicationName: l10n.appTitle,
             applicationVersion: version,
-            applicationIcon: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.restaurant_menu,
-                size: 48,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            applicationIcon: const Padding(
+              padding: EdgeInsets.all(8),
+              child: MirtillaLogo(size: 64),
             ),
           ),
         ),

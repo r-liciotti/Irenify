@@ -97,7 +97,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In it, this message translates to:
-  /// **'Irenefy'**
+  /// **'Da Mirtilla'**
   String get appTitle;
 
   /// No description provided for @navRecipes.
@@ -133,7 +133,7 @@ abstract class AppLocalizations {
   /// No description provided for @recipesEmptyBody.
   ///
   /// In it, this message translates to:
-  /// **'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy.'**
+  /// **'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Da Mirtilla.'**
   String get recipesEmptyBody;
 
   /// No description provided for @recipesEmptyStepOpen.
@@ -151,7 +151,7 @@ abstract class AppLocalizations {
   /// No description provided for @recipesEmptyStepChoose.
   ///
   /// In it, this message translates to:
-  /// **'Scegli Irenefy'**
+  /// **'Scegli Da Mirtilla'**
   String get recipesEmptyStepChoose;
 
   /// No description provided for @recipesSearchHint.
@@ -1207,7 +1207,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeTitle.
   ///
   /// In it, this message translates to:
-  /// **'Benvenuto in Irenefy'**
+  /// **'Benvenuto da Mirtilla'**
   String get welcomeTitle;
 
   /// No description provided for @welcomeIntro.
@@ -1225,7 +1225,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeShareBody.
   ///
   /// In it, this message translates to:
-  /// **'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Irenefy. Al resto pensa l\'app.'**
+  /// **'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Da Mirtilla. Al resto pensa l\'app.'**
   String get welcomeShareBody;
 
   /// No description provided for @welcomeKeyTitle.
@@ -1237,7 +1237,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeKeyBody.
   ///
   /// In it, this message translates to:
-  /// **'Irenefy usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.'**
+  /// **'Da Mirtilla usa Gemini di Google per leggere la ricetta. Serve una tua chiave gratuita, creata su Google AI Studio.'**
   String get welcomeKeyBody;
 
   /// No description provided for @welcomeModelTitle.

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../app/theme.dart';
+import '../../../app/widgets/mirtilla_logo.dart';
 import '../../../app/widgets/share_steps.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../settings/presentation/gemini_settings_tile.dart';
@@ -177,6 +178,8 @@ class _SharePage extends StatelessWidget {
     final theme = Theme.of(context);
     return _StepPage(
       children: [
+        const MirtillaLogo(size: 96),
+        const SizedBox(height: 20),
         Text(l10n.welcomeTitle, style: theme.textTheme.displaySmall),
         const SizedBox(height: 12),
         Text(

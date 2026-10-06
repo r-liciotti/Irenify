@@ -94,6 +94,7 @@ flutter:
   # registrate in LicenseRegistry (lib/app/licenses.dart). Database degli
   # alimenti (D-54) generato da tool/nutrition/build_food_db.dart.
   assets:
+    - assets/branding/
     - assets/licenses/
     - assets/nutrition/
 
