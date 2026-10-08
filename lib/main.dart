@@ -56,6 +56,10 @@ Future<void> main() async {
           openImportAfterShare(container, job.id);
         },
       );
+  // Tornando in primo piano ripartono i job in attesa della rete o della
+  // quota (D-62): il timer della quota e l'ascolto della rete non girano
+  // mentre il telefono dorme. Il listener vive quanto l'app.
+  AppLifecycleListener(onResume: () => unawaited(engine.resumeWaiting()));
   // Valori nutrizionali mancanti o calcolati con un database degli alimenti
   // precedente (D-57): in background, dopo l'avvio del motore, senza mai
   // bloccare l'app. Gli errori di avvio del motore li gestisce già la

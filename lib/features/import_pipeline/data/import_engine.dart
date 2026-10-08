@@ -8,6 +8,7 @@ import '../../../app/providers.dart';
 import '../../../core/errors/failure.dart';
 import '../../../core/logging/app_log.dart';
 import '../../../core/network/http_client.dart';
+import '../../../core/network/network_status.dart';
 import '../../nutrition/data/food_db.dart';
 import '../../recipes/data/recipe_files.dart';
 import '../../recipes/data/recipe_repository.dart';
@@ -16,6 +17,7 @@ import '../domain/import_flow.dart';
 import '../domain/import_job.dart';
 import '../domain/import_step.dart';
 import '../domain/post_page.dart';
+import '../domain/quota_reset.dart';
 import '../domain/transcription.dart';
 import 'import_job_repository.dart';
 import 'job_storage.dart';
@@ -66,14 +68,25 @@ final importStepsProvider = Provider<List<ImportStep>>((ref) {
   final downloader = Downloader(ref.watch(httpClientProvider));
   final log = ref.watch(appLogProvider);
   final models = ref.watch(whisperModelManagerProvider);
+  final network = ref.watch(networkStatusProvider);
   return [
     NormalizeLinkStep(
       resolver: LinkResolver(ref.watch(httpClientProvider)),
       recipes: ref.watch(recipeRepositoryProvider),
       jobs: ref.watch(importJobRepositoryProvider),
     ),
-    MetadataStep(clients: clients, downloader: downloader, log: log),
-    MediaStep(clients: clients, downloader: downloader, log: log),
+    MetadataStep(
+      clients: clients,
+      downloader: downloader,
+      log: log,
+      isOffline: network.isOffline,
+    ),
+    MediaStep(
+      clients: clients,
+      downloader: downloader,
+      log: log,
+      isOffline: network.isOffline,
+    ),
     AudioStep(
       extractor: ref.watch(audioExtractorProvider),
       cpu: ref.watch(cpuCompatibilityProvider),
@@ -103,6 +116,7 @@ final importEngineProvider = Provider<ImportEngine>((ref) {
     log: ref.watch(appLogProvider),
     speechModels: ref.watch(whisperModelManagerProvider),
     cacheDirectory: getTemporaryDirectory,
+    network: ref.watch(networkStatusProvider),
   );
   ref.onDispose(engine.dispose);
   return engine;
@@ -124,7 +138,11 @@ class ImportEngine {
     SpeechModelStore? speechModels,
     DateTime Function()? clock,
     Future<Directory> Function()? cacheDirectory,
+    NetworkStatus? network,
+    Timer Function(Duration delay, void Function() callback)? createTimer,
   }) : _speechModels = speechModels,
+       _network = network,
+       _createTimer = createTimer ?? Timer.new,
        _cacheDirectory = cacheDirectory,
        _repo = repository,
        _storage = storage,
@@ -138,6 +156,14 @@ class ImportEngine {
   final AppLog _log;
   final DateTime Function() _clock;
   final Map<ImportStatus, ImportStep> _steps;
+
+  /// Stato della rete (D-62); senza, il telefono è sempre online.
+  final NetworkStatus? _network;
+
+  /// Crea il timer della quota: nei test un timer finto, senza attese.
+  final Timer Function(Duration delay, void Function() callback) _createTimer;
+  Timer? _quotaTimer;
+  StreamSubscription<void>? _onlineSubscription;
 
   /// Cache dell'app, dove il selettore dei file copia il video scelto: da lì
   /// il video si sposta, altrimenti si copia (D-28). Senza, si copia sempre.
@@ -156,6 +182,13 @@ class ImportEngine {
     await _cleanUpFolders();
     await _resumeNowAvailable();
     await _resumeWaitingForSpeechModel();
+    // Al ritorno della rete ripartono i job che la aspettavano (D-62).
+    _onlineSubscription ??= _network?.onOnline.listen(
+      (_) => unawaited(resumeWaiting()),
+      onError: (Object e, StackTrace st) =>
+          _log.error('Stato della rete non leggibile', e, st),
+    );
+    await resumeWaiting();
     unawaited(wake());
   }
 
@@ -170,6 +203,93 @@ class ImportEngine {
       _loopDone = _loop();
     }
     return _loopDone;
+  }
+
+  /// Fa ripartire i job in attesa (D-62) la cui condizione è soddisfatta:
+  /// [WaitReason.connection] se il telefono ha di nuovo una rete,
+  /// [WaitReason.quota] se `waitUntil` è passato. La chiamano l'avvio, il
+  /// ritorno della rete, il ritorno in primo piano dell'app e il timer della
+  /// quota.
+  Future<void> resumeWaiting() async {
+    if (_disposed) return;
+    try {
+      final now = _clock();
+      bool? offline;
+      for (final job in await _waitingJobs()) {
+        final reason = job.data.waitingFor!;
+        switch (reason) {
+          case WaitReason.connection:
+            offline ??= await _isOffline();
+            if (offline) continue;
+          case WaitReason.quota:
+            final until = job.data.waitUntil;
+            if (until != null && until.isAfter(now)) continue;
+        }
+        // Riletto nella transazione: nel frattempo può essere ripartito
+        // ("Riprova") o stato eliminato.
+        final restarted = await _repo.transaction(() async {
+          final fresh = await _repo.getById(job.id);
+          if (fresh == null ||
+              fresh.status != ImportStatus.failed ||
+              fresh.data.waitingFor != reason) {
+            return false;
+          }
+          await _repo.save(_restarted(fresh));
+          return true;
+        });
+        if (restarted) {
+          _log.info('${_tag(job)} riparte dopo l\'attesa (${reason.name})');
+        }
+      }
+    } catch (e, st) {
+      _log.error('Ripresa dei job in attesa non riuscita', e, st);
+    }
+    await _scheduleQuotaTimer();
+    unawaited(wake());
+  }
+
+  /// Job fermi che ripartiranno da soli (D-62).
+  Future<List<ImportJob>> _waitingJobs() async => [
+    for (final code in const [FailureCode.network, FailureCode.quotaExceeded])
+      for (final job in await _repo.failedWith(code))
+        if (job.data.waitingFor != null) job,
+  ];
+
+  /// Un solo timer, alla `waitUntil` più vicina tra i job in attesa della
+  /// quota; nessuno se non ce ne sono. Un secondo di margine evita che il
+  /// timer scatti un attimo prima dell'ora e trovi il job ancora in attesa.
+  Future<void> _scheduleQuotaTimer() async {
+    _quotaTimer?.cancel();
+    _quotaTimer = null;
+    if (_disposed) return;
+    try {
+      DateTime? next;
+      for (final job in await _waitingJobs()) {
+        final until = job.data.waitUntil;
+        if (job.data.waitingFor != WaitReason.quota || until == null) continue;
+        if (next == null || until.isBefore(next)) next = until;
+      }
+      if (next == null || _disposed) return;
+      var delay = next.difference(_clock());
+      if (delay.isNegative) delay = Duration.zero;
+      _quotaTimer?.cancel();
+      _quotaTimer = _createTimer(delay + const Duration(seconds: 1), () {
+        _quotaTimer = null;
+        unawaited(resumeWaiting());
+      });
+    } catch (e, st) {
+      _log.error('Timer della quota non programmato', e, st);
+    }
+  }
+
+  /// `true` se il telefono non ha rete; se non si sa, `false` (D-62).
+  Future<bool> _isOffline() async {
+    try {
+      return await _network?.isOffline() ?? false;
+    } catch (e, st) {
+      _log.error('Stato della rete non leggibile', e, st);
+      return false;
+    }
   }
 
   /// Riparte dalla tappa in cui il job [jobId] si è fermato.
@@ -304,6 +424,8 @@ class ImportEngine {
       errorCode: null,
       errorDetail: null,
       data: data.copyWith(
+        waitingFor: null,
+        waitUntil: null,
         addedVideoPath: addedPath,
         captionOnly: false,
         skippedSteps: {
@@ -363,8 +485,15 @@ class ImportEngine {
     await _storage.delete(jobId);
   }
 
-  /// Ferma il motore dopo la tappa in corso.
-  void dispose() => _disposed = true;
+  /// Ferma il motore dopo la tappa in corso, con il timer della quota e
+  /// l'ascolto della rete.
+  void dispose() {
+    _disposed = true;
+    _quotaTimer?.cancel();
+    _quotaTimer = null;
+    unawaited(_onlineSubscription?.cancel());
+    _onlineSubscription = null;
+  }
 
   Future<void> _loop() async {
     try {
@@ -479,13 +608,31 @@ class ImportEngine {
   }
 
   /// Una tappa facoltativa fallita viene saltata; una necessaria ferma il job.
+  /// Senza rete o con la quota giornaliera di Gemini esaurita il job si ferma
+  /// (anche su una tappa facoltativa) e aspetta di ripartire da solo (D-62).
   Future<void> _fail(ImportJob job, ImportStatus step, Failure failure) async {
     _log.error(
       '${_tag(job)} ${step.name} non riuscita (${failure.code.name})',
       failure.cause,
       failure.stackTrace,
     );
-    if (ImportFlow.isOptional(step)) {
+    final WaitReason? wait;
+    DateTime? waitUntil;
+    if (failure is NetworkFailure && await _isOffline()) {
+      wait = WaitReason.connection;
+    } else if (failure is QuotaExceededFailure && failure.daily) {
+      wait = WaitReason.quota;
+      waitUntil = nextGeminiQuotaReset(_clock());
+    } else {
+      wait = null;
+    }
+    if (wait != null) {
+      _log.warning(
+        '${_tag(job)} in attesa (${wait.name})'
+        '${waitUntil == null ? '' : ' fino a ${waitUntil.toIso8601String()}'}',
+      );
+    }
+    if (wait == null && ImportFlow.isOptional(step)) {
       await _skip(
         job,
         step,
@@ -493,14 +640,22 @@ class ImportEngine {
       );
       return;
     }
+    final ended = _markEnded(job, step);
     await _save(
-      _markEnded(job, step).copyWith(
+      ended.copyWith(
         status: ImportStatus.failed,
         failedStep: step,
         errorCode: failure.code.name,
         errorDetail: _detail(failure),
+        data: ended.data.copyWith(waitingFor: wait, waitUntil: waitUntil),
       ),
     );
+    if (wait == WaitReason.quota) await _scheduleQuotaTimer();
+    // La rete può essere tornata tra il controllo e il salvataggio: il suo
+    // avviso sarebbe arrivato prima che il job fosse in attesa.
+    if (wait == WaitReason.connection && !await _isOffline()) {
+      unawaited(resumeWaiting());
+    }
   }
 
   Future<void> _skip(ImportJob job, ImportStatus step, SkippedStep skipped) {
@@ -551,6 +706,7 @@ class ImportEngine {
     failedStep: null,
     errorCode: null,
     errorDetail: null,
+    data: job.data.copyWith(waitingFor: null, waitUntil: null),
   );
 
   /// I job fermi su una tappa che non esisteva ancora ripartono da soli

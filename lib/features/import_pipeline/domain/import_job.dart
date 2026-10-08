@@ -101,6 +101,16 @@ enum SkipReason {
   noSpeech,
 }
 
+/// Che cosa aspetta un job fermo che ripartirà da solo (D-62). Salvato per
+/// nome: mai rinominare (D-18).
+enum WaitReason {
+  /// Il telefono non ha rete: riparte quando torna.
+  connection,
+
+  /// Quota giornaliera di Gemini esaurita: riparte a `waitUntil`.
+  quota,
+}
+
 @freezed
 abstract class SkippedStep with _$SkippedStep {
   const factory SkippedStep({
@@ -160,6 +170,20 @@ abstract class ImportJobData with _$ImportJobData {
     /// (`NutritionSnapshot.toJson`, D-57): li salva la tappa finale insieme
     /// alla ricetta. Manca se la tappa è stata saltata.
     Map<String, Object?>? nutrition,
+
+    /// Job `failed` che riparte da solo (D-62): per la rete
+    /// ([WaitReason.connection]) o per la quota giornaliera di Gemini
+    /// ([WaitReason.quota], con [waitUntil]). Lo azzera ogni ripartenza.
+    WaitReason? waitingFor,
+    DateTime? waitUntil,
+
+    /// Gemini non era disponibile (sovraccarico): la tappa finale salva una
+    /// ricetta in bozza invece della ricetta estratta (D-62).
+    @Default(false) bool draft,
+
+    /// Job creato da "Elabora ricetta" (D-62): la ricetta da completare. La
+    /// tappa finale la sostituisce invece di inserirne una nuova.
+    String? draftRecipeId,
   }) = _ImportJobData;
 
   factory ImportJobData.fromJson(Map<String, Object?> json) =>

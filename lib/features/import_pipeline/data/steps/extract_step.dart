@@ -12,6 +12,12 @@ import '../../domain/transcription.dart';
 /// La risposta viene validata; se non va bene c'è un secondo e ultimo
 /// tentativo con gli errori nel prompt (D-36). Il JSON normalizzato resta
 /// nel job: la tappa di salvataggio lo trasforma in ricetta.
+///
+/// Gemini sovraccarico (`LlmUnavailableFailure`, o quota al minuto ancora
+/// esaurita dopo i tentativi del client) non ferma il job: la tappa finisce
+/// con `data.draft` e la tappa finale salva una ricetta in bozza (D-62). La
+/// quota giornaliera e la rete assente risalgono al motore, che mette il job
+/// in attesa. Una ripresa con `draft` già impostato riprova Gemini.
 class ExtractStep implements ImportStep {
   ExtractStep({required LlmProvider llm}) : _llm = llm;
 
@@ -43,6 +49,11 @@ class ExtractStep implements ImportStep {
       } on LlmResponseException catch (e) {
         previousError = _checkAttempts(attempt, e.message);
         continue;
+      } on LlmUnavailableFailure {
+        return _draft(job);
+      } on QuotaExceededFailure catch (e) {
+        if (e.daily) rethrow;
+        return _draft(job);
       }
       switch (validateRecipeJson(response.json)) {
         case ValidRecipeJson(isRecipe: false, :final notRecipeReason):
@@ -55,6 +66,7 @@ class ExtractStep implements ImportStep {
               data: job.data.copyWith(
                 extraction: json,
                 extractionModel: response.model,
+                draft: false,
               ),
             ),
           );
@@ -63,6 +75,10 @@ class ExtractStep implements ImportStep {
       }
     }
   }
+
+  /// Gemini non disponibile: si prosegue verso una ricetta in bozza (D-62).
+  static StepResult _draft(ImportJob job) =>
+      StepResult.done(job.copyWith(data: job.data.copyWith(draft: true)));
 
   /// Perché non c'è testo: se la trascrizione è stata saltata per un motivo
   /// rimediabile o spiegabile, lo si dice (D-40, D-41).

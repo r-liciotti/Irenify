@@ -529,6 +529,21 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, RecipeRow> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _isDraftMeta = const VerificationMeta(
+    'isDraft',
+  );
+  @override
+  late final GeneratedColumn<bool> isDraft = GeneratedColumn<bool>(
+    'is_draft',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_draft" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -566,6 +581,7 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, RecipeRow> {
     isFavorite,
     extractionModel,
     needsReview,
+    isDraft,
     createdAt,
     updatedAt,
   ];
@@ -683,6 +699,12 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, RecipeRow> {
         ),
       );
     }
+    if (data.containsKey('is_draft')) {
+      context.handle(
+        _isDraftMeta,
+        isDraft.isAcceptableOrUnknown(data['is_draft']!, _isDraftMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -762,6 +784,10 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, RecipeRow> {
         DriftSqlType.bool,
         data['${effectivePrefix}needs_review'],
       )!,
+      isDraft: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_draft'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -798,6 +824,10 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
   final bool isFavorite;
   final String? extractionModel;
   final bool needsReview;
+
+  /// Ricetta in bozza (D-62, schema v3): Gemini non era disponibile, ci sono
+  /// solo titolo provvisorio, fonte (didascalia e trascrizione) e miniatura.
+  final bool isDraft;
   final DateTime createdAt;
   final DateTime updatedAt;
   const RecipeRow({
@@ -814,6 +844,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
     required this.isFavorite,
     this.extractionModel,
     required this.needsReview,
+    required this.isDraft,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -849,6 +880,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
       map['extraction_model'] = Variable<String>(extractionModel);
     }
     map['needs_review'] = Variable<bool>(needsReview);
+    map['is_draft'] = Variable<bool>(isDraft);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -883,6 +915,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
           ? const Value.absent()
           : Value(extractionModel),
       needsReview: Value(needsReview),
+      isDraft: Value(isDraft),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -909,6 +942,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       extractionModel: serializer.fromJson<String?>(json['extractionModel']),
       needsReview: serializer.fromJson<bool>(json['needsReview']),
+      isDraft: serializer.fromJson<bool>(json['isDraft']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -932,6 +966,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'extractionModel': serializer.toJson<String?>(extractionModel),
       'needsReview': serializer.toJson<bool>(needsReview),
+      'isDraft': serializer.toJson<bool>(isDraft),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -951,6 +986,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
     bool? isFavorite,
     Value<String?> extractionModel = const Value.absent(),
     bool? needsReview,
+    bool? isDraft,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => RecipeRow(
@@ -971,6 +1007,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
         ? extractionModel.value
         : this.extractionModel,
     needsReview: needsReview ?? this.needsReview,
+    isDraft: isDraft ?? this.isDraft,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -1011,6 +1048,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
       needsReview: data.needsReview.present
           ? data.needsReview.value
           : this.needsReview,
+      isDraft: data.isDraft.present ? data.isDraft.value : this.isDraft,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -1032,6 +1070,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
           ..write('isFavorite: $isFavorite, ')
           ..write('extractionModel: $extractionModel, ')
           ..write('needsReview: $needsReview, ')
+          ..write('isDraft: $isDraft, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1053,6 +1092,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
     isFavorite,
     extractionModel,
     needsReview,
+    isDraft,
     createdAt,
     updatedAt,
   );
@@ -1073,6 +1113,7 @@ class RecipeRow extends DataClass implements Insertable<RecipeRow> {
           other.isFavorite == this.isFavorite &&
           other.extractionModel == this.extractionModel &&
           other.needsReview == this.needsReview &&
+          other.isDraft == this.isDraft &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -1091,6 +1132,7 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
   final Value<bool> isFavorite;
   final Value<String?> extractionModel;
   final Value<bool> needsReview;
+  final Value<bool> isDraft;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -1108,6 +1150,7 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
     this.isFavorite = const Value.absent(),
     this.extractionModel = const Value.absent(),
     this.needsReview = const Value.absent(),
+    this.isDraft = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1126,6 +1169,7 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
     this.isFavorite = const Value.absent(),
     this.extractionModel = const Value.absent(),
     this.needsReview = const Value.absent(),
+    this.isDraft = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -1148,6 +1192,7 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
     Expression<bool>? isFavorite,
     Expression<String>? extractionModel,
     Expression<bool>? needsReview,
+    Expression<bool>? isDraft,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -1166,6 +1211,7 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (extractionModel != null) 'extraction_model': extractionModel,
       if (needsReview != null) 'needs_review': needsReview,
+      if (isDraft != null) 'is_draft': isDraft,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1186,6 +1232,7 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
     Value<bool>? isFavorite,
     Value<String?>? extractionModel,
     Value<bool>? needsReview,
+    Value<bool>? isDraft,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -1204,6 +1251,7 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
       isFavorite: isFavorite ?? this.isFavorite,
       extractionModel: extractionModel ?? this.extractionModel,
       needsReview: needsReview ?? this.needsReview,
+      isDraft: isDraft ?? this.isDraft,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -1254,6 +1302,9 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
     if (needsReview.present) {
       map['needs_review'] = Variable<bool>(needsReview.value);
     }
+    if (isDraft.present) {
+      map['is_draft'] = Variable<bool>(isDraft.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1282,6 +1333,7 @@ class RecipesCompanion extends UpdateCompanion<RecipeRow> {
           ..write('isFavorite: $isFavorite, ')
           ..write('extractionModel: $extractionModel, ')
           ..write('needsReview: $needsReview, ')
+          ..write('isDraft: $isDraft, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -5773,6 +5825,7 @@ typedef $$RecipesTableCreateCompanionBuilder =
       Value<bool> isFavorite,
       Value<String?> extractionModel,
       Value<bool> needsReview,
+      Value<bool> isDraft,
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<int> rowid,
@@ -5792,6 +5845,7 @@ typedef $$RecipesTableUpdateCompanionBuilder =
       Value<bool> isFavorite,
       Value<String?> extractionModel,
       Value<bool> needsReview,
+      Value<bool> isDraft,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -5990,6 +6044,11 @@ class $$RecipesTableFilterComposer
 
   ColumnFilters<bool> get needsReview => $composableBuilder(
     column: $table.needsReview,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDraft => $composableBuilder(
+    column: $table.isDraft,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6228,6 +6287,11 @@ class $$RecipesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isDraft => $composableBuilder(
+    column: $table.isDraft,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -6309,6 +6373,9 @@ class $$RecipesTableAnnotationComposer
     column: $table.needsReview,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get isDraft =>
+      $composableBuilder(column: $table.isDraft, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -6516,6 +6583,7 @@ class $$RecipesTableTableManager
                 Value<bool> isFavorite = const Value.absent(),
                 Value<String?> extractionModel = const Value.absent(),
                 Value<bool> needsReview = const Value.absent(),
+                Value<bool> isDraft = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -6533,6 +6601,7 @@ class $$RecipesTableTableManager
                 isFavorite: isFavorite,
                 extractionModel: extractionModel,
                 needsReview: needsReview,
+                isDraft: isDraft,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -6552,6 +6621,7 @@ class $$RecipesTableTableManager
                 Value<bool> isFavorite = const Value.absent(),
                 Value<String?> extractionModel = const Value.absent(),
                 Value<bool> needsReview = const Value.absent(),
+                Value<bool> isDraft = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
@@ -6569,6 +6639,7 @@ class $$RecipesTableTableManager
                 isFavorite: isFavorite,
                 extractionModel: extractionModel,
                 needsReview: needsReview,
+                isDraft: isDraft,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,

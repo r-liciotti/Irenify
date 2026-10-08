@@ -5,6 +5,7 @@ import '../../../../app/theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/recipe.dart';
 import '../../domain/recipe_enums.dart';
+import '../recipe_title.dart';
 
 /// Parte alta del foglio: titolo, descrizione, tempi e difficoltà con il
 /// pulsante del post originale (D-60), avviso "Controlla la ricetta" e tag.
@@ -48,7 +49,14 @@ class RecipeDetailHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(recipe.title, style: theme.textTheme.headlineMedium),
+          Text(
+            recipeDisplayTitle(
+              l10n,
+              title: recipe.title,
+              isDraft: recipe.isDraft,
+            ),
+            style: theme.textTheme.headlineMedium,
+          ),
           if (recipe.description case final description?) ...[
             const SizedBox(height: 8),
             Text(description, style: theme.textTheme.bodyLarge),

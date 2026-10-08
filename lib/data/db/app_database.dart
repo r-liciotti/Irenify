@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
       db.execute('PRAGMA busy_timeout = 5000');
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -85,6 +85,15 @@ class AppDatabase extends _$AppDatabase {
       await convertTagsToGuidedList(db);
       await db.customStatement('DELETE FROM recipe_search');
       await db.customStatement(recipeSearchInsertSql());
+    },
+    // v3: ricette in bozza (D-62). Ripetibile: la colonna si aggiunge solo
+    // se manca.
+    from2To3: (m, schema) async {
+      final columns = await m.database
+          .customSelect('PRAGMA table_info(recipes)')
+          .get();
+      if (columns.any((c) => c.read<String>('name') == 'is_draft')) return;
+      await m.addColumn(schema.recipes, schema.recipes.isDraft);
     },
   );
 }

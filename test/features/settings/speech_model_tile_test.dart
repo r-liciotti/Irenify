@@ -112,7 +112,9 @@ void main() {
     );
 
     expect(
-      find.text('Download non riuscito. Connessione assente o troppo lenta.'),
+      find.text(
+        'Download non riuscito. Non è stato possibile collegarsi: riprova più tardi.',
+      ),
       findsOneWidget,
     );
     await tester.tap(find.text('Riprova'));

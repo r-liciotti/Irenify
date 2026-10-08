@@ -16,17 +16,20 @@ import '../domain/recipe.dart';
 import '../domain/scaling.dart';
 import 'detail/recipe_detail_app_bar.dart';
 import 'detail/recipe_detail_header.dart';
+import 'detail/recipe_draft_view.dart';
 import 'detail/recipe_ingredients.dart';
 import 'detail/recipe_steps.dart';
 import 'detail/servings_bar.dart';
 import 'recipe_providers.dart';
+import 'recipe_title.dart';
 
 /// Dettaglio di una ricetta (D-43, D-45, D-48, D-58): foto a tutta larghezza
 /// con foglio arrotondato, schede Ingredienti / Procedimento / Nutrienti con
 /// la barra delle schede fissata in alto, barra delle porzioni fissa in basso.
 ///
 /// Tutto scorre in un'unica `CustomScrollView`: la scheda scelta decide
-/// quali contenuti seguono la barra delle schede.
+/// quali contenuti seguono la barra delle schede. Una ricetta in bozza (D-62)
+/// non ha schede né porzioni: sotto l'intestazione c'è [RecipeDraftView].
 class RecipeDetailScreen extends ConsumerStatefulWidget {
   const RecipeDetailScreen({required this.recipeId, super.key});
 
@@ -96,6 +99,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
   }
 
   Widget _buildRecipe(BuildContext context, Recipe recipe) {
+    if (recipe.isDraft) return _buildDraft(context, recipe);
     final l10n = AppLocalizations.of(context);
     final colors = IrenefyColors.of(context);
     final servings = _servings ?? recipe.baseServings;
@@ -159,6 +163,30 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
     );
   }
 
+  /// Bozza (D-62): foto, titolo e post originale come sempre, poi la vista
+  /// della bozza; restano preferito ed eliminazione.
+  Widget _buildDraft(BuildContext context, Recipe recipe) => Scaffold(
+    backgroundColor: IrenefyColors.of(context).sheet,
+    body: CustomScrollView(
+      slivers: [
+        RecipeDetailAppBar(
+          recipe: recipe,
+          onToggleFavorite: () => _toggleFavorite(recipe),
+          onDelete: () => _delete(recipe),
+        ),
+        SliverToBoxAdapter(
+          child: RecipeDetailHeader(
+            recipe: recipe,
+            onTagSelected: _showTag,
+            onOpenPost: _openPost,
+          ),
+        ),
+        SliverToBoxAdapter(child: RecipeDraftView(recipe: recipe)),
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+      ],
+    ),
+  );
+
   /// Torna al ricettario filtrato solo per [tag].
   void _showTag(String tag) {
     ref.read(recipeFilterProvider.notifier)
@@ -205,7 +233,15 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.recipeDeleteTitle),
-        content: Text(l10n.recipeDeleteBody(recipe.title)),
+        content: Text(
+          l10n.recipeDeleteBody(
+            recipeDisplayTitle(
+              l10n,
+              title: recipe.title,
+              isDraft: recipe.isDraft,
+            ),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),

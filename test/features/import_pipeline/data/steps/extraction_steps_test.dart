@@ -308,6 +308,52 @@ void main() {
       expect(llm.calls, 2);
     });
 
+    test('Gemini non disponibile: bozza invece di fallire (D-62)', () async {
+      llm.responses.add(const LlmUnavailableFailure(cause: '503'));
+      final done = await runDone(job());
+      expect(done.data.draft, isTrue);
+      expect(done.data.extraction, isNull);
+      expect(llm.calls, 1);
+    });
+
+    test('quota al minuto ancora esaurita: bozza (D-62)', () async {
+      llm.responses.add(const QuotaExceededFailure());
+      final done = await runDone(job());
+      expect(done.data.draft, isTrue);
+      expect(done.data.extraction, isNull);
+    });
+
+    test('Gemini non disponibile al secondo tentativo: bozza', () async {
+      llm
+        ..responses.add(const LlmResponseException('JSON troncato'))
+        ..responses.add(const LlmUnavailableFailure());
+      final done = await runDone(job());
+      expect(done.data.draft, isTrue);
+      expect(llm.calls, 2);
+    });
+
+    test('quota giornaliera e rete assente risalgono al motore', () async {
+      llm.responses.add(const QuotaExceededFailure(daily: true));
+      await expectLater(
+        step.run(job(), files),
+        throwsA(isA<QuotaExceededFailure>()),
+      );
+      llm.responses.add(const NetworkFailure());
+      await expectLater(step.run(job(), files), throwsA(isA<NetworkFailure>()));
+      expect(llm.calls, 2);
+    });
+
+    test('ripresa di un job già in bozza: si riprova Gemini', () async {
+      llm.reply(llmFixture('pasta_alla_norma'));
+      final base = job();
+      final done = await runDone(
+        base.copyWith(data: base.data.copyWith(draft: true)),
+      );
+      expect(llm.calls, 1);
+      expect(done.data.draft, isFalse);
+      expect(done.data.extraction![RecipeJson.title], 'Pasta alla Norma');
+    });
+
     test('estrazione già fatta: nessuna nuova richiesta', () async {
       final extraction =
           (validateRecipeJson(llmFixture('pasta_alla_norma'))
@@ -521,6 +567,125 @@ void main() {
         ]);
       },
     );
+
+    ImportJob draftJob({
+      String id = 'job-1',
+      String? draftRecipeId,
+      Map<String, Object?>? extraction,
+      String? thumbnailPath,
+      Map<String, Object?>? nutrition,
+    }) {
+      final base = job(
+        id: id,
+        status: ImportStatus.nutrition,
+        extraction: extraction,
+        thumbnailPath: thumbnailPath,
+        caption: '#reel\nPasta alla Norma come a Catania\n320 g di rigatoni',
+      );
+      return base.copyWith(
+        data: base.data.copyWith(
+          draft: extraction == null,
+          draftRecipeId: draftRecipeId,
+          nutrition: nutrition,
+        ),
+      );
+    }
+
+    test(
+      'Gemini non disponibile: salva la bozza con miniatura (D-62)',
+      () async {
+        final thumbnail = await writeThumbnail();
+        final result = await step.run(
+          draftJob(thumbnailPath: thumbnail),
+          files,
+        );
+        expect(result, isA<StepDone>());
+        expect(result.job.recipeId, 'job-1');
+        final recipe = (await recipes.getById('job-1'))!;
+        expect(recipe.isDraft, isTrue);
+        expect(recipe.title, 'Pasta alla Norma come a Catania');
+        expect(recipe.ingredientGroups, isEmpty);
+        expect(recipe.steps, isEmpty);
+        expect(recipe.thumbnailPath, 'recipes/job-1/miniatura.jpg');
+        expect(recipe.source.transcript, transcript);
+        expect(recipe.source.sourceKey, 'instagram:DDle01fMxoA');
+      },
+    );
+
+    test('bozza di un post già nel ricettario: alreadyImported', () async {
+      await step.run(
+        job(id: 'primo', extraction: extraction('pasta_alla_norma')),
+        files,
+      );
+      final result = await step.run(draftJob(id: 'secondo'), files);
+      expect(result, isA<StepAlreadyImported>());
+      expect((result as StepAlreadyImported).recipeId, 'primo');
+      expect(await recipes.getById('secondo'), isNull);
+    });
+
+    group('Elabora ricetta', () {
+      Future<void> saveDraft() async {
+        final thumbnail = await writeThumbnail();
+        await step.run(draftJob(id: 'bozza', thumbnailPath: thumbnail), files);
+        await recipes.setFavorite('bozza', favorite: true);
+      }
+
+      test('Gemini ancora non disponibile: la bozza resta com\'è', () async {
+        await saveDraft();
+        final before = await recipes.getById('bozza');
+        final result = await step.run(
+          draftJob(id: 'elabora', draftRecipeId: 'bozza'),
+          files,
+        );
+        expect(result, isA<StepDone>());
+        expect(result.job.recipeId, 'bozza');
+        expect(await recipes.getById('bozza'), before);
+        expect(await recipes.getById('elabora'), isNull);
+      });
+
+      test('sostituisce la bozza: ingredienti, preferita e miniatura '
+          'mantenute', () async {
+        await saveDraft();
+        final result = await step.run(
+          draftJob(
+            id: 'elabora',
+            draftRecipeId: 'bozza',
+            extraction: extraction('pasta_alla_norma'),
+          ),
+          files,
+        );
+        expect(result, isA<StepDone>());
+        expect(result.job.recipeId, 'bozza');
+
+        final recipe = (await recipes.getById('bozza'))!;
+        expect(recipe.isDraft, isFalse);
+        expect(recipe.title, 'Pasta alla Norma');
+        expect(recipe.ingredientGroups, isNotEmpty);
+        expect(recipe.ingredientGroups.first.ingredients.first.id, 'bozza-i1');
+        expect(recipe.steps, isNotEmpty);
+        expect(recipe.isFavorite, isTrue);
+        expect(recipe.thumbnailPath, 'recipes/bozza/miniatura.jpg');
+        expect(recipe.extractionModel, FakeLlmProvider.model);
+        expect(await recipes.getById('elabora'), isNull);
+        final all = await recipes.watchSummaries().first;
+        expect(all.map((r) => r.id), ['bozza']);
+      });
+
+      test('bozza eliminata nel frattempo: UnexpectedFailure', () async {
+        await expectLater(
+          step.run(
+            draftJob(
+              id: 'elabora',
+              draftRecipeId: 'sparita',
+              extraction: extraction('pasta_alla_norma'),
+            ),
+            files,
+          ),
+          throwsA(isA<UnexpectedFailure>()),
+        );
+        expect(await recipes.getById('sparita'), isNull);
+      });
+    });
 
     test('nessuna estrazione nel job: UnexpectedFailure', () async {
       await expectLater(

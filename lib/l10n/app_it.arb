@@ -160,6 +160,32 @@
   "importSkipCpuUnsupported": "trascrizione non supportata da questo telefono",
   "importSkipPlatformSubtitles": "usati i sottotitoli della piattaforma",
   "importSkipNoSpeech": "solo musica, nessuna voce",
+  "importWaitingConnection": "In attesa di connessione: riparte da sola quando torna la rete.",
+  "importWaitingQuota": "Quota giornaliera di Gemini esaurita: riparte da sola alle {time}.",
+  "@importWaitingQuota": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "importWaitingConnectionHint": "Riparte da sola quando torna la rete.",
+  "importWaitingQuotaHint": "Riparte da sola alle {time}, quando si rinnova la quota giornaliera.",
+  "@importWaitingQuotaHint": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "importWaitingQuotaHintLater": "Riparte da sola quando si rinnova la quota giornaliera.",
+  "importWaitingConnectionShort": "In attesa di connessione",
+  "importWaitingQuotaShort": "In attesa della quota di Gemini",
+  "importDraftSaved": "Salvata in bozza",
+  "importProgressDraft": "Gemini non è disponibile in questo momento: ho salvato la ricetta in bozza. Riprova più tardi con «Elabora ricetta».",
+  "recipeDraftBadge": "Bozza",
+  "recipeDraftUntitled": "Ricetta in bozza",
+  "recipeDraftMessage": "Questa ricetta è in bozza: quando l'hai importata Gemini non era disponibile. Ingredienti e passi arriveranno elaborandola.",
+  "recipeDraftProcess": "Elabora ricetta",
+  "recipeDraftProcessFailed": "Non è stato possibile elaborare la ricetta: riprova più tardi.",
+  "recipeDraftCaption": "Didascalia",
+  "recipeDraftTranscript": "Trascrizione",
   "importDurationUnderSecond": "meno di 1 s",
   "importDurationSeconds": "{seconds} s",
   "@importDurationSeconds": {
@@ -534,7 +560,7 @@
     }
   },
 
-  "failureNetwork": "Connessione assente o troppo lenta.",
+  "failureNetwork": "Non è stato possibile collegarsi: riprova più tardi.",
   "failureUnexpected": "Si è verificato un errore imprevisto.",
   "failureStepInterrupted": "L'importazione si è interrotta più volte allo stesso punto.",
   "failureUnsupportedLink": "Link non supportato: condividi un post di Instagram o TikTok.",

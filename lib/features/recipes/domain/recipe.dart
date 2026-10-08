@@ -30,6 +30,10 @@ abstract class Recipe with _$Recipe {
 
     /// Ci sono quantità stimate o incerte da controllare.
     @Default(false) bool needsReview,
+
+    /// Bozza (D-62): Gemini non era disponibile; niente ingredienti né passi,
+    /// si completa con "Elabora ricetta".
+    @Default(false) bool isDraft,
     required RecipeSourceInfo source,
     @Default(<IngredientGroup>[]) List<IngredientGroup> ingredientGroups,
     @Default(<RecipeStep>[]) List<RecipeStep> steps,
@@ -52,6 +56,9 @@ abstract class RecipeSummary with _$RecipeSummary {
     required bool needsReview,
     required DateTime createdAt,
     int? restMinutes,
+
+    /// Bozza da elaborare (D-62).
+    @Default(false) bool isDraft,
     SourcePlatform? platform,
     String? authorName,
     @Default(<String>[]) List<String> tags,

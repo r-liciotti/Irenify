@@ -178,7 +178,10 @@ void main() {
       tester.element(find.byType(Scaffold).first),
     );
     const failure = NetworkFailure();
-    expect(failure.message(l10n), 'Connessione assente o troppo lenta.');
+    expect(
+      failure.message(l10n),
+      'Non è stato possibile collegarsi: riprova più tardi.',
+    );
     expect(failure.action.label(l10n), 'Riprova');
     expect(RecoveryAction.none.label(l10n), isNull);
     // I job salvano solo il codice: il messaggio si ricava da lì.

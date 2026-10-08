@@ -332,6 +332,64 @@ class AppLocalizationsIt extends AppLocalizations {
   String get importSkipNoSpeech => 'solo musica, nessuna voce';
 
   @override
+  String get importWaitingConnection =>
+      'In attesa di connessione: riparte da sola quando torna la rete.';
+
+  @override
+  String importWaitingQuota(String time) {
+    return 'Quota giornaliera di Gemini esaurita: riparte da sola alle $time.';
+  }
+
+  @override
+  String get importWaitingConnectionHint =>
+      'Riparte da sola quando torna la rete.';
+
+  @override
+  String importWaitingQuotaHint(String time) {
+    return 'Riparte da sola alle $time, quando si rinnova la quota giornaliera.';
+  }
+
+  @override
+  String get importWaitingQuotaHintLater =>
+      'Riparte da sola quando si rinnova la quota giornaliera.';
+
+  @override
+  String get importWaitingConnectionShort => 'In attesa di connessione';
+
+  @override
+  String get importWaitingQuotaShort => 'In attesa della quota di Gemini';
+
+  @override
+  String get importDraftSaved => 'Salvata in bozza';
+
+  @override
+  String get importProgressDraft =>
+      'Gemini non è disponibile in questo momento: ho salvato la ricetta in bozza. Riprova più tardi con «Elabora ricetta».';
+
+  @override
+  String get recipeDraftBadge => 'Bozza';
+
+  @override
+  String get recipeDraftUntitled => 'Ricetta in bozza';
+
+  @override
+  String get recipeDraftMessage =>
+      'Questa ricetta è in bozza: quando l\'hai importata Gemini non era disponibile. Ingredienti e passi arriveranno elaborandola.';
+
+  @override
+  String get recipeDraftProcess => 'Elabora ricetta';
+
+  @override
+  String get recipeDraftProcessFailed =>
+      'Non è stato possibile elaborare la ricetta: riprova più tardi.';
+
+  @override
+  String get recipeDraftCaption => 'Didascalia';
+
+  @override
+  String get recipeDraftTranscript => 'Trascrizione';
+
+  @override
   String get importDurationUnderSecond => 'meno di 1 s';
 
   @override
@@ -996,7 +1054,8 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get failureNetwork => 'Connessione assente o troppo lenta.';
+  String get failureNetwork =>
+      'Non è stato possibile collegarsi: riprova più tardi.';
 
   @override
   String get failureUnexpected => 'Si è verificato un errore imprevisto.';

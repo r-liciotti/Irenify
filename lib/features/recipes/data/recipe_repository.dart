@@ -59,52 +59,118 @@ class RecipeRepository {
               transcriptQuality: source.transcriptQuality,
             ),
           );
-      for (final (groupIndex, group) in recipe.ingredientGroups.indexed) {
-        await _db
-            .into(_db.ingredientGroups)
-            .insert(
-              IngredientGroupsCompanion.insert(
-                id: group.id,
-                recipeId: recipe.id,
-                name: Value(group.name),
-                position: groupIndex,
-              ),
-            );
-        for (final (index, ingredient) in group.ingredients.indexed) {
-          await _db
-              .into(_db.ingredients)
-              .insert(_ingredientCompanion(ingredient, group.id, index));
-        }
-      }
-      for (final (index, step) in recipe.steps.indexed) {
-        await _db
-            .into(_db.recipeSteps)
-            .insert(
-              RecipeStepsCompanion.insert(
-                id: step.id,
-                recipeId: recipe.id,
-                number: index + 1,
-                body: step.text,
-                durationMinutes: Value(step.durationMinutes),
-                temperatureC: Value(step.temperatureC),
-              ),
-            );
-      }
-      for (final name in recipe.tags.toSet()) {
-        final tagId = await _tagId(name);
-        await _db
-            .into(_db.recipeTags)
-            .insert(
-              RecipeTagsCompanion.insert(recipeId: recipe.id, tagId: tagId),
-            );
-      }
-      if (nutrition != null) {
-        await _db
-            .into(_db.nutritionSnapshots)
-            .insert(_snapshotCompanion(recipe.id, nutrition));
-      }
+      await _insertChildren(recipe, nutrition);
       await _index(recipe.id);
     });
+  }
+
+  /// Completa la bozza [recipe].id (D-62) con la ricetta estratta [recipe]
+  /// in un'unica transazione: sostituisce campi, fonte, ingredienti, passi,
+  /// tag, valori e riga dell'indice di ricerca. Mantiene di quella salvata
+  /// `isFavorite`, `createdAt` e `thumbnailPath` (se [recipe] non ne ha uno).
+  /// Lancia [StateError] se la ricetta non esiste o non è una bozza.
+  Future<void> replaceDraft(Recipe recipe, {NutritionSnapshot? nutrition}) =>
+      _db.transaction(() async {
+        final id = recipe.id;
+        final old = await (_db.select(
+          _db.recipes,
+        )..where((r) => r.id.equals(id))).getSingleOrNull();
+        if (old == null) throw StateError('Ricetta $id inesistente');
+        if (!old.isDraft) throw StateError('La ricetta $id non è una bozza');
+
+        // La riga della ricetta si aggiorna e non si ricrea: eliminarla
+        // cancellerebbe a cascata la fonte e attiverebbe il trigger
+        // dell'indice. Si tolgono solo i figli, che poi si riscrivono.
+        await (_db.delete(
+          _db.ingredientGroups,
+        )..where((g) => g.recipeId.equals(id))).go();
+        await (_db.delete(
+          _db.recipeSteps,
+        )..where((s) => s.recipeId.equals(id))).go();
+        await (_db.delete(
+          _db.recipeTags,
+        )..where((t) => t.recipeId.equals(id))).go();
+        await (_db.delete(
+          _db.nutritionSnapshots,
+        )..where((n) => n.recipeId.equals(id))).go();
+
+        final merged = recipe.copyWith(
+          isDraft: false,
+          isFavorite: old.isFavorite,
+          createdAt: old.createdAt,
+          thumbnailPath: recipe.thumbnailPath ?? old.thumbnailPath,
+        );
+        await (_db.update(
+          _db.recipes,
+        )..where((r) => r.id.equals(id))).write(_recipeCompanion(merged));
+        final source = recipe.source;
+        await (_db.update(
+          _db.recipeSources,
+        )..where((s) => s.recipeId.equals(id))).write(
+          RecipeSourcesCompanion(
+            platform: Value(source.platform),
+            url: Value(source.url),
+            sourceKey: Value(source.sourceKey),
+            authorName: Value(source.authorName),
+            caption: Value(source.caption),
+            transcript: Value(source.transcript),
+            transcriptQuality: Value(source.transcriptQuality),
+          ),
+        );
+        await _insertChildren(merged, nutrition);
+        await _index(id);
+      });
+
+  /// Scrive gruppi, ingredienti, passi, tag e (se presenti) valori di
+  /// [recipe]; la riga della ricetta e la fonte devono già esistere.
+  Future<void> _insertChildren(
+    Recipe recipe,
+    NutritionSnapshot? nutrition,
+  ) async {
+    for (final (groupIndex, group) in recipe.ingredientGroups.indexed) {
+      await _db
+          .into(_db.ingredientGroups)
+          .insert(
+            IngredientGroupsCompanion.insert(
+              id: group.id,
+              recipeId: recipe.id,
+              name: Value(group.name),
+              position: groupIndex,
+            ),
+          );
+      for (final (index, ingredient) in group.ingredients.indexed) {
+        await _db
+            .into(_db.ingredients)
+            .insert(_ingredientCompanion(ingredient, group.id, index));
+      }
+    }
+    for (final (index, step) in recipe.steps.indexed) {
+      await _db
+          .into(_db.recipeSteps)
+          .insert(
+            RecipeStepsCompanion.insert(
+              id: step.id,
+              recipeId: recipe.id,
+              number: index + 1,
+              body: step.text,
+              durationMinutes: Value(step.durationMinutes),
+              temperatureC: Value(step.temperatureC),
+            ),
+          );
+    }
+    for (final name in recipe.tags.toSet()) {
+      final tagId = await _tagId(name);
+      await _db
+          .into(_db.recipeTags)
+          .insert(
+            RecipeTagsCompanion.insert(recipeId: recipe.id, tagId: tagId),
+          );
+    }
+    if (nutrition != null) {
+      await _db
+          .into(_db.nutritionSnapshots)
+          .insert(_snapshotCompanion(recipe.id, nutrition));
+    }
   }
 
   /// Salva i valori nutrizionali ricalcolati della ricetta [recipeId] (F4,
@@ -155,23 +221,27 @@ class RecipeRepository {
           .map(_snapshotFromRow)
           .watchSingleOrNull();
 
-  /// Id delle ricette senza valori nutrizionali salvati.
-  Future<List<String>> recipeIdsWithoutNutrition() => _db
+  /// Id delle ricette complete (non in bozza: senza ingredienti non hanno
+  /// valori da calcolare, D-62) senza valori nutrizionali salvati, dalla meno
+  /// recente.
+  Future<List<String>> completeRecipeIdsWithoutNutrition() => _db
       .customSelect(
         'SELECT r.id FROM recipes r '
-        'WHERE NOT EXISTS (SELECT 1 FROM nutrition_snapshots n '
+        'WHERE r.is_draft = 0 AND NOT EXISTS (SELECT 1 FROM nutrition_snapshots n '
         'WHERE n.recipe_id = r.id) ORDER BY r.created_at, r.id',
         readsFrom: {_db.recipes, _db.nutritionSnapshots},
       )
       .map((row) => row.read<String>('id'))
       .get();
 
-  /// Id di tutte le ricette, dalla meno recente.
-  Future<List<String>> allRecipeIds() =>
-      (_db.select(_db.recipes)..orderBy([
-            (r) => OrderingTerm(expression: r.createdAt),
-            (r) => OrderingTerm(expression: r.id),
-          ]))
+  /// Id delle ricette complete (bozze escluse, D-62), dalla meno recente.
+  Future<List<String>> completeRecipeIds() =>
+      (_db.select(_db.recipes)
+            ..where((r) => r.isDraft.equals(false))
+            ..orderBy([
+              (r) => OrderingTerm(expression: r.createdAt),
+              (r) => OrderingTerm(expression: r.id),
+            ]))
           .map((r) => r.id)
           .get();
 
@@ -238,6 +308,7 @@ class RecipeRepository {
       isFavorite: row.isFavorite,
       extractionModel: row.extractionModel,
       needsReview: row.needsReview,
+      isDraft: row.isDraft,
       source: RecipeSourceInfo(
         platform: source.platform,
         url: source.url,
@@ -308,7 +379,7 @@ class RecipeRepository {
     final sql =
         'SELECT r.id, r.title, r.thumbnail_path, r.prep_minutes, '
         'r.cook_minutes, r.rest_minutes, r.is_favorite, r.needs_review, '
-        'r.created_at, s.platform, s.author_name, '
+        'r.is_draft, r.created_at, s.platform, s.author_name, '
         '(SELECT group_concat(t.name, char(31)) FROM recipe_tags rt '
         'JOIN tags t ON t.id = rt.tag_id WHERE rt.recipe_id = r.id) AS tags '
         'FROM recipes r '
@@ -342,6 +413,7 @@ class RecipeRepository {
             restMinutes: row.read<int?>('rest_minutes'),
             isFavorite: row.read<bool>('is_favorite'),
             needsReview: row.read<bool>('needs_review'),
+            isDraft: row.read<bool>('is_draft'),
             createdAt: row.read<DateTime>('created_at'),
             platform: switch (row.read<String?>('platform')) {
               final name? => SourcePlatform.values.byName(name),
@@ -445,6 +517,7 @@ class RecipeRepository {
     isFavorite: Value(r.isFavorite),
     extractionModel: Value(r.extractionModel),
     needsReview: Value(r.needsReview),
+    isDraft: Value(r.isDraft),
     createdAt: r.createdAt,
     updatedAt: r.updatedAt,
   );

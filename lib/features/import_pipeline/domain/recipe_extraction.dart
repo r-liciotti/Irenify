@@ -176,7 +176,6 @@ Recipe recipeFromExtraction({
 
   final servings = json[RecipeJson.servings] as double?;
   final estimated = ingredients.any((i) => i[RecipeJson.isEstimated] == true);
-  final data = job.data;
   return Recipe(
     id: recipeId,
     title: json[RecipeJson.title]! as String,
@@ -190,17 +189,9 @@ Recipe recipeFromExtraction({
     restMinutes: json[RecipeJson.restMinutes] as int?,
     difficulty: Difficulty.values.asNameMap()[json[RecipeJson.difficulty]],
     thumbnailPath: thumbnailPath,
-    extractionModel: data.extractionModel,
+    extractionModel: job.data.extractionModel,
     needsReview: estimated || servings == null,
-    source: RecipeSourceInfo(
-      platform: job.platform ?? SourcePlatform.file,
-      url: job.sourceUrl,
-      sourceKey: job.sourceKey,
-      authorName: data.authorName,
-      caption: data.caption,
-      transcript: data.transcript,
-      transcriptQuality: data.transcriptQuality ?? TranscriptQuality.none,
-    ),
+    source: _sourceOf(job),
     ingredientGroups: groups,
     steps: [
       for (final (index, step) in _maps(json[RecipeJson.steps]).indexed)
@@ -484,3 +475,83 @@ class _Validator {
   static String _quoted(Object? value) =>
       value is String ? '"$value"' : '$value';
 }
+
+/// Id della ricetta che il [job] salva: la bozza da completare per un job di
+/// "Elabora ricetta" (D-62), altrimenti l'id del job. Gli id di gruppi,
+/// ingredienti e passi derivano da qui: tappa nutrizione e tappa finale
+/// devono usare lo stesso.
+String recipeIdForJob(ImportJob job) => job.data.draftRecipeId ?? job.id;
+
+/// Ricetta in bozza (D-62) per un [job] in cui Gemini non era disponibile:
+/// titolo provvisorio dalla prima riga utile della didascalia (o della
+/// trascrizione), tagliato a 80 caratteri senza hashtag; nessun ingrediente,
+/// passo o tag; 1 "ricetta"; fonte completa come in [recipeFromExtraction];
+/// `isDraft: true`. Il titolo può essere vuoto: l'interfaccia mostra un testo
+/// suo.
+Recipe draftRecipeFromJob({
+  required ImportJob job,
+  required String recipeId,
+  String? thumbnailPath,
+  required DateTime now,
+}) => Recipe(
+  id: recipeId,
+  title: draftTitle(job.data.caption) ?? draftTitle(job.data.transcript) ?? '',
+  baseServings: 1,
+  servingsUnit: 'ricetta',
+  thumbnailPath: thumbnailPath,
+  isDraft: true,
+  source: _sourceOf(job),
+  createdAt: now,
+  updatedAt: now,
+);
+
+/// Lunghezza massima del titolo provvisorio di una bozza, "…" compreso.
+const maxDraftTitleLength = 80;
+
+/// Titolo provvisorio ricavato da [text]: la prima riga che resta non vuota
+/// dopo aver tolto gli hashtag (`#parola`) e gli spazi doppi, tagliata a
+/// [maxDraftTitleLength] caratteri su un confine di parola con "…". `null`
+/// se non ce n'è.
+String? draftTitle(String? text) {
+  if (text == null) return null;
+  for (final line in text.split('\n')) {
+    final clean = line
+        .replaceAll(_hashtag, ' ')
+        .replaceAll(_spaces, ' ')
+        .trim();
+    if (clean.isNotEmpty) return _shorten(clean);
+  }
+  return null;
+}
+
+final _hashtag = RegExp(r'#[\p{L}\p{N}_]+', unicode: true);
+final _spaces = RegExp(r'\s+');
+final _trailing = RegExp(r'[\s,;:.\-–—]+$');
+
+/// [text] entro [maxDraftTitleLength] caratteri (contati per code point, per
+/// non spezzare le emoji): se è più lungo, si taglia all'ultimo spazio e si
+/// aggiunge "…".
+String _shorten(String text) {
+  final runes = text.runes.toList();
+  if (runes.length <= maxDraftTitleLength) return text;
+  var cut = String.fromCharCodes(runes.take(maxDraftTitleLength - 1));
+  // Parola spezzata a metà: si torna all'ultimo spazio, se c'è.
+  final next = runes[maxDraftTitleLength - 1];
+  if (next != 0x20) {
+    final space = cut.lastIndexOf(' ');
+    if (space > 0) cut = cut.substring(0, space);
+  }
+  return '${cut.replaceAll(_trailing, '')}…';
+}
+
+/// Fonte della ricetta: piattaforma, link, autore, didascalia e
+/// trascrizione del [job].
+RecipeSourceInfo _sourceOf(ImportJob job) => RecipeSourceInfo(
+  platform: job.platform ?? SourcePlatform.file,
+  url: job.sourceUrl,
+  sourceKey: job.sourceKey,
+  authorName: job.data.authorName,
+  caption: job.data.caption,
+  transcript: job.data.transcript,
+  transcriptQuality: job.data.transcriptQuality ?? TranscriptQuality.none,
+);

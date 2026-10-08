@@ -198,7 +198,9 @@ void main() {
     ]);
 
     expect(
-      find.text('Ferma a «didascalia»: Connessione assente o troppo lenta.'),
+      find.text(
+        'Ferma a «didascalia»: Non è stato possibile collegarsi: riprova più tardi.',
+      ),
       findsOneWidget,
     );
     // Il dettaglio tecnico non si mostra mai.
@@ -344,5 +346,67 @@ void main() {
     await tester.pumpAndSettle();
     expect(actions.calls, ['delete j1']);
     expect(find.text("Eliminare l'importazione?"), findsNothing);
+  });
+
+  group('attesa e bozza (D-62)', () {
+    testWidgets('in attesa di connessione: testo breve, nessun errore, '
+        '"Riprova" resta', (tester) async {
+      final actions = await _pumpScreen(tester, [
+        _job(
+          status: ImportStatus.failed,
+          failedStep: ImportStatus.metadata,
+          errorCode: 'network',
+          data: const ImportJobData(waitingFor: WaitReason.connection),
+        ),
+      ]);
+
+      expect(find.text('In attesa di connessione'), findsOneWidget);
+      expect(find.byIcon(Icons.wifi_off), findsOneWidget);
+      expect(find.byIcon(Icons.error_outline), findsNothing);
+      expect(find.textContaining('Ferma a'), findsNothing);
+
+      await tester.tap(find.text('Riprova'));
+      await tester.pumpAndSettle();
+      expect(actions.calls, ['retry j1']);
+    });
+
+    testWidgets('in attesa della quota: testo breve con l\'orologio', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, [
+        _job(
+          status: ImportStatus.failed,
+          failedStep: ImportStatus.extracted,
+          errorCode: 'quotaExceeded',
+          data: ImportJobData(
+            waitingFor: WaitReason.quota,
+            waitUntil: DateTime(2026, 10, 9, 9).toUtc(),
+          ),
+        ),
+      ]);
+
+      expect(find.text('In attesa della quota di Gemini'), findsOneWidget);
+      expect(find.byIcon(Icons.schedule), findsOneWidget);
+      expect(find.byIcon(Icons.error_outline), findsNothing);
+      expect(find.text('Riprova'), findsOneWidget);
+    });
+
+    testWidgets('completato in bozza: "Salvata in bozza" e apre la ricetta', (
+      tester,
+    ) async {
+      await _pumpScreen(tester, [
+        _job(
+          status: ImportStatus.completed,
+          recipeId: 'r9',
+          data: const ImportJobData(draft: true),
+        ),
+      ]);
+
+      expect(find.text('Salvata in bozza'), findsOneWidget);
+      expect(find.text('Ricetta salvata'), findsNothing);
+      await tester.tap(find.text('Apri la ricetta'));
+      await tester.pumpAndSettle();
+      expect(find.text('Dettaglio r9'), findsOneWidget);
+    });
   });
 }

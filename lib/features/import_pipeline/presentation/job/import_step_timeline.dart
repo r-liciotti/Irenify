@@ -9,7 +9,8 @@ import '../../../../core/errors/failure.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/import_flow.dart';
 import '../../domain/import_job.dart';
-import '../import_job_tile.dart' show stepLabel;
+import '../import_job_tile.dart'
+    show importWaitIcon, importWaitReason, importWaitText, stepLabel;
 
 /// Ora corrente, sostituibile nei test (durata della tappa in corso).
 final importClockProvider = Provider<DateTime Function()>(
@@ -23,8 +24,21 @@ final timelineSteps = [
     if (step != ImportStatus.completed) step,
 ];
 
-/// Stato di una tappa nel dettaglio del job.
-enum StepState { done, skipped, stopped, running, pending }
+/// Tappe da mostrare per [job]. Un job di "Elabora ricetta" (D-62) parte
+/// dopo la trascrizione con le informazioni già salvate nella bozza: le
+/// tappe precedenti non le ha fatte, quindi non si mostrano.
+List<ImportStatus> timelineStepsFor(ImportJob job) {
+  if (job.data.draftRecipeId == null) return timelineSteps;
+  final first = ImportFlow.steps.indexOf(ImportStatus.extracted);
+  return [
+    for (final step in timelineSteps)
+      if (ImportFlow.steps.indexOf(step) >= first) step,
+  ];
+}
+
+/// Stato di una tappa nel dettaglio del job. [waiting] è la tappa di un job
+/// fermo che riparte da solo (D-62): non è un errore.
+enum StepState { done, skipped, stopped, waiting, running, pending }
 
 /// Stato della tappa [step] per [job].
 ///
@@ -40,7 +54,11 @@ StepState stepStateOf(ImportJob job, ImportStatus step) {
       final failedIndex = ImportFlow.steps.indexOf(
         job.failedStep ?? ImportFlow.steps.first,
       );
-      if (index == failedIndex) return StepState.stopped;
+      if (index == failedIndex) {
+        return job.data.waitingFor == null
+            ? StepState.stopped
+            : StepState.waiting;
+      }
       if (index > failedIndex) return StepState.pending;
       return skipped ? StepState.skipped : StepState.done;
     case ImportStatus.completed:
@@ -119,15 +137,17 @@ class ImportStepTimeline extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      for (final (i, step) in timelineSteps.indexed)
+      for (final (i, step) in _steps.indexed)
         _StepRow(
           key: ValueKey('import-step-${step.name}'),
           job: job,
           step: step,
-          isLast: i == timelineSteps.length - 1,
+          isLast: i == _steps.length - 1,
         ),
     ],
   );
+
+  List<ImportStatus> get _steps => timelineStepsFor(job);
 }
 
 class _StepRow extends StatelessWidget {
@@ -155,6 +175,10 @@ class _StepRow extends StatelessWidget {
       StepState.done => (Icons.check_circle, extra.success),
       StepState.skipped => (Icons.remove_circle_outline, colors.outline),
       StepState.stopped => (Icons.error, colors.error),
+      StepState.waiting => (
+        importWaitIcon(importWaitReason(job)!),
+        extra.accentDecoration,
+      ),
       // Icona ferma e non un indicatore animato: un job può restare in
       // corso a lungo e un'animazione infinita bloccherebbe i widget test.
       StepState.running => (Icons.hourglass_top, extra.accentDecoration),
@@ -173,6 +197,10 @@ class _StepRow extends StatelessWidget {
           FailureCode.fromName(job.errorCode).message(l10n),
         ),
         color: colors.error,
+      ),
+      StepState.waiting => _DetailText(
+        importWaitText(context, job, short: true)!,
+        color: colors.onSurface,
       ),
       StepState.running => _RunningText(since: runningSince(job.data, step)),
       StepState.pending => _DetailText(l10n.importStepStatePending),

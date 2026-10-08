@@ -160,7 +160,7 @@ class _Header extends StatelessWidget {
             style: secondary,
           ),
         const SizedBox(height: 12),
-        ImportStatusLine(job),
+        ImportStatusLine(job, detailed: true),
         if (reason != null && reason.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(

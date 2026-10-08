@@ -21,13 +21,21 @@ class MediaStep implements ImportStep {
     required Map<SourcePlatform, PlatformClient> clients,
     required Downloader downloader,
     required AppLog log,
+    Future<bool> Function()? isOffline,
   }) : _clients = clients,
        _downloader = downloader,
-       _log = log;
+       _log = log,
+       _isOffline = isOffline ?? _alwaysOnline;
 
   final Map<SourcePlatform, PlatformClient> _clients;
   final Downloader _downloader;
   final AppLog _log;
+
+  /// Stato della rete (D-62): senza rete un errore di connessione su
+  /// i sottotitoli ferma la tappa, così il job aspetta la rete.
+  final Future<bool> Function() _isOffline;
+
+  static Future<bool> _alwaysOnline() async => false;
 
   static const videoName = 'video.mp4';
   static const subtitlesName = 'sottotitoli.vtt';
@@ -109,7 +117,8 @@ class MediaStep implements ImportStep {
       seconds != null &&
       seconds > ImportFlow.maxVideoDuration.inSeconds.toDouble();
 
-  /// I sottotitoli sono un di più: se non si scaricano, il job prosegue.
+  /// I sottotitoli sono un di più: se non si scaricano, il job prosegue;
+  /// senza rete invece la tappa si ferma e il job aspetta (D-62).
   Future<String?> _subtitles(Uri? url, JobFiles files) async {
     if (url == null) return null;
     try {
@@ -123,6 +132,7 @@ class MediaStep implements ImportStep {
       );
       return file.path;
     } catch (e, st) {
+      if (Failure.from(e) is NetworkFailure && await _isOffline()) rethrow;
       _log.error('Sottotitoli non scaricati', e, st);
       return null;
     }

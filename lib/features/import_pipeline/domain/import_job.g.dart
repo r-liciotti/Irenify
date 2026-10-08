@@ -84,6 +84,12 @@ _ImportJobData _$ImportJobDataFromJson(Map<String, dynamic> json) =>
       extraction: json['extraction'] as Map<String, dynamic>?,
       extractionModel: json['extractionModel'] as String?,
       nutrition: json['nutrition'] as Map<String, dynamic>?,
+      waitingFor: $enumDecodeNullable(_$WaitReasonEnumMap, json['waitingFor']),
+      waitUntil: json['waitUntil'] == null
+          ? null
+          : DateTime.parse(json['waitUntil'] as String),
+      draft: json['draft'] as bool? ?? false,
+      draftRecipeId: json['draftRecipeId'] as String?,
     );
 
 Map<String, dynamic> _$ImportJobDataToJson(
@@ -117,6 +123,10 @@ Map<String, dynamic> _$ImportJobDataToJson(
   'extraction': instance.extraction,
   'extractionModel': instance.extractionModel,
   'nutrition': instance.nutrition,
+  'waitingFor': _$WaitReasonEnumMap[instance.waitingFor],
+  'waitUntil': instance.waitUntil?.toIso8601String(),
+  'draft': instance.draft,
+  'draftRecipeId': instance.draftRecipeId,
 };
 
 const _$ImportStatusEnumMap = {
@@ -142,4 +152,9 @@ const _$TranscriptQualityEnumMap = {
 const _$TranscriptSourceEnumMap = {
   TranscriptSource.platformSubtitles: 'platformSubtitles',
   TranscriptSource.whisper: 'whisper',
+};
+
+const _$WaitReasonEnumMap = {
+  WaitReason.connection: 'connection',
+  WaitReason.quota: 'quota',
 };

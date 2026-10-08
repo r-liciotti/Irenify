@@ -143,6 +143,38 @@ void main() {
       expect(second.job.data.nutrition, first.job.data.nutrition);
     });
 
+    test('ricetta in bozza: tappa saltata (D-62)', () async {
+      final lookup = FakeFoodLookup();
+      final step = NutritionStep(lookup: () async => lookup);
+      final base = job(status: ImportStatus.extracted);
+      final result = await step.run(
+        base.copyWith(data: base.data.copyWith(draft: true)),
+        files,
+      );
+      expect(result, isA<StepNotApplicable>());
+      expect((result as StepNotApplicable).reason, SkipReason.notApplicable);
+      expect(result.job.data.nutrition, isNull);
+      expect(lookup.calls, isEmpty);
+    });
+
+    test('Elabora ricetta: abbinamenti con gli id della bozza', () async {
+      final step = NutritionStep(
+        lookup: () async => FakeFoodLookup(),
+        clock: () => now,
+      );
+      final base = job(
+        status: ImportStatus.extracted,
+        extraction: _extraction(),
+      );
+      final result = await step.run(
+        base.copyWith(data: base.data.copyWith(draftRecipeId: 'bozza')),
+        files,
+      );
+      final snapshot = NutritionSnapshot.fromJson(result.job.data.nutrition!);
+      expect(snapshot.matches.keys, everyElement(startsWith('bozza-i')));
+      expect(snapshot.matches, isNotEmpty);
+    });
+
     test('nessuna estrazione nel job: UnexpectedFailure', () async {
       final step = NutritionStep(lookup: () async => FakeFoodLookup());
       await expectLater(

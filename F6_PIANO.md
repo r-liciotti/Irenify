@@ -47,7 +47,7 @@ dettaglio si apre il post originale.
 - **Da fare:** prova di un reel di sola musica (serve un link nuovo dall'utente: quello delle Cinnamon Tortilla Rolls
   è già nel ricettario e verrebbe riconosciuto come doppione).
 
-## Fase 2 — Offline e quote (≈ 0,75 gg)
+## Fase 2 — Offline, quote e bozze (≈ 1,25 gg) — ✅ sviluppata e provata il 2026-10-08 (D-62)
 
 Nuovi stati di attesa del job:
 - **"in attesa di connessione":** quando la rete manca, il job riparte da solo quando la rete torna;
@@ -60,6 +60,20 @@ Da capire nella rianalisi: come distinguere "manca la rete" da "il sito non risp
 (il motore lavora solo ad app aperta, D-34).
 
 **Uscita:** in modalità aereo una condivisione aspetta e completa da sola alla riconnessione.
+
+**Resoconto del 2026-10-08 (D-62):** rete assente → attesa automatica (anche per il video, che prima si saltava in
+silenzio); sito che non risponde con la rete presente → "riprova più tardi", senza nuovi tentativi; quota giornaliera →
+attesa fino alla mezzanotte del Pacifico; Gemini sovraccarico → ricetta in bozza (database v3) con "Elabora ricetta",
+che usa didascalia e trascrizione salvate. Ad app chiusa si riprende alla prossima apertura.
+
+**Com'è andata (2026-10-08):** contratto dell'agente principale (`NetworkStatus`, `nextGeminiQuotaReset`,
+`WaitReason`/`waitUntil`/`draft`/`draftRecipeId` nel job, `recipes.is_draft` con database v3, `replaceDraft`,
+`DraftReprocessor`, testi), poi 4 subagent: motore (attesa, timer della quota, ripresa a rete tornata e al ritorno
+in primo piano), bozze nella pipeline ed "Elabora ricetta", database e repository, interfaccia. 958 test passati, APK
+di debug compilato. **Prova sul Pixel:** migrazione v3 senza perdite (9 ricette); con modalità aereo e Wi-Fi spento il
+post `Ddwoj5kBk9X` si è fermato su "Didascalia" con "In attesa di connessione"; riaccesa la rete è ripartito da solo
+fino a Gemini ("non è una ricetta", come atteso). Con il Wi-Fi rimasto acceso in modalità aereo l'app ha visto la rete
+e ha lavorato normalmente. La bozza non si può provocare dal vivo: coperta dai test.
 
 ## Fase 3 — Backup (≈ 1 gg)
 

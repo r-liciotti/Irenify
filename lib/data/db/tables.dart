@@ -26,6 +26,10 @@ class Recipes extends Table {
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   TextColumn get extractionModel => text().nullable()();
   BoolColumn get needsReview => boolean().withDefault(const Constant(false))();
+
+  /// Ricetta in bozza (D-62, schema v3): Gemini non era disponibile, ci sono
+  /// solo titolo provvisorio, fonte (didascalia e trascrizione) e miniatura.
+  BoolColumn get isDraft => boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
 

@@ -11,6 +11,26 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-62 — Offline, quota e ricette in bozza (2026-10-08) — Attiva
+- **Decisione:**
+  - **Rete assente** (il telefono non ha nessuna rete, letto con `connectivity_plus`): il job si ferma in attesa
+    (`waitingFor: connection`) e riparte da solo quando torna la rete, quando si riapre l'app o all'avvio. Vale
+    anche per la tappa video, che prima veniva saltata in silenzio, e per miniatura e sottotitoli.
+  - **Rete presente ma sito che non risponde** (Instagram, TikTok o Gemini irraggiungibili): nessun nuovo tentativo
+    automatico; messaggio "Non è stato possibile collegarsi: riprova più tardi" con "Riprova".
+  - **Quota giornaliera di Gemini esaurita**: il job aspetta (`waitingFor: quota`, `waitUntil`) e riparte da solo alla
+    mezzanotte del Pacifico (9:00 in Italia, 8:00 nelle settimane di sfasamento dell'ora legale).
+  - **Gemini sovraccarico** (5xx, modello non disponibile, quota al minuto ancora esaurita dopo i tentativi): la
+    ricetta si salva **in bozza** (titolo provvisorio, didascalia, trascrizione, miniatura, link), database v3 con
+    `recipes.is_draft`. Nel dettaglio "Elabora ricetta" crea un job che rimanda a Gemini **le informazioni salvate**,
+    senza riaprire il post né rifare la trascrizione, e sostituisce la bozza.
+  - **App chiusa del tutto**: nessun risveglio in background; si riprende alla prossima apertura.
+- **Alternative scartate:** nuovi tentativi automatici per qualche ora anche col sito irraggiungibile (scelta
+  dell'utente: messaggio e riprova manuale); WorkManager per riprendere ad app chiusa (complessità, e Whisper
+  richiede comunque l'app aperta, D-34); bozza anche per la quota giornaliera (resta l'attesa automatica di D-59).
+- **Deciso da:** utente (risposte al resoconto della fase 2 della F6: "1 ok", "dici non è stato possibile e di
+  riprovare più tardi", "si salva la ricetta in bozza ed elabora delle informazioni salvate").
+
 ## D-61 — Rilevatore di voce Silero e whisper_ggml copiato nel progetto (2026-10-06) — Attiva
 - **Decisione:**
   - **Pacchetto:** `whisper_ggml` 2.6.0 copiato in `packages/whisper_ggml/` (solo `lib`, `android`, `ios`, circa

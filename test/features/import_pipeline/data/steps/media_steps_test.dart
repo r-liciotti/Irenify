@@ -98,6 +98,37 @@ void main() {
       expect(log.export(), contains('Miniatura non scaricata'));
     });
 
+    test(
+      'miniatura senza rete (D-62): la tappa si ferma e il job aspetta',
+      () async {
+        http.routes.remove(_thumbUrl);
+        final offline = MetadataStep(
+          clients: {SourcePlatform.tiktok: client},
+          downloader: Downloader(http.dio),
+          log: log,
+          isOffline: () async => true,
+        );
+
+        await expectLater(
+          offline.run(_job(), files),
+          throwsA(predicate((Object e) => Failure.from(e) is NetworkFailure)),
+        );
+      },
+    );
+
+    test('miniatura con la rete ma non scaricabile: si prosegue', () async {
+      http.routes.remove(_thumbUrl);
+      final online = MetadataStep(
+        clients: {SourcePlatform.tiktok: client},
+        downloader: Downloader(http.dio),
+        log: log,
+        isOffline: () async => false,
+      );
+
+      final result = await online.run(_job(), files);
+      expect(result.job.data.thumbnailPath, isNull);
+    });
+
     test('un video condiviso come file non ha una pagina da leggere', () async {
       final result = await metadata.run(
         _job(sharedFilePath: '/jobs/job/condiviso.mp4'),
@@ -291,6 +322,30 @@ void main() {
       expect(result.job.data.videoPath, isNotNull);
       expect(result.job.data.subtitlesPath, isNull);
     });
+
+    test(
+      'sottotitoli senza rete (D-62): la tappa si ferma, il video resta',
+      () async {
+        client.onFetch = (_) =>
+            _videoPage(subtitles: Uri.parse('https://x/assenti.vtt'));
+        final offline = MediaStep(
+          clients: {SourcePlatform.tiktok: client},
+          downloader: Downloader(http.dio),
+          log: log,
+          isOffline: () async => true,
+        );
+
+        await expectLater(
+          offline.run(_job(), files),
+          throwsA(predicate((Object e) => Failure.from(e) is NetworkFailure)),
+        );
+        expect(
+          await files.file('video.mp4').exists(),
+          isTrue,
+          reason: 'al nuovo tentativo non si riscarica',
+        );
+      },
+    );
   });
 
   group('Downloader', () {

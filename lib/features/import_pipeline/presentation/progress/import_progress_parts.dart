@@ -8,7 +8,8 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../recipes/domain/recipe_enums.dart';
 import '../../domain/import_flow.dart';
 import '../../domain/import_job.dart';
-import '../import_job_tile.dart' show importPlatformIcon, stepLabel;
+import '../import_job_tile.dart'
+    show importPlatformIcon, importWaitIcon, importWaitReason, stepLabel;
 import '../imports_screen.dart' show recentImportJobsProvider;
 import '../job/import_step_timeline.dart';
 
@@ -198,7 +199,7 @@ class CompactStepList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final step in timelineSteps)
+        for (final step in timelineStepsFor(job))
           Padding(
             key: ValueKey('progress-step-${step.name}'),
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -212,6 +213,10 @@ class CompactStepList extends StatelessWidget {
                     colors.outline,
                   ),
                   StepState.stopped => (Icons.error, colors.error),
+                  StepState.waiting => (
+                    importWaitIcon(importWaitReason(job)!),
+                    extra.accentDecoration,
+                  ),
                   StepState.running => (
                     Icons.radio_button_checked,
                     extra.accentDecoration,
@@ -222,7 +227,8 @@ class CompactStepList extends StatelessWidget {
                   ),
                 };
                 final style = switch (state) {
-                  StepState.running => theme.textTheme.titleSmall,
+                  StepState.running ||
+                  StepState.waiting => theme.textTheme.titleSmall,
                   StepState.done => theme.textTheme.bodyMedium,
                   StepState.stopped => theme.textTheme.bodyMedium?.copyWith(
                     color: colors.error,

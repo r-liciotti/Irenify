@@ -136,7 +136,7 @@ void main() {
     ),
     (
       const GeminiKeyUnverified(NetworkFailure()),
-      'Salvata ma non verificata. Connessione assente o troppo lenta.',
+      'Salvata ma non verificata. Non è stato possibile collegarsi: riprova più tardi.',
     ),
   ]) {
     testWidgets('esito della verifica: $check', (tester) async {

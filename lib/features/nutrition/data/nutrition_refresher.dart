@@ -1,6 +1,7 @@
 /// Ricalcolo dei valori nutrizionali salvati (F4 fase 3, D-57): all'avvio
 /// calcola quelli mancanti e, quando cambia il database degli alimenti,
-/// ricalcola tutte le ricette.
+/// ricalcola tutte le ricette. Le bozze (D-62) restano fuori: non hanno
+/// ingredienti.
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -97,8 +98,8 @@ class NutritionRefresher {
     }
     final all = stored != lookup.version;
     final ids = all
-        ? await _recipes.allRecipeIds()
-        : await _recipes.recipeIdsWithoutNutrition();
+        ? await _recipes.completeRecipeIds()
+        : await _recipes.completeRecipeIdsWithoutNutrition();
 
     final service = NutritionService(lookup);
     var computed = 0;

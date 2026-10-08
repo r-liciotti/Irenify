@@ -11,6 +11,11 @@ import 'test_database.dart';
 
 const _when = '2026-09-28T10:30:15.123';
 
+/// Versione attuale: il codice dell'app (repository compreso) legge solo
+/// questa, quindi i dati v1 si portano fino all'ultima versione passando dal
+/// passo v1 → v2.
+const _latest = 3;
+
 /// Ricettario v1 realistico: tag copiati dagli hashtag, accenti, ricetta
 /// senza fonte né ingredienti.
 const _seedV1 = [
@@ -51,7 +56,7 @@ Future<AppDatabase> _migratedFromV1(SchemaVerifier verifier) async {
     schema.rawDatabase.execute(sql);
   }
   final db = AppDatabase(schema.newConnection());
-  await verifier.migrateAndValidate(db, 2);
+  await verifier.migrateAndValidate(db, _latest);
   return db;
 }
 
@@ -199,7 +204,7 @@ void main() {
         throwsA(isA<StateError>()),
       );
       await crashed.close();
-      expect(_userVersion(schema.rawDatabase), 2);
+      expect(_userVersion(schema.rawDatabase), _latest);
 
       db = AppDatabase(schema.newConnection());
       expect((await RecipeRepository(db).getById('caffe'))!.tags, ['bevanda']);
@@ -213,13 +218,13 @@ void main() {
       schema.rawDatabase.execute(sql);
     }
     final first = AppDatabase(schema.newConnection());
-    await verifier.migrateAndValidate(first, 2);
+    await verifier.migrateAndValidate(first, _latest);
     await first.close();
     // Come se drift non avesse fatto in tempo a salvare la versione.
     schema.rawDatabase.execute('PRAGMA user_version = 1');
 
     db = AppDatabase(schema.newConnection());
-    await verifier.migrateAndValidate(db, 2);
+    await verifier.migrateAndValidate(db, _latest);
     final repo = RecipeRepository(db);
 
     final count = await db
@@ -248,7 +253,7 @@ void main() {
         .customSelect("SELECT name FROM sqlite_master WHERE type = 'trigger'")
         .get();
     expect(triggers, hasLength(1));
-    expect(_userVersion(schema.rawDatabase), 2);
+    expect(_userVersion(schema.rawDatabase), _latest);
   });
 
   test('database nuovo: indice e trigger creati da createAll', () async {

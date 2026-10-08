@@ -69,7 +69,10 @@ quote con attesa automatica, backup zip, Whisper per altri telefoni e APK firmat
 `whisper_ggml` **copiato in `packages/whisper_ggml/`** (`dependency_overrides`; modifiche native marcate "Irenefy
 (D-61)" in `android/src/whisper/main.cpp`; i file generati del pacchetto vanno rigenerati con cura: `--delete-conflicting-outputs`
 cancella gli altri), modello `assets/whisper/ggml-silero-v5.1.2.bin`, motivo `noSpeech`; icona del post originale sotto il
-titolo (D-60, `font_awesome_flutter`). Prove dal vivo D-44 ancora aperte.
+titolo (D-60, `font_awesome_flutter`). Fase 2 (2026-10-08, provata sul Pixel): attesa senza rete e per la quota giornaliera di Gemini (`core/network/network_status.dart`,
+`domain/quota_reset.dart`, `ImportEngine.resumeWaiting`, job `failed` con `data.waitingFor`), ricette **in bozza** quando Gemini è
+sovraccarico (database **v3**, `recipes.is_draft`, `RecipeRepository.replaceDraft`) ed "Elabora ricetta" (`data/draft_reprocessor.dart`:
+job che parte da `transcribed` con `draftRecipeId`; id della ricetta sempre da `recipeIdForJob`), D-62. Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

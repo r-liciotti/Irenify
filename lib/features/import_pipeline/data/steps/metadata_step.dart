@@ -1,3 +1,4 @@
+import '../../../../core/errors/failure.dart';
 import '../../../../core/logging/app_log.dart';
 import '../../../recipes/domain/recipe_enums.dart';
 import '../../domain/import_job.dart';
@@ -13,13 +14,21 @@ class MetadataStep implements ImportStep {
     required Map<SourcePlatform, PlatformClient> clients,
     required Downloader downloader,
     required AppLog log,
+    Future<bool> Function()? isOffline,
   }) : _clients = clients,
        _downloader = downloader,
-       _log = log;
+       _log = log,
+       _isOffline = isOffline ?? _alwaysOnline;
 
   final Map<SourcePlatform, PlatformClient> _clients;
   final Downloader _downloader;
   final AppLog _log;
+
+  /// Stato della rete (D-62): senza rete un errore di connessione su
+  /// la miniatura ferma la tappa, così il job aspetta la rete.
+  final Future<bool> Function() _isOffline;
+
+  static Future<bool> _alwaysOnline() async => false;
 
   static const thumbnailName = 'miniatura.jpg';
 
@@ -48,7 +57,8 @@ class MetadataStep implements ImportStep {
     );
   }
 
-  /// La miniatura è un di più: se non si scarica, il job prosegue.
+  /// La miniatura è un di più: se non si scarica, il job prosegue;
+  /// senza rete invece la tappa si ferma e il job aspetta (D-62).
   Future<String?> _thumbnail(Uri? url, JobFiles files) async {
     if (url == null) return null;
     final existing = files.file(thumbnailName);
@@ -64,6 +74,7 @@ class MetadataStep implements ImportStep {
       );
       return file.path;
     } catch (e, st) {
+      if (Failure.from(e) is NetworkFailure && await _isOffline()) rethrow;
       _log.error('Miniatura non scaricata', e, st);
       return null;
     }

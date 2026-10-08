@@ -186,21 +186,94 @@ IconData importPlatformIcon(SourcePlatform? platform) => switch (platform) {
 
 enum _MenuItem { details, delete }
 
-/// Stato del job con un'icona: in corso (con la tappa), concluso o fermo.
+/// Che cosa aspetta [job] per ripartire da solo (D-62); `null` se non è un
+/// job fermo in attesa.
+WaitReason? importWaitReason(ImportJob job) =>
+    job.status == ImportStatus.failed ? job.data.waitingFor : null;
+
+/// Icona dell'attesa: rete assente o quota di Gemini.
+IconData importWaitIcon(WaitReason reason) => switch (reason) {
+  WaitReason.connection => Icons.wifi_off,
+  WaitReason.quota => Icons.schedule,
+};
+
+/// Testo dell'attesa di [job] (D-62): breve per l'elenco e le tappe
+/// ("In attesa di connessione"), completo per il dettaglio e la schermata di
+/// caricamento (con l'ora di ripartenza per la quota). `null` se il job non
+/// è in attesa.
+String? importWaitText(
+  BuildContext context,
+  ImportJob job, {
+  required bool short,
+}) {
+  final l10n = AppLocalizations.of(context);
+  switch (importWaitReason(job)) {
+    case null:
+      return null;
+    case WaitReason.connection:
+      return short
+          ? l10n.importWaitingConnectionShort
+          : l10n.importWaitingConnection;
+    case WaitReason.quota:
+      final until = job.data.waitUntil;
+      if (short || until == null) return l10n.importWaitingQuotaShort;
+      return l10n.importWaitingQuota(_waitTime(context, until));
+  }
+}
+
+/// Seconda riga dell'attesa di [job] sotto il titolo breve della schermata di
+/// caricamento: solo quando riparte, senza ripetere il titolo. `null` se il
+/// job non è in attesa.
+String? importWaitHint(BuildContext context, ImportJob job) {
+  final l10n = AppLocalizations.of(context);
+  return switch (importWaitReason(job)) {
+    null => null,
+    WaitReason.connection => l10n.importWaitingConnectionHint,
+    WaitReason.quota => switch (job.data.waitUntil) {
+      null => l10n.importWaitingQuotaHintLater,
+      final until => l10n.importWaitingQuotaHint(_waitTime(context, until)),
+    },
+  };
+}
+
+/// Ora locale di ripartenza, sempre a 24 ore ("09:00").
+String _waitTime(BuildContext context, DateTime until) =>
+    MaterialLocalizations.of(context).formatTimeOfDay(
+      TimeOfDay.fromDateTime(until.toLocal()),
+      alwaysUse24HourFormat: true,
+    );
+
+/// Stato del job con un'icona: in corso (con la tappa), concluso, in attesa
+/// (D-62) o fermo.
 class ImportStatusLine extends StatelessWidget {
-  const ImportStatusLine(this.job, {super.key});
+  const ImportStatusLine(this.job, {this.detailed = false, super.key});
 
   final ImportJob job;
+
+  /// Testo completo dell'attesa (dettaglio del job) invece di quello breve.
+  final bool detailed;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colors = Theme.of(context).colorScheme;
+    final wait = importWaitReason(job);
     final (icon, color, text) = switch (job.status) {
+      // In attesa: non è un errore, riparte da solo.
+      ImportStatus.failed when wait != null => (
+        importWaitIcon(wait),
+        colors.onSurfaceVariant,
+        importWaitText(context, job, short: !detailed)!,
+      ),
       ImportStatus.completed when job.data.alreadyImported => (
         Icons.bookmark_added_outlined,
         colors.primary,
         l10n.importAlreadyInRecipes,
+      ),
+      ImportStatus.completed when job.data.draft => (
+        Icons.edit_note,
+        colors.primary,
+        l10n.importDraftSaved,
       ),
       ImportStatus.completed => (
         Icons.check_circle_outline,

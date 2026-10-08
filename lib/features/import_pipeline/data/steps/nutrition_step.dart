@@ -11,8 +11,8 @@ import '../../domain/recipe_extraction.dart';
 /// finale li salva insieme alla ricetta.
 ///
 /// La ricetta si costruisce in memoria come la costruirà la tappa finale:
-/// gli id degli ingredienti dipendono solo dall'estrazione e dall'id del
-/// job, quindi gli abbinamenti corrispondono. Se la tappa fallisce il job
+/// gli id degli ingredienti dipendono solo dall'estrazione e dall'id della
+/// ricetta (`recipeIdForJob`), quindi gli abbinamenti corrispondono. Se la tappa fallisce il job
 /// prosegue senza valori: li calcola all'avvio il ricalcolo delle ricette.
 ///
 /// Idempotente: rieseguita, ricalcola e sovrascrive lo stesso campo.
@@ -31,6 +31,10 @@ class NutritionStep implements ImportStep {
 
   @override
   Future<StepResult> run(ImportJob job, JobFiles files) async {
+    // Bozza (D-62): niente ingredienti, niente valori.
+    if (job.data.draft && job.data.extraction == null) {
+      return StepResult.notApplicable(job, SkipReason.notApplicable);
+    }
     final extraction = job.data.extraction;
     if (extraction == null) {
       throw const UnexpectedFailure(
@@ -44,7 +48,7 @@ class NutritionStep implements ImportStep {
       final recipe = recipeFromExtraction(
         extraction: extraction,
         job: job,
-        recipeId: job.id,
+        recipeId: recipeIdForJob(job),
         thumbnailPath: null,
         now: now,
       );

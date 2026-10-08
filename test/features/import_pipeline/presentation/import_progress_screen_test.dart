@@ -339,7 +339,10 @@ void main() {
     );
 
     expect(find.text('Importazione non riuscita'), findsOneWidget);
-    expect(find.text('Connessione assente o troppo lenta.'), findsOneWidget);
+    expect(
+      find.text('Non è stato possibile collegarsi: riprova più tardi.'),
+      findsOneWidget,
+    );
     expect(_stepIcon(ImportStatus.extracted, Icons.error), findsOneWidget);
     expect(find.text('Aggiungi il video'), findsNothing);
     expect(find.text('Continua con la sola didascalia'), findsNothing);
@@ -512,4 +515,114 @@ void main() {
       await tester.pumpAndSettle();
     });
   }
+
+  group('attesa e bozza (D-62)', () {
+    testWidgets('in attesa di connessione: niente errore, "Riprova" resta', (
+      tester,
+    ) async {
+      final h = await _pump(
+        tester,
+        _job(
+          status: ImportStatus.failed,
+          failedStep: ImportStatus.media,
+          errorCode: 'network',
+          data: const ImportJobData(waitingFor: WaitReason.connection),
+        ),
+      );
+
+      expect(find.text('Importazione non riuscita'), findsNothing);
+      expect(find.text('In attesa di connessione'), findsOneWidget);
+      expect(
+        find.text('Riparte da sola quando torna la rete.'),
+        findsOneWidget,
+      );
+      expect(_stepIcon(ImportStatus.media, Icons.wifi_off), findsOneWidget);
+      expect(_stepIcon(ImportStatus.media, Icons.error), findsNothing);
+
+      await tester.ensureVisible(find.text('Riprova'));
+      await tester.tap(find.text('Riprova'));
+      await tester.pumpAndSettle();
+      expect(h.actions.calls, ['retry j1']);
+    });
+
+    testWidgets('in attesa della quota: ora locale della ripartenza', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        _job(
+          status: ImportStatus.failed,
+          failedStep: ImportStatus.extracted,
+          errorCode: 'quotaExceeded',
+          data: ImportJobData(
+            waitingFor: WaitReason.quota,
+            waitUntil: DateTime(2026, 10, 9, 9).toUtc(),
+          ),
+        ),
+      );
+
+      expect(
+        find.text(
+          'Riparte da sola alle 09:00, quando si rinnova la quota giornaliera.',
+        ),
+        findsOneWidget,
+      );
+      expect(_stepIcon(ImportStatus.extracted, Icons.schedule), findsOneWidget);
+      expect(find.text('Riprova'), findsOneWidget);
+    });
+
+    testWidgets('salvata in bozza: resta il messaggio, la ricetta si apre '
+        'col pulsante', (tester) async {
+      final h = await _pump(
+        tester,
+        _job(
+          status: ImportStatus.completed,
+          recipeId: 'r9',
+          data: const ImportJobData(draft: true),
+        ),
+      );
+
+      expect(find.text('Salvata in bozza'), findsOneWidget);
+      expect(
+        find.textContaining('ho salvato la ricetta in bozza'),
+        findsOneWidget,
+      );
+      expect(find.text(_done), findsNothing);
+
+      // Nessuna apertura automatica.
+      await tester.pump(ImportProgressScreen.doneDelay);
+      await tester.pumpAndSettle();
+      expect(find.byType(ImportProgressScreen), findsOneWidget);
+
+      await tester.tap(find.text('Apri la ricetta'));
+      await tester.pumpAndSettle();
+      expect(find.text('Ricetta r9'), findsOneWidget);
+      expect(h.locations.where((l) => l == '/ricette/r9'), hasLength(1));
+    });
+
+    testWidgets('job di "Elabora ricetta": parte dalla scrittura della '
+        'ricetta senza le tappe precedenti', (tester) async {
+      await _pump(
+        tester,
+        _job(
+          status: ImportStatus.transcribed,
+          data: const ImportJobData(draftRecipeId: 'r9'),
+        ),
+      );
+
+      expect(find.text('Scrivo la ricetta…'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('progress-step-normalized')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey('progress-step-transcribed')),
+        findsNothing,
+      );
+      expect(
+        _stepIcon(ImportStatus.extracted, Icons.radio_button_checked),
+        findsOneWidget,
+      );
+    });
+  });
 }

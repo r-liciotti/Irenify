@@ -8,6 +8,7 @@ import '../../../../app/theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/recipe.dart';
 import '../recipe_thumbnail.dart';
+import '../recipe_title.dart';
 
 /// Scheda di una ricetta nella griglia della home: foto 3:4, titolo in
 /// Gloock su due righe al massimo, tempo totale e autore.
@@ -106,6 +107,14 @@ class RecipeCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                // Bozza (D-62): in basso, così non si sovrappone agli
+                // altri segni.
+                if (recipe.isDraft)
+                  Positioned(
+                    left: 8,
+                    bottom: 8,
+                    child: _DraftBadge(label: l10n.recipeDraftBadge),
+                  ),
                 if (recipe.isFavorite)
                   Positioned(
                     top: 8,
@@ -127,7 +136,11 @@ class RecipeCard extends StatelessWidget {
           ),
           const SizedBox(height: _gapBelowPhoto),
           Text(
-            recipe.title,
+            recipeDisplayTitle(
+              l10n,
+              title: recipe.title,
+              isDraft: recipe.isDraft,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: _titleStyle(theme),
@@ -173,4 +186,39 @@ class _Badge extends StatelessWidget {
     decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     child: Padding(padding: const EdgeInsets.all(6), child: child),
   );
+}
+
+/// Etichetta "Bozza" sopra la foto (D-62).
+class _DraftBadge extends StatelessWidget {
+  const _DraftBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = IrenefyColors.of(context);
+    return DecoratedBox(
+      key: const ValueKey('recipe-card-draft'),
+      decoration: BoxDecoration(
+        color: colors.warningContainer,
+        borderRadius: BorderRadius.circular(IrenefyRadii.field),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.edit_note, size: 16, color: colors.onWarningContainer),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: colors.onWarningContainer,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

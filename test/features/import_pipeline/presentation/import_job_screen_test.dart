@@ -251,7 +251,7 @@ void main() {
     expect(
       _inStep(
         ImportStatus.nutrition,
-        'Saltata: Connessione assente o troppo lenta.',
+        'Saltata: Non è stato possibile collegarsi: riprova più tardi.',
       ),
       findsOne,
     );
@@ -331,7 +331,7 @@ void main() {
     expect(
       _inStep(
         ImportStatus.metadata,
-        'Ferma qui: Connessione assente o troppo lenta.',
+        'Ferma qui: Non è stato possibile collegarsi: riprova più tardi.',
       ),
       findsOne,
     );
@@ -581,6 +581,90 @@ void main() {
       expect(find.text('1 h 2 min'), findsOneWidget);
     });
   }
+
+  group('attesa e bozza (D-62)', () {
+    testWidgets('in attesa di connessione: messaggio completo, tappa in '
+        'attesa e "Riprova"', (tester) async {
+      final h = await _pumpDetail(
+        tester,
+        _job(
+          status: ImportStatus.failed,
+          failedStep: ImportStatus.metadata,
+          errorCode: 'network',
+          data: const ImportJobData(waitingFor: WaitReason.connection),
+        ),
+      );
+
+      expect(
+        find.text(
+          'In attesa di connessione: riparte da sola quando torna la rete.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        _inStep(ImportStatus.metadata, 'In attesa di connessione'),
+        findsOne,
+      );
+      expect(find.textContaining('Ferma qui'), findsNothing);
+      expect(find.byIcon(Icons.error), findsNothing);
+
+      await _scrollTo(tester, find.text('Riprova'));
+      await tester.tap(find.text('Riprova'));
+      await tester.pumpAndSettle();
+      expect(h.actions.calls, ['retry j1']);
+    });
+
+    testWidgets('in attesa della quota: ora della ripartenza', (tester) async {
+      await _pumpDetail(
+        tester,
+        _job(
+          status: ImportStatus.failed,
+          failedStep: ImportStatus.extracted,
+          errorCode: 'quotaExceeded',
+          data: ImportJobData(
+            waitingFor: WaitReason.quota,
+            waitUntil: DateTime(2026, 10, 9, 9).toUtc(),
+          ),
+        ),
+      );
+
+      expect(
+        find.text(
+          'Quota giornaliera di Gemini esaurita: riparte da sola alle 09:00.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        _inStep(ImportStatus.extracted, 'In attesa della quota di Gemini'),
+        findsOne,
+      );
+    });
+
+    testWidgets('job di "Elabora ricetta": solo le tappe dopo la '
+        'trascrizione; bozza di nuovo salvata', (tester) async {
+      await _pumpDetail(
+        tester,
+        _job(
+          status: ImportStatus.completed,
+          recipeId: 'r9',
+          data: const ImportJobData(draftRecipeId: 'r9', draft: true),
+        ),
+      );
+
+      for (final step in [
+        ImportStatus.normalized,
+        ImportStatus.metadata,
+        ImportStatus.media,
+        ImportStatus.audio,
+        ImportStatus.transcribed,
+      ]) {
+        expect(find.byKey(ValueKey('import-step-${step.name}')), findsNothing);
+      }
+      expect(find.byKey(const ValueKey('import-step-extracted')), findsOne);
+      expect(find.byKey(const ValueKey('import-step-nutrition')), findsOne);
+      expect(find.text('Salvata in bozza'), findsOneWidget);
+    });
+  });
 }
 
 /// Eliminazione come nel motore: prima la riga (lo stream emette `null`),

@@ -175,6 +175,22 @@ void main() {
     expect(versions.version, 'v1');
   });
 
+  test('le bozze (D-62) restano fuori dal ricalcolo', () async {
+    await recipes.insert(
+      sampleRecipe(
+        id: 'bozza',
+        sourceKey: 'tiktok:9',
+      ).copyWith(isDraft: true, ingredientGroups: const [], steps: const []),
+    );
+    expect(await refresher().run(), 2);
+    expect(recipes.saved, ['r1', 'r2']);
+    dbVersion = 'v2';
+    recipes.saved.clear();
+    expect(await refresher().run(), 2);
+    expect(recipes.saved, ['r1', 'r2']);
+    expect(await recipes.watchNutrition('bozza').first, isNull);
+  });
+
   test('ricette eliminate nel frattempo: saltate senza errori', () async {
     await recipes.delete('r2');
     expect(await refresher().run(), 1);

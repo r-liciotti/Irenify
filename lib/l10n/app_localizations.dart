@@ -628,6 +628,102 @@ abstract class AppLocalizations {
   /// **'solo musica, nessuna voce'**
   String get importSkipNoSpeech;
 
+  /// No description provided for @importWaitingConnection.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa di connessione: riparte da sola quando torna la rete.'**
+  String get importWaitingConnection;
+
+  /// No description provided for @importWaitingQuota.
+  ///
+  /// In it, this message translates to:
+  /// **'Quota giornaliera di Gemini esaurita: riparte da sola alle {time}.'**
+  String importWaitingQuota(String time);
+
+  /// No description provided for @importWaitingConnectionHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Riparte da sola quando torna la rete.'**
+  String get importWaitingConnectionHint;
+
+  /// No description provided for @importWaitingQuotaHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Riparte da sola alle {time}, quando si rinnova la quota giornaliera.'**
+  String importWaitingQuotaHint(String time);
+
+  /// No description provided for @importWaitingQuotaHintLater.
+  ///
+  /// In it, this message translates to:
+  /// **'Riparte da sola quando si rinnova la quota giornaliera.'**
+  String get importWaitingQuotaHintLater;
+
+  /// No description provided for @importWaitingConnectionShort.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa di connessione'**
+  String get importWaitingConnectionShort;
+
+  /// No description provided for @importWaitingQuotaShort.
+  ///
+  /// In it, this message translates to:
+  /// **'In attesa della quota di Gemini'**
+  String get importWaitingQuotaShort;
+
+  /// No description provided for @importDraftSaved.
+  ///
+  /// In it, this message translates to:
+  /// **'Salvata in bozza'**
+  String get importDraftSaved;
+
+  /// No description provided for @importProgressDraft.
+  ///
+  /// In it, this message translates to:
+  /// **'Gemini non è disponibile in questo momento: ho salvato la ricetta in bozza. Riprova più tardi con «Elabora ricetta».'**
+  String get importProgressDraft;
+
+  /// No description provided for @recipeDraftBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'Bozza'**
+  String get recipeDraftBadge;
+
+  /// No description provided for @recipeDraftUntitled.
+  ///
+  /// In it, this message translates to:
+  /// **'Ricetta in bozza'**
+  String get recipeDraftUntitled;
+
+  /// No description provided for @recipeDraftMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa ricetta è in bozza: quando l\'hai importata Gemini non era disponibile. Ingredienti e passi arriveranno elaborandola.'**
+  String get recipeDraftMessage;
+
+  /// No description provided for @recipeDraftProcess.
+  ///
+  /// In it, this message translates to:
+  /// **'Elabora ricetta'**
+  String get recipeDraftProcess;
+
+  /// No description provided for @recipeDraftProcessFailed.
+  ///
+  /// In it, this message translates to:
+  /// **'Non è stato possibile elaborare la ricetta: riprova più tardi.'**
+  String get recipeDraftProcessFailed;
+
+  /// No description provided for @recipeDraftCaption.
+  ///
+  /// In it, this message translates to:
+  /// **'Didascalia'**
+  String get recipeDraftCaption;
+
+  /// No description provided for @recipeDraftTranscript.
+  ///
+  /// In it, this message translates to:
+  /// **'Trascrizione'**
+  String get recipeDraftTranscript;
+
   /// No description provided for @importDurationUnderSecond.
   ///
   /// In it, this message translates to:
@@ -1573,7 +1669,7 @@ abstract class AppLocalizations {
   /// No description provided for @failureNetwork.
   ///
   /// In it, this message translates to:
-  /// **'Connessione assente o troppo lenta.'**
+  /// **'Non è stato possibile collegarsi: riprova più tardi.'**
   String get failureNetwork;
 
   /// No description provided for @failureUnexpected.

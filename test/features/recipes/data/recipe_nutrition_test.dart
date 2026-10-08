@@ -167,10 +167,10 @@ void main() {
         createdAt: DateTime(2026, 1, 3),
       ),
     );
-    expect(await repo.allRecipeIds(), ['r2', 'r1', 'r3']);
-    expect(await repo.recipeIdsWithoutNutrition(), ['r1', 'r3']);
+    expect(await repo.completeRecipeIds(), ['r2', 'r1', 'r3']);
+    expect(await repo.completeRecipeIdsWithoutNutrition(), ['r1', 'r3']);
     await repo.saveNutrition('r3', snapshot());
-    expect(await repo.recipeIdsWithoutNutrition(), ['r1']);
+    expect(await repo.completeRecipeIdsWithoutNutrition(), ['r1']);
   });
 
   test('delete e deleteAll eliminano anche i valori', () async {

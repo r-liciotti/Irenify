@@ -13,6 +13,8 @@ import '../domain/import_flow.dart';
 import '../domain/import_job.dart';
 import 'import_actions.dart';
 import 'import_job_screen.dart' show importJobDetailProvider;
+import 'import_job_tile.dart'
+    show importWaitHint, importWaitIcon, importWaitReason, importWaitText;
 import 'job/import_job_commands.dart';
 import 'progress/import_progress_parts.dart';
 
@@ -23,7 +25,11 @@ import 'progress/import_progress_parts.dart';
 ///   `MediaQuery.disableAnimations`, come nei widget test), tappe compatte.
 /// - Completata: [doneDelay] con "Ricetta pronta!", poi `go` alla ricetta,
 ///   che sostituisce questa schermata ("indietro" torna al ricettario).
-/// - Ferma: errore e azioni; dopo "Riprova" torna l'avanzamento.
+/// - Salvata in bozza (Gemini non disponibile, D-62): resta qui con il
+///   messaggio e il pulsante per aprire la ricetta.
+/// - Ferma: errore e azioni; dopo "Riprova" torna l'avanzamento. In attesa
+///   della rete o della quota (D-62) non è un errore: messaggio d'attesa,
+///   "Riprova" resta.
 /// - Eliminata (o inesistente): esce verso le ricette.
 class ImportProgressScreen extends ConsumerStatefulWidget {
   const ImportProgressScreen({required this.jobId, super.key});
@@ -71,12 +77,15 @@ class _ImportProgressScreenState extends ConsumerState<ImportProgressScreen> {
           if (_isCurrent) _exit();
         });
       case AsyncData(
-        value: ImportJob(status: ImportStatus.completed, :final recipeId?),
+        value: ImportJob(
+          status: ImportStatus.completed,
+          :final recipeId?,
+          data: ImportJobData(draft: false),
+        ),
       ):
         _openRecipe ??= Timer(ImportProgressScreen.doneDelay, () {
           if (!_isCurrent || _leaving) return;
-          _leaving = true;
-          context.go(Routes.recipe(recipeId));
+          _goToRecipe(recipeId);
         });
       default:
         break;
@@ -86,6 +95,15 @@ class _ImportProgressScreenState extends ConsumerState<ImportProgressScreen> {
   /// Questa schermata è ancora quella in primo piano: se un'altra
   /// condivisione l'ha già sostituita, non deve più navigare.
   bool get _isCurrent => mounted && (ModalRoute.of(context)?.isCurrent ?? true);
+
+  /// Apre la ricetta al posto di questa schermata ("indietro" torna al
+  /// ricettario).
+  void _goToRecipe(String recipeId) {
+    if (_leaving) return;
+    _leaving = true;
+    _openRecipe?.cancel();
+    context.go(Routes.recipe(recipeId));
+  }
 
   /// "Continua in background": l'importazione prosegue nel motore.
   void _background() {
@@ -117,7 +135,7 @@ class _ImportProgressScreenState extends ConsumerState<ImportProgressScreen> {
         _Failed(job: job, onClose: _background),
       AsyncData(value: final ImportJob job)
           when job.status == ImportStatus.completed =>
-        _Done(job: job),
+        _Done(job: job, onOpenRecipe: _goToRecipe, onClose: _background),
       AsyncData(value: final ImportJob job) => _Running(
         job: job,
         queued: queued,
@@ -270,14 +288,21 @@ class _Running extends StatelessWidget {
 }
 
 class _Done extends StatelessWidget {
-  const _Done({required this.job});
+  const _Done({
+    required this.job,
+    required this.onOpenRecipe,
+    required this.onClose,
+  });
 
   final ImportJob job;
+  final ValueChanged<String> onOpenRecipe;
+  final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    if (job.data.draft) return _draft(context, l10n, theme);
     return _Page(
       children: [
         ProgressHeader(job: job),
@@ -302,6 +327,66 @@ class _Done extends StatelessWidget {
       ],
     );
   }
+
+  /// Ricetta salvata in bozza (D-62): nessuna apertura automatica, prima il
+  /// messaggio.
+  Widget _draft(BuildContext context, AppLocalizations l10n, ThemeData theme) {
+    final recipeId = job.recipeId;
+    return _WithClose(
+      onClose: onClose,
+      child: _Page(
+        bottom: recipeId == null
+            ? null
+            : FilledButton.icon(
+                onPressed: () => onOpenRecipe(recipeId),
+                icon: const Icon(Icons.menu_book_outlined),
+                label: Text(l10n.importActionOpenRecipe),
+              ),
+        children: [
+          ProgressHeader(job: job),
+          const SizedBox(height: 24),
+          Icon(
+            Icons.edit_note,
+            size: 48,
+            color: IrenefyColors.of(context).accentDecoration,
+          ),
+          const SizedBox(height: 12),
+          _Headline(l10n.importDraftSaved),
+          const SizedBox(height: 8),
+          Text(
+            l10n.importProgressDraft,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Pagina con la "X" in alto per uscire.
+class _WithClose extends StatelessWidget {
+  const _WithClose({required this.onClose, required this.child});
+
+  final VoidCallback onClose;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.expand,
+    children: [
+      child,
+      PositionedDirectional(
+        top: 4,
+        start: 4,
+        child: IconButton(
+          onPressed: onClose,
+          tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+          icon: const Icon(Icons.close),
+        ),
+      ),
+    ],
+  );
 }
 
 /// Job fermo: errore, motivo di Gemini per `notARecipe` e le azioni
@@ -325,6 +410,7 @@ class _Failed extends ConsumerWidget {
     final secondary = theme.textTheme.bodyMedium?.copyWith(
       color: colors.onSurfaceVariant,
     );
+    final wait = importWaitReason(job);
 
     final actions = <Widget>[
       if (recoveryLabel != null)
@@ -359,22 +445,37 @@ class _Failed extends ConsumerWidget {
       ),
     ];
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        _Page(
-          bottom: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final (i, action) in actions.indexed) ...[
-                if (i > 0) const SizedBox(height: 8),
-                action,
-              ],
-            ],
-          ),
+    return _WithClose(
+      onClose: onClose,
+      child: _Page(
+        bottom: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ProgressHeader(job: job),
-            const SizedBox(height: 24),
+            for (final (i, action) in actions.indexed) ...[
+              if (i > 0) const SizedBox(height: 8),
+              action,
+            ],
+          ],
+        ),
+        children: [
+          ProgressHeader(job: job),
+          const SizedBox(height: 24),
+          // In attesa (D-62): riparte da solo, non è un errore.
+          if (wait != null) ...[
+            Icon(
+              importWaitIcon(wait),
+              size: 40,
+              color: IrenefyColors.of(context).accentDecoration,
+            ),
+            const SizedBox(height: 8),
+            _Headline(importWaitText(context, job, short: true)!),
+            const SizedBox(height: 8),
+            Text(
+              importWaitHint(context, job)!,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge,
+            ),
+          ] else ...[
             Icon(Icons.error_outline, size: 40, color: colors.error),
             const SizedBox(height: 8),
             _Headline(l10n.importProgressFailed),
@@ -384,28 +485,19 @@ class _Failed extends ConsumerWidget {
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge,
             ),
-            if (reason != null && reason.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                l10n.importNotARecipeReason(reason),
-                textAlign: TextAlign.center,
-                style: secondary?.copyWith(fontStyle: FontStyle.italic),
-              ),
-            ],
-            const SizedBox(height: 24),
-            CompactStepList(job: job),
           ],
-        ),
-        PositionedDirectional(
-          top: 4,
-          start: 4,
-          child: IconButton(
-            onPressed: onClose,
-            tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-            icon: const Icon(Icons.close),
-          ),
-        ),
-      ],
+          if (reason != null && reason.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              l10n.importNotARecipeReason(reason),
+              textAlign: TextAlign.center,
+              style: secondary?.copyWith(fontStyle: FontStyle.italic),
+            ),
+          ],
+          const SizedBox(height: 24),
+          CompactStepList(job: job),
+        ],
+      ),
     );
   }
 
