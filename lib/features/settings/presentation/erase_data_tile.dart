@@ -9,8 +9,8 @@ import '../data/data_eraser.dart';
 import 'settings_providers.dart';
 
 /// Voce "Elimina dati" (D-50): disattivata finché c'è un'importazione non
-/// conclusa; altrimenti chiede conferma, con due caselle per chiave e
-/// modello (spente di default).
+/// conclusa; altrimenti chiede conferma. Chiave Gemini e modello di
+/// trascrizione non si eliminano mai da qui (D-64).
 class EraseDataTile extends ConsumerStatefulWidget {
   const EraseDataTile({super.key});
 
@@ -42,19 +42,17 @@ class _EraseDataTileState extends ConsumerState<EraseDataTile> {
   }
 
   Future<void> _confirmAndErase() async {
-    final choice = await showDialog<_EraseChoice>(
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => const _EraseDialog(),
     );
-    if (choice == null || !mounted) return;
+    if (confirmed != true || !mounted) return;
     setState(() => _erasing = true);
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
     String message;
     try {
-      await ref
-          .read(dataEraserProvider)
-          .eraseAll(apiKey: choice.apiKey, speechModel: choice.speechModel);
+      await ref.read(dataEraserProvider).eraseAll();
       message = l10n.settingsErased;
     } on Object catch (e, st) {
       ref.read(appLogProvider).error('Elimina dati non riuscito', e, st);
@@ -66,18 +64,8 @@ class _EraseDataTileState extends ConsumerState<EraseDataTile> {
   }
 }
 
-typedef _EraseChoice = ({bool apiKey, bool speechModel});
-
-class _EraseDialog extends StatefulWidget {
+class _EraseDialog extends StatelessWidget {
   const _EraseDialog();
-
-  @override
-  State<_EraseDialog> createState() => _EraseDialogState();
-}
-
-class _EraseDialogState extends State<_EraseDialog> {
-  bool _apiKey = false;
-  bool _speechModel = false;
 
   @override
   Widget build(BuildContext context) {
@@ -85,39 +73,15 @@ class _EraseDialogState extends State<_EraseDialog> {
     final scheme = Theme.of(context).colorScheme;
     return AlertDialog(
       title: Text(l10n.settingsEraseTitle),
-      scrollable: true,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.settingsEraseBody),
-          const SizedBox(height: 8),
-          CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.leading,
-            value: _apiKey,
-            title: Text(l10n.settingsEraseApiKey),
-            onChanged: (v) => setState(() => _apiKey = v ?? false),
-          ),
-          CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.leading,
-            value: _speechModel,
-            title: Text(l10n.settingsEraseSpeechModel),
-            onChanged: (v) => setState(() => _speechModel = v ?? false),
-          ),
-        ],
-      ),
+      content: Text(l10n.settingsEraseBody),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(false),
           child: Text(l10n.actionCancel),
         ),
         TextButton(
           style: TextButton.styleFrom(foregroundColor: scheme.error),
-          onPressed: () => Navigator.of(
-            context,
-          ).pop<_EraseChoice>((apiKey: _apiKey, speechModel: _speechModel)),
+          onPressed: () => Navigator.of(context).pop(true),
           child: Text(l10n.settingsEraseConfirm),
         ),
       ],

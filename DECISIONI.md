@@ -11,6 +11,30 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-64 — "Elimina dati" senza chiave Gemini e modello (2026-10-08) — Attiva
+- **Decisione:** "Elimina dati" cancella solo ricette, tag e importazioni con le loro cartelle. Tolte le due caselle
+  "Elimina anche la chiave Gemini" e "Elimina anche il modello di trascrizione"; la conferma dice che chiave e
+  modello restano. `DataEraser.eraseAll()` senza parametri.
+- **Perché:** richiesta dell'utente dopo la prova del backup (esporta → elimina dati → importa): le due opzioni non
+  servono e rischiano di far riscaricare 264 MB o reinserire la chiave. La chiave si cambia da Impostazioni → Gemini, il
+  modello si elimina dalla sua voce in "Trascrizione".
+- **Deciso da:** utente ("in elimina dati togli le opzioni di gemini e di modello").
+
+## D-63 — Backup delle ricette: contenuto e regole (2026-10-08) — Attiva
+- **Decisione:**
+  - **Formato:** file `.zip` con un JSON versionato (formato proprio del backup, non una copia del database) e le
+    miniature; esporta e importa dalle Impostazioni → Dati, con `file_picker` (`saveFile`/scelta del file) e `archive`.
+  - **Bozze escluse** dal backup (scelta dell'utente).
+  - **Ricette già presenti** (stessa `sourceKey` o stesso id) saltate e lasciate com'erano, preferita compresa.
+  - **Valori nutrizionali** ricalcolati dopo l'importazione; chiave Gemini mai nel file; backup di una versione più
+    nuova rifiutato.
+  - **Apertura del file con un tocco** ("Apri con Da Mirtilla") rimandata.
+- **Collaterale:** eliminati dal Pixel via adb, con il consenso dell'utente, 4 modelli Whisper rimasti dalla F0
+  (`ggml-base*.bin`, `ggml-small-q5_1.bin`, ~470 MB); resta `ggml-small-q8_0.bin`.
+- **Alternative scartate:** copia del file `.sqlite` (porterebbe job e indice, legata allo schema, non unisce);
+  bozze nel backup.
+- **Deciso da:** utente (risposte al resoconto della fase 3 della F6: "1. non includere, 2. ok, 3. ok, 4. ok").
+
 ## D-62 — Offline, quota e ricette in bozza (2026-10-08) — Attiva
 - **Decisione:**
   - **Rete assente** (il telefono non ha nessuna rete, letto con `connectivity_plus`): il job si ferma in attesa
@@ -238,7 +262,7 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 - **Quando riprenderla:** alla prima occasione con i contenuti adatti, e comunque nella F6 (prova su 30 link reali).
 - **Deciso da:** utente (2026-10-06).
 
-## D-50 — Primo avvio, elimina dati e versione (2026-10-06) — Attiva
+## D-50 — Primo avvio, elimina dati e versione (2026-10-06) — Attiva (le caselle di "Elimina dati" superate da D-64)
 - **Decisione:**
   - **Primo avvio:** benvenuto in 3 passi saltabili (come condividere, chiave Gemini, modello di trascrizione), con
     un flag in `shared_preferences`. Si salta da solo se c'è già una chiave, il modello o una ricetta (utente

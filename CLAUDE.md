@@ -72,7 +72,10 @@ cancella gli altri), modello `assets/whisper/ggml-silero-v5.1.2.bin`, motivo `no
 titolo (D-60, `font_awesome_flutter`). Fase 2 (2026-10-08, provata sul Pixel): attesa senza rete e per la quota giornaliera di Gemini (`core/network/network_status.dart`,
 `domain/quota_reset.dart`, `ImportEngine.resumeWaiting`, job `failed` con `data.waitingFor`), ricette **in bozza** quando Gemini è
 sovraccarico (database **v3**, `recipes.is_draft`, `RecipeRepository.replaceDraft`) ed "Elabora ricetta" (`data/draft_reprocessor.dart`:
-job che parte da `transcribed` con `draftRecipeId`; id della ricetta sempre da `recipeIdForJob`), D-62. Prove dal vivo D-44 ancora aperte.
+job che parte da `transcribed` con `draftRecipeId`; id della ricetta sempre da `recipeIdForJob`), D-62. Fase 3 (2026-10-08,
+provata): backup in `lib/features/backup/` (zip con `ricette.json` versionato + `miniature/`, formato proprio e non copia del
+DB; bozze escluse, ricette già presenti saltate, D-63; nomi delle voci mai usati come percorsi, id controllati con
+`isSafeBackupRecipeId`); "Elimina dati" non tocca più chiave e modello (D-64). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

@@ -25,27 +25,24 @@ import '../../app/fake_theme_mode_store.dart';
 import 'gemini_settings_tile_test.dart' show FakeGeminiKeyController;
 import 'speech_model_tile_test.dart' show FakeSpeechModelController;
 
-/// Servizio finto: registra le scelte, non tocca nulla; con [error] fallisce
-/// come quello vero.
+/// Servizio finto: conta le eliminazioni, non tocca nulla; con [error]
+/// fallisce come quello vero.
 class _FakeEraser extends DataEraser {
   _FakeEraser(super.ref, this.erased, {this.error});
 
-  final List<({bool apiKey, bool speechModel})> erased;
+  final List<int> erased;
   final Object? error;
 
   @override
-  Future<void> eraseAll({
-    required bool apiKey,
-    required bool speechModel,
-  }) async {
+  Future<void> eraseAll() async {
     if (error case final error?) throw error;
-    erased.add((apiKey: apiKey, speechModel: speechModel));
+    erased.add(erased.length + 1);
   }
 }
 
 void main() {
   late FakeThemeModeStore themeStore;
-  late List<({bool apiKey, bool speechModel})> erased;
+  late List<int> erased;
   late StreamController<int> unfinished;
   late StreamController<int> needingAttention;
 
@@ -172,6 +169,8 @@ void main() {
       'Chiaro',
       'Scuro',
       'Dati',
+      'Esporta ricette',
+      'Importa ricette',
       'Elimina dati',
       'Rivedi la guida',
       'Diagnostica',
@@ -283,10 +282,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Eliminare i dati?'), findsOne);
-    final boxes = tester.widgetList<CheckboxListTile>(
-      find.byType(CheckboxListTile),
-    );
-    expect(boxes.map((b) => b.value), [false, false]);
+    expect(find.byType(CheckboxListTile), findsNothing);
+    expect(find.textContaining('La chiave Gemini e il modello'), findsOne);
     final confirm = find.widgetWithText(TextButton, 'Elimina');
     final color = tester
         .widget<TextButton>(confirm)
@@ -295,12 +292,10 @@ void main() {
         .resolve({});
     expect(color, lightTheme.colorScheme.error);
 
-    await tester.tap(find.text('Elimina anche il modello di trascrizione'));
-    await tester.pump();
     await tester.tap(confirm);
     await tester.pumpAndSettle();
 
-    expect(erased, [(apiKey: false, speechModel: true)]);
+    expect(erased, [1]);
     expect(find.text('Dati eliminati'), findsOne);
   });
 

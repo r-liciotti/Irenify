@@ -8,6 +8,7 @@ import '../../../app/router.dart';
 import '../../../app/theme_mode.dart';
 import '../../../app/widgets/mirtilla_logo.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../backup/presentation/backup_tiles.dart';
 import '../../import_pipeline/presentation/imports_screen.dart';
 import 'erase_data_tile.dart';
 import 'gemini_settings_tile.dart';
@@ -34,6 +35,7 @@ class SettingsScreen extends ConsumerWidget {
           _SectionHeader(l10n.settingsAppearance),
           const _ThemeModeChoice(),
           _SectionHeader(l10n.settingsData),
+          const BackupTiles(),
           const EraseDataTile(),
           ListTile(
             leading: const Icon(Icons.school_outlined),

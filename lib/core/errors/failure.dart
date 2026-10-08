@@ -33,7 +33,9 @@ enum FailureCode {
   llmUnavailable,
   speechModelMissing,
   videoTooLong,
-  importsInProgress;
+  importsInProgress,
+  backupInvalid,
+  backupTooNew;
 
   /// Codice salvato → [FailureCode]; un nome sconosciuto diventa [unexpected].
   static FailureCode fromName(String? name) =>
@@ -65,7 +67,10 @@ enum FailureCode {
     contentBlocked ||
     videoTooLong ||
     // Si aspetta che finiscano: il pulsante si riattiva da solo.
-    importsInProgress => RecoveryAction.none,
+    importsInProgress ||
+    // Il file va cambiato, non riprovato (D-63).
+    backupInvalid ||
+    backupTooNew => RecoveryAction.none,
   };
 }
 
@@ -283,4 +288,23 @@ final class ImportsInProgressFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.importsInProgress;
+}
+
+/// Il file scelto non è un backup di Da Mirtilla leggibile (zip rovinato,
+/// manca `ricette.json`, JSON non valido, troppo grande) (D-63). Il
+/// ricettario non viene toccato.
+final class BackupInvalidFailure extends Failure {
+  const BackupInvalidFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.backupInvalid;
+}
+
+/// Backup creato da una versione più nuova dell'app, con un formato che
+/// questa non conosce (D-63).
+final class BackupTooNewFailure extends Failure {
+  const BackupTooNewFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.backupTooNew;
 }

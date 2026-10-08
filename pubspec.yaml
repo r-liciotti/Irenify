@@ -61,6 +61,7 @@ dependencies:
   package_info_plus: ^10.2.2
   font_awesome_flutter: ^11.0.0
   connectivity_plus: ^7.3.1
+  archive: ^4.3.0
 
 
 # whisper_ggml copiato nel progetto (F6 fase 1, D-61): aggiunge il rilevatore di voce

@@ -17,7 +17,6 @@ import 'package:irenefy/features/recipes/data/recipe_files.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/settings/data/data_eraser.dart';
 import 'package:irenefy/features/settings/data/llm_settings_store.dart';
-import 'package:irenefy/features/settings/presentation/gemini_key_controller.dart';
 import 'package:irenefy/features/settings/presentation/speech_model_controller.dart';
 
 import '../../data/db/test_database.dart';
@@ -87,22 +86,15 @@ class _RecordingLlmSettings extends FakeLlmSettings {
   }
 }
 
-/// Controller del modello con stato fisso; le azioni finiscono in [calls].
-/// Con [deleteFails] l'eliminazione finisce in errore, come quella vera
-/// (che non lancia ma passa a [SpeechModelFailed]).
+/// Controller del modello con stato fisso; le azioni finiscono in [calls]:
+/// "Elimina dati" non deve mai chiamarne nessuna (D-64).
 class _FakeSpeechModelController extends SpeechModelController {
-  _FakeSpeechModelController(
-    this.initial,
-    this.calls, {
-    this.deleteFails = false,
-  });
+  _FakeSpeechModelController(this.calls);
 
-  final SpeechModelState initial;
   final Calls calls;
-  final bool deleteFails;
 
   @override
-  SpeechModelState build() => initial;
+  SpeechModelState build() => const SpeechModelReady(100);
 
   @override
   void cancel() => calls.add('annulla download');
@@ -113,11 +105,7 @@ class _FakeSpeechModelController extends SpeechModelController {
   @override
   Future<void> delete() async {
     calls.add('modello');
-    state = deleteFails
-        ? SpeechModelFailed(
-            UnexpectedFailure(cause: const FileSystemException('occupato')),
-          )
-        : const SpeechModelMissing();
+    state = const SpeechModelMissing();
   }
 }
 
@@ -140,10 +128,7 @@ void main() {
 
   Directory jobsDir() => Directory('${support.path}/jobs');
 
-  ProviderContainer container({
-    SpeechModelState speech = const SpeechModelReady(100),
-    bool modelDeleteFails = false,
-  }) => ProviderContainer.test(
+  ProviderContainer container() => ProviderContainer.test(
     retry: noAutomaticRetry,
     overrides: [
       appLogProvider.overrideWithValue(AppLog()),
@@ -158,11 +143,7 @@ void main() {
       ),
       llmSettingsProvider.overrideWithValue(settings),
       speechModelControllerProvider.overrideWith(
-        () => _FakeSpeechModelController(
-          speech,
-          calls,
-          deleteFails: modelDeleteFails,
-        ),
+        () => _FakeSpeechModelController(calls),
       ),
     ],
   );
@@ -189,14 +170,12 @@ void main() {
       ..writeAsStringSync('jpg');
   }
 
-  test('senza caselle: job, ricette e cartelle, in questo ordine; '
-      'chiave e modello restano', () async {
+  test('job, ricette e cartelle, in questo ordine; chiave e modello restano '
+      'sempre (D-64)', () async {
     await seed();
     final c = container();
 
-    await c
-        .read(dataEraserProvider)
-        .eraseAll(apiKey: false, speechModel: false);
+    await c.read(dataEraserProvider).eraseAll();
 
     expect(calls, ['job', 'ricette', 'cartelle job', 'cartelle ricette']);
     expect(await db.select(db.importJobs).get(), isEmpty);
@@ -206,55 +185,8 @@ void main() {
     expect(jobsDir().existsSync(), isFalse);
     expect(Directory('${support.path}/recipes').existsSync(), isFalse);
     expect(settings.apiKey, isNotNull);
+    expect(c.read(speechModelControllerProvider), isA<SpeechModelReady>());
   });
-
-  test(
-    'con le caselle: anche chiave (interfaccia aggiornata) e modello',
-    () async {
-      await seed();
-      final c = container();
-      c.listen(geminiKeyControllerProvider, (_, _) {});
-      await pumpEventQueue();
-      expect(
-        (c.read(geminiKeyControllerProvider) as GeminiKeyReady).hasKey,
-        true,
-      );
-
-      await c
-          .read(dataEraserProvider)
-          .eraseAll(apiKey: true, speechModel: true);
-      await pumpEventQueue();
-
-      expect(calls, [
-        'job',
-        'ricette',
-        'cartelle job',
-        'cartelle ricette',
-        'chiave',
-        'modello',
-      ]);
-      expect(settings.apiKey, isNull);
-      expect(
-        (c.read(geminiKeyControllerProvider) as GeminiKeyReady).hasKey,
-        false,
-        reason: 'le Impostazioni mostrano "nessuna chiave"',
-      );
-      expect(c.read(speechModelControllerProvider), isA<SpeechModelMissing>());
-    },
-  );
-
-  test(
-    'download del modello in corso: prima annullato, poi eliminato',
-    () async {
-      final c = container(speech: const SpeechModelDownloading(0.4));
-
-      await c
-          .read(dataEraserProvider)
-          .eraseAll(apiKey: false, speechModel: true);
-
-      expect(calls.skip(4), ['annulla download', 'attesa download', 'modello']);
-    },
-  );
 
   test('importazione in corso: si rifiuta senza eliminare nulla', () async {
     await seed();
@@ -262,7 +194,7 @@ void main() {
     final c = container();
 
     await expectLater(
-      c.read(dataEraserProvider).eraseAll(apiKey: true, speechModel: true),
+      c.read(dataEraserProvider).eraseAll(),
       throwsA(isA<ImportsInProgressFailure>()),
     );
 
@@ -273,21 +205,11 @@ void main() {
     expect(settings.apiKey, isNotNull);
   });
 
-  test('eliminazione del modello non riuscita: l\'errore si propaga', () async {
-    final c = container(modelDeleteFails: true);
-
-    await expectLater(
-      c.read(dataEraserProvider).eraseAll(apiKey: false, speechModel: true),
-      throwsA(isA<UnexpectedFailure>()),
-    );
-    expect(calls.last, 'modello');
-  });
-
   test('niente da eliminare: nessun errore', () async {
-    final c = container(speech: const SpeechModelMissing());
+    final c = container();
 
-    await c.read(dataEraserProvider).eraseAll(apiKey: true, speechModel: true);
+    await c.read(dataEraserProvider).eraseAll();
 
-    expect(calls, hasLength(6));
+    expect(calls, hasLength(4));
   });
 }

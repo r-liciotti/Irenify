@@ -804,14 +804,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get settingsEraseBody =>
-      'Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono.';
-
-  @override
-  String get settingsEraseApiKey => 'Elimina anche la chiave Gemini';
-
-  @override
-  String get settingsEraseSpeechModel =>
-      'Elimina anche il modello di trascrizione';
+      'Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono. La chiave Gemini e il modello di trascrizione restano.';
 
   @override
   String get settingsEraseConfirm => 'Elimina';
@@ -1130,6 +1123,99 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get failureImportsInProgress =>
       'C\'è un\'importazione in corso: aspetta che finisca, poi elimina i dati.';
+
+  @override
+  String get failureBackupInvalid =>
+      'Questo file non è un backup di Da Mirtilla leggibile.';
+
+  @override
+  String get failureBackupTooNew =>
+      'Questo backup viene da una versione più nuova dell\'app: aggiorna Da Mirtilla e riprova.';
+
+  @override
+  String get backupExport => 'Esporta ricette';
+
+  @override
+  String get backupExportSubtitle =>
+      'Salva tutte le ricette e le foto in un file .zip';
+
+  @override
+  String get backupImport => 'Importa ricette';
+
+  @override
+  String get backupImportSubtitle =>
+      'Rimetti nel ricettario le ricette di un backup';
+
+  @override
+  String get backupExportDialogTitle => 'Salva il backup';
+
+  @override
+  String get backupExportEmpty => 'Non ci sono ricette da esportare.';
+
+  @override
+  String backupExportDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Backup salvato: $count ricette',
+      one: 'Backup salvato: 1 ricetta',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupExportDraftsNote(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Le $count ricette in bozza non sono incluse.',
+      one: 'La ricetta in bozza non è inclusa.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupWorking => 'Un momento…';
+
+  @override
+  String get backupImportDoneTitle => 'Importazione completata';
+
+  @override
+  String backupImportDoneImported(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ricette importate',
+      one: '1 ricetta importata',
+      zero: 'Nessuna ricetta nuova',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupImportDoneExisting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count erano già nel ricettario',
+      one: '1 era già nel ricettario',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String backupImportDoneInvalid(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count non erano leggibili e sono state saltate',
+      one: '1 non era leggibile ed è stata saltata',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backupImportDoneOk => 'OK';
 
   @override
   String get actionRetry => 'Riprova';

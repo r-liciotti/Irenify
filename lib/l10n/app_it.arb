@@ -443,9 +443,7 @@
   "settingsEraseData": "Elimina dati",
   "settingsEraseDataSubtitle": "Ricette e importazioni",
   "settingsEraseTitle": "Eliminare i dati?",
-  "settingsEraseBody": "Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono.",
-  "settingsEraseApiKey": "Elimina anche la chiave Gemini",
-  "settingsEraseSpeechModel": "Elimina anche il modello di trascrizione",
+  "settingsEraseBody": "Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono. La chiave Gemini e il modello di trascrizione restano.",
   "settingsEraseConfirm": "Elimina",
   "settingsErased": "Dati eliminati",
   "settingsEraseBusy": "Attendi la fine dell'importazione in corso",
@@ -580,6 +578,47 @@
   "failureSpeechModelMissing": "Per questo video serve la trascrizione: scarica il modello nelle Impostazioni.",
   "failureVideoTooLong": "Il video dura più di 3 minuti e non ha una didascalia da usare.",
   "failureImportsInProgress": "C'è un'importazione in corso: aspetta che finisca, poi elimina i dati.",
+  "failureBackupInvalid": "Questo file non è un backup di Da Mirtilla leggibile.",
+  "failureBackupTooNew": "Questo backup viene da una versione più nuova dell'app: aggiorna Da Mirtilla e riprova.",
+  "backupExport": "Esporta ricette",
+  "backupExportSubtitle": "Salva tutte le ricette e le foto in un file .zip",
+  "backupImport": "Importa ricette",
+  "backupImportSubtitle": "Rimetti nel ricettario le ricette di un backup",
+  "backupExportDialogTitle": "Salva il backup",
+  "backupExportEmpty": "Non ci sono ricette da esportare.",
+  "backupExportDone": "{count, plural, =1{Backup salvato: 1 ricetta} other{Backup salvato: {count} ricette}}",
+  "@backupExportDone": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "backupExportDraftsNote": "{count, plural, =1{La ricetta in bozza non è inclusa.} other{Le {count} ricette in bozza non sono incluse.}}",
+  "@backupExportDraftsNote": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "backupWorking": "Un momento…",
+  "backupImportDoneTitle": "Importazione completata",
+  "backupImportDoneImported": "{count, plural, =0{Nessuna ricetta nuova} =1{1 ricetta importata} other{{count} ricette importate}}",
+  "@backupImportDoneImported": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "backupImportDoneExisting": "{count, plural, =1{1 era già nel ricettario} other{{count} erano già nel ricettario}}",
+  "@backupImportDoneExisting": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "backupImportDoneInvalid": "{count, plural, =1{1 non era leggibile ed è stata saltata} other{{count} non erano leggibili e sono state saltate}}",
+  "@backupImportDoneInvalid": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "backupImportDoneOk": "OK",
   "actionRetry": "Riprova",
   "actionOpenSettings": "Apri impostazioni"
 }

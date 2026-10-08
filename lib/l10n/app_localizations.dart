@@ -1249,20 +1249,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsEraseBody.
   ///
   /// In it, this message translates to:
-  /// **'Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono.'**
+  /// **'Tutte le ricette e le importazioni verranno eliminate definitivamente da questo telefono. La chiave Gemini e il modello di trascrizione restano.'**
   String get settingsEraseBody;
-
-  /// No description provided for @settingsEraseApiKey.
-  ///
-  /// In it, this message translates to:
-  /// **'Elimina anche la chiave Gemini'**
-  String get settingsEraseApiKey;
-
-  /// No description provided for @settingsEraseSpeechModel.
-  ///
-  /// In it, this message translates to:
-  /// **'Elimina anche il modello di trascrizione'**
-  String get settingsEraseSpeechModel;
 
   /// No description provided for @settingsEraseConfirm.
   ///
@@ -1785,6 +1773,102 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'C\'è un\'importazione in corso: aspetta che finisca, poi elimina i dati.'**
   String get failureImportsInProgress;
+
+  /// No description provided for @failureBackupInvalid.
+  ///
+  /// In it, this message translates to:
+  /// **'Questo file non è un backup di Da Mirtilla leggibile.'**
+  String get failureBackupInvalid;
+
+  /// No description provided for @failureBackupTooNew.
+  ///
+  /// In it, this message translates to:
+  /// **'Questo backup viene da una versione più nuova dell\'app: aggiorna Da Mirtilla e riprova.'**
+  String get failureBackupTooNew;
+
+  /// No description provided for @backupExport.
+  ///
+  /// In it, this message translates to:
+  /// **'Esporta ricette'**
+  String get backupExport;
+
+  /// No description provided for @backupExportSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva tutte le ricette e le foto in un file .zip'**
+  String get backupExportSubtitle;
+
+  /// No description provided for @backupImport.
+  ///
+  /// In it, this message translates to:
+  /// **'Importa ricette'**
+  String get backupImport;
+
+  /// No description provided for @backupImportSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimetti nel ricettario le ricette di un backup'**
+  String get backupImportSubtitle;
+
+  /// No description provided for @backupExportDialogTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva il backup'**
+  String get backupExportDialogTitle;
+
+  /// No description provided for @backupExportEmpty.
+  ///
+  /// In it, this message translates to:
+  /// **'Non ci sono ricette da esportare.'**
+  String get backupExportEmpty;
+
+  /// No description provided for @backupExportDone.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{Backup salvato: 1 ricetta} other{Backup salvato: {count} ricette}}'**
+  String backupExportDone(int count);
+
+  /// No description provided for @backupExportDraftsNote.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{La ricetta in bozza non è inclusa.} other{Le {count} ricette in bozza non sono incluse.}}'**
+  String backupExportDraftsNote(int count);
+
+  /// No description provided for @backupWorking.
+  ///
+  /// In it, this message translates to:
+  /// **'Un momento…'**
+  String get backupWorking;
+
+  /// No description provided for @backupImportDoneTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Importazione completata'**
+  String get backupImportDoneTitle;
+
+  /// No description provided for @backupImportDoneImported.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =0{Nessuna ricetta nuova} =1{1 ricetta importata} other{{count} ricette importate}}'**
+  String backupImportDoneImported(int count);
+
+  /// No description provided for @backupImportDoneExisting.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{1 era già nel ricettario} other{{count} erano già nel ricettario}}'**
+  String backupImportDoneExisting(int count);
+
+  /// No description provided for @backupImportDoneInvalid.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{1 non era leggibile ed è stata saltata} other{{count} non erano leggibili e sono state saltate}}'**
+  String backupImportDoneInvalid(int count);
+
+  /// No description provided for @backupImportDoneOk.
+  ///
+  /// In it, this message translates to:
+  /// **'OK'**
+  String get backupImportDoneOk;
 
   /// No description provided for @actionRetry.
   ///

@@ -7,15 +7,12 @@ import '../../import_pipeline/data/import_job_repository.dart';
 import '../../recipes/data/recipe_files.dart';
 import '../../recipes/data/recipe_repository.dart';
 import '../../recipes/presentation/recipe_providers.dart';
-import '../presentation/gemini_key_controller.dart';
-import '../presentation/speech_model_controller.dart';
-import 'llm_settings_store.dart';
 
 final dataEraserProvider = Provider<DataEraser>(DataEraser.new);
 
-/// "Elimina dati" delle Impostazioni (D-50): ricette, tag e importazioni con
-/// le loro cartelle; chiave Gemini e modello di trascrizione solo se chiesto.
-/// Tema, flag del primo avvio e modello Gemini scelto restano.
+/// "Elimina dati" delle Impostazioni (D-50, D-64): ricette, tag e
+/// importazioni con le loro cartelle. Chiave Gemini, modello di trascrizione,
+/// tema, flag del primo avvio e modello Gemini scelto restano sempre.
 ///
 /// Solo senza importazioni in corso: Whisper non si può interrompere e
 /// lascerebbe file in una cartella appena eliminata. L'interfaccia spegne il
@@ -27,21 +24,12 @@ class DataEraser {
   final Ref _ref;
 
   /// Elimina tutto nell'ordine sicuro: prima i job (nessuno può più creare
-  /// una ricetta), poi le ricette, poi i file (una chiusura a metà lascia al
-  /// più cartelle orfane, mai righe che puntano a file spariti), infine
-  /// chiave e modello se richiesti. Un errore si propaga: chi chiama lo
-  /// mostra e si può ripetere. Con un'importazione non conclusa lancia
-  /// [ImportsInProgressFailure] senza eliminare nulla; un'eliminazione del
-  /// modello non riuscita si propaga come il suo [Failure].
-  Future<void> eraseAll({
-    required bool apiKey,
-    required bool speechModel,
-  }) async {
-    final log = _ref.read(appLogProvider)
-      ..info(
-        'Elimina dati: inizio (chiave: ${apiKey ? 'sì' : 'no'}, '
-        'modello: ${speechModel ? 'sì' : 'no'})',
-      );
+  /// una ricetta), poi le ricette, infine i file (una chiusura a metà lascia
+  /// al più cartelle orfane, mai righe che puntano a file spariti). Un errore
+  /// si propaga: chi chiama lo mostra e si può ripetere. Con un'importazione
+  /// non conclusa lancia [ImportsInProgressFailure] senza eliminare nulla.
+  Future<void> eraseAll() async {
+    final log = _ref.read(appLogProvider)..info('Elimina dati: inizio');
     final jobs = _ref.read(importJobRepositoryProvider);
     // Controllo ed eliminazione nella stessa transazione: un job creato nel
     // frattempo non viene cancellato senza essere visto.
@@ -60,28 +48,6 @@ class DataEraser {
     _ref
       ..invalidate(recipeDetailProvider)
       ..invalidate(recipeThumbnailProvider);
-    if (apiKey) {
-      await _ref.read(llmSettingsProvider).deleteApiKey();
-      // Rilegge dal secure storage: le Impostazioni mostrano "nessuna chiave".
-      _ref.invalidate(geminiKeyControllerProvider);
-    }
-    if (speechModel) await _deleteSpeechModel();
     log.info('Elimina dati: fatto');
-  }
-
-  Future<void> _deleteSpeechModel() async {
-    final controller = _ref.read(speechModelControllerProvider.notifier);
-    final state = _ref.read(speechModelControllerProvider);
-    if (state is SpeechModelDownloading || state is SpeechModelVerifying) {
-      controller.cancel();
-      await controller.whenIdle();
-    }
-    await controller.delete();
-    // `delete()` non lancia: un errore lo lascia nello stato.
-    if (_ref.read(speechModelControllerProvider) case SpeechModelFailed(
-      :final failure,
-    )) {
-      throw failure;
-    }
   }
 }

@@ -75,7 +75,7 @@ post `Ddwoj5kBk9X` si è fermato su "Didascalia" con "In attesa di connessione";
 fino a Gemini ("non è una ricetta", come atteso). Con il Wi-Fi rimasto acceso in modalità aereo l'app ha visto la rete
 e ha lavorato normalmente. La bozza non si può provocare dal vivo: coperta dai test.
 
-## Fase 3 — Backup (≈ 1 gg)
+## Fase 3 — Backup (≈ 1 gg) — ✅ sviluppata e provata il 2026-10-08 (D-63, D-64)
 
 **Esporta:** un file `.zip` (JSON versionato con ricette, fonti, tag e valori, più le miniature), salvato dove sceglie
 l'utente.
@@ -88,6 +88,13 @@ l'utente.
 Si accede dalle Impostazioni.
 
 **Uscita:** si esporta, si cancellano i dati, si reimporta e il ricettario torna identico, foto comprese.
+
+**Com'è andata (2026-10-08):** contratto (`features/backup/`: formato `ricette.json` v1 + `miniature/`, `BackupService`,
+`BackupFilePicker`, errori `backupInvalid`/`backupTooNew`, testi), poi 2 subagent: formato e servizio (`ZipBackupService`,
+53 test) e interfaccia (voci in Impostazioni → Dati, 11 test). Prova sul Pixel: export in Download (1,27 MB, 9 ricette,
+9 foto, nessuna chiave), "Elimina dati", import → database identico riga per riga (339 righe confrontate, valori
+nutrizionali compresi) e foto identiche byte per byte. Dopo la prova, su richiesta dell'utente, tolte da "Elimina dati"
+le caselle per chiave e modello (D-64). 1019 test.
 
 ## Fase 4 — Altri telefoni, APK firmato, prestazioni (≈ 1 gg)
 
