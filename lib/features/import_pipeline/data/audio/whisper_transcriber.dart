@@ -5,28 +5,39 @@ import 'package:whisper_ggml/whisper_ggml.dart';
 
 import '../../../../core/errors/failure.dart';
 import '../../domain/transcription.dart';
+import 'cpu_compatibility.dart';
 
 final transcriberProvider = Provider<Transcriber>(
-  (ref) => WhisperTranscriber(),
+  (ref) => WhisperTranscriber(
+    library: () => ref.read(whisperLibraryProvider.future),
+  ),
 );
+
+/// Libreria di whisper.cpp da aprire su Android (variante della CPU, D-65).
+typedef WhisperLibrary = Future<String> Function();
+
+Future<String> _baseLibrary() async => Whisper.defaultAndroidLibrary;
 
 /// Chiamata a whisper.cpp: restituisce il testo trascritto. Separata perché
 /// sul Mac (test) la libreria nativa non esiste.
 typedef WhisperCall =
     Future<String> Function({
+      required String library,
       required String modelPath,
       required TranscribeRequest request,
     });
 
 /// Chiamata reale tramite `whisper_ggml`.
 Future<String> whisperGgmlCall({
+  required String library,
   required String modelPath,
   required TranscribeRequest request,
 }) async {
   // `model` serve al pacchetto solo come default: conta `modelPath`, che
   // permette i modelli quantizzati (small-q8_0) assenti dall'enum.
-  final response = await const Whisper(
+  final response = await Whisper(
     model: WhisperModel.base,
+    androidLibrary: library,
   ).transcribe(transcribeRequest: request, modelPath: modelPath);
   return response.text;
 }
@@ -34,9 +45,14 @@ Future<String> whisperGgmlCall({
 /// Trascrive con whisper.cpp sul telefono (parametri D-10), nella lingua
 /// del parlato riconosciuta da whisper.cpp (D-53).
 class WhisperTranscriber implements Transcriber {
-  WhisperTranscriber({WhisperCall call = whisperGgmlCall}) : _call = call;
+  WhisperTranscriber({
+    WhisperCall call = whisperGgmlCall,
+    WhisperLibrary library = _baseLibrary,
+  }) : _call = call,
+       _library = library;
 
   final WhisperCall _call;
+  final WhisperLibrary _library;
 
   /// Un thread per core del Pixel 9 Pro (D-10).
   static const threads = 8;
@@ -67,6 +83,7 @@ class WhisperTranscriber implements Transcriber {
     // trascrizione partirebbe mentre la prima gira ancora (D-09).
     try {
       final text = await _call(
+        library: await _library(),
         modelPath: model.path,
         request: request(wav, vadModel: vadModel),
       );

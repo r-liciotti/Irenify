@@ -12,6 +12,7 @@ import 'package:irenefy/core/logging/app_log.dart';
 import 'package:irenefy/features/settings/data/whisper_model_manager.dart';
 import 'package:irenefy/features/settings/presentation/speech_model_controller.dart';
 
+import 'fake_bundled_assets.dart';
 import 'whisper_model_manager_test.dart' show RangeServer, body;
 
 void main() {
@@ -25,7 +26,10 @@ void main() {
   });
   tearDown(() => dir.deleteSync(recursive: true));
 
-  ProviderContainer container(RangeServer server) => ProviderContainer.test(
+  ProviderContainer container(
+    RangeServer server, {
+    FakeBundledAssets? assets,
+  }) => ProviderContainer.test(
     retry: noAutomaticRetry,
     overrides: [
       appLogProvider.overrideWithValue(AppLog()),
@@ -38,6 +42,7 @@ void main() {
           () async => dir,
           expectedBytes: payload.length,
           expectedSha256: sha256.convert(payload).toString(),
+          bundledAssets: assets ?? FakeBundledAssets(null),
         ),
       ),
     ],
@@ -161,4 +166,90 @@ void main() {
       await controller.whenIdle();
     },
   );
+
+  group('modello incluso nell\'APK (D-67)', () {
+    final noNetwork = RangeServer((_) => throw StateError('nessuna rete'));
+
+    File asset() => File('${dir.path}/asset.bin')..writeAsBytesSync(payload);
+
+    test('da mancante a pronto, e i job in attesa ripartono', () async {
+      final c = container(noNetwork, assets: FakeBundledAssets(asset()));
+      final states = await start(c);
+      expect(states.last, isA<SpeechModelMissing>());
+
+      await c.read(speechModelControllerProvider.notifier).installBundled();
+
+      expect(states.whereType<SpeechModelVerifying>(), hasLength(1));
+      expect(states.last, isA<SpeechModelReady>());
+      expect((states.last as SpeechModelReady).bytes, payload.length);
+      expect(
+        File('${dir.path}/${WhisperModelManager.fileName}').existsSync(),
+        isTrue,
+      );
+      expect(resumed, 1, reason: 'i job in attesa del modello ripartono');
+    });
+
+    test('chiamata subito all\'avvio: lo stato finale è pronto', () async {
+      final c = container(noNetwork, assets: FakeBundledAssets(asset()));
+      final states = <SpeechModelState>[];
+      c.listen(
+        speechModelControllerProvider,
+        (_, next) => states.add(next),
+        fireImmediately: true,
+      );
+
+      await c.read(speechModelControllerProvider.notifier).installBundled();
+      await pumpEventQueue();
+
+      expect(states.last, isA<SpeechModelReady>());
+      expect(resumed, 1);
+    });
+
+    test('asset assente: resta mancante, nessuna ripresa', () async {
+      final c = container(noNetwork);
+      final states = await start(c);
+
+      await c.read(speechModelControllerProvider.notifier).installBundled();
+
+      expect(states.last, isA<SpeechModelMissing>());
+      expect(states.whereType<SpeechModelVerifying>(), isEmpty);
+      expect(resumed, 0);
+    });
+
+    test('modello già pronto: nessuna copia né ripresa', () async {
+      File(
+        '${dir.path}/${WhisperModelManager.fileName}',
+      ).writeAsBytesSync(payload);
+      final assets = FakeBundledAssets(asset());
+      final c = container(noNetwork, assets: assets);
+      final states = await start(c);
+
+      await c.read(speechModelControllerProvider.notifier).installBundled();
+
+      expect(states.last, isA<SpeechModelReady>());
+      expect(assets.copies, isEmpty);
+      expect(resumed, 0);
+    });
+
+    test('copia non riuscita: errore nel registro, torna mancante', () async {
+      final c = container(
+        noNetwork,
+        assets: FakeBundledAssets(asset(), failCopy: true),
+      );
+      final states = await start(c);
+
+      await c.read(speechModelControllerProvider.notifier).installBundled();
+
+      expect(states.last, isA<SpeechModelMissing>());
+      expect(resumed, 0);
+      expect(
+        File('${dir.path}/${WhisperModelManager.fileName}.part').existsSync(),
+        isFalse,
+      );
+      expect(
+        c.read(appLogProvider).export(),
+        contains("copia dall'APK non riuscita"),
+      );
+    });
+  });
 }

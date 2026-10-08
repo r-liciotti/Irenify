@@ -49,8 +49,9 @@ android {
         // plugin channels (e.g. path_provider). See issue #16.
         consumerProguardFiles 'consumer-rules.pro'
         ndk {
-            // Flutter does not currently support building for x86 Android (See Issue 9253).
-            abiFilters("armeabi-v7a", "x86_64", "arm64-v8a", "x86")
+            // Irenefy (D-65): arm64 only. The app ships only arm64-v8a, and
+            // CMakeLists.txt builds three CPU variants of libwhisper for it.
+            abiFilters("arm64-v8a")
         }
         externalNativeBuild {
             cmake {

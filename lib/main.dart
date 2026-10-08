@@ -12,6 +12,7 @@ import 'core/logging/app_log.dart';
 import 'features/import_pipeline/data/import_engine.dart';
 import 'features/nutrition/data/nutrition_refresher.dart';
 import 'features/onboarding/presentation/onboarding_controller.dart';
+import 'features/settings/presentation/speech_model_controller.dart';
 import 'features/share_intake/data/share_intake.dart';
 
 Future<void> main() async {
@@ -72,6 +73,24 @@ Future<void> main() async {
           (_) {},
           onError: (Object e, StackTrace s) =>
               log.error('Valori nutrizionali: ricalcolo non riuscito', e, s),
+        ),
+  );
+  // Modello Whisper incluso nell'APK di rilascio (D-67): copiato in
+  // background dopo l'avvio del motore, senza bloccare il primo fotogramma.
+  // Un job che arriva durante la copia si ferma in attesa del modello e
+  // riparte a copia finita (D-40); gli errori li registra il controller.
+  unawaited(
+    engineReady
+        .then<void>((_) {}, onError: (Object _) {})
+        .then(
+          (_) => container
+              .read(speechModelControllerProvider.notifier)
+              .installBundled(),
+        )
+        .then<void>(
+          (_) {},
+          onError: (Object e, StackTrace s) =>
+              log.error('Modello Whisper: copia dall\'APK non riuscita', e, s),
         ),
   );
   runApp(

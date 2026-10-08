@@ -8,12 +8,23 @@ final llmSettingsProvider = Provider<LlmSettings>(
   (ref) => const SecureLlmSettings(FlutterSecureStorage()),
 );
 
+/// Chiave inclusa nell'APK di rilascio per i telefoni dell'utente (D-66):
+/// la passa `tool/build_release.sh` dal Portachiavi del Mac con
+/// `--dart-define-from-file`. Vuota nelle build di debug e nei test. Chi ha
+/// l'APK può estrarla: l'APK non va condiviso né pubblicato così.
+const bundledGeminiApiKey = String.fromEnvironment('IRENEFY_GEMINI_KEY');
+
 /// Chiave Gemini e modello scelto, cifrati nel Keystore di Android /
-/// Portachiavi di iOS (D-39). Mai nel codice, nel repo o nei log.
+/// Portachiavi di iOS (D-39). Mai nel codice, nel repo o nei log. Senza una
+/// chiave inserita si usa quella inclusa nell'APK, se c'è (D-66).
 class SecureLlmSettings implements LlmSettings {
-  const SecureLlmSettings(this._storage);
+  const SecureLlmSettings(
+    this._storage, {
+    String bundledApiKey = bundledGeminiApiKey,
+  }) : _bundledApiKey = bundledApiKey;
 
   final FlutterSecureStorage _storage;
+  final String _bundledApiKey;
 
   static const _apiKey = 'gemini_api_key';
   static const _model = 'gemini_model';
@@ -21,7 +32,9 @@ class SecureLlmSettings implements LlmSettings {
   @override
   Future<String?> readApiKey() async {
     final key = (await _read(_apiKey))?.trim();
-    return key == null || key.isEmpty ? null : key;
+    if (key != null && key.isNotEmpty) return key;
+    final bundled = _bundledApiKey.trim();
+    return bundled.isEmpty ? null : bundled;
   }
 
   @override

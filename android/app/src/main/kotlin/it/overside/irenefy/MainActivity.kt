@@ -6,7 +6,15 @@ import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import io.flutter.FlutterInjector
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+import java.io.File
+import java.io.IOException
+import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +30,81 @@ class MainActivity : FlutterActivity() {
         super.onCreate(savedInstanceState)
         publishShareShortcut()
         reportShare(intent)
+    }
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, BUNDLED_ASSETS_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                val asset = call.argument<String>("asset")
+                if (asset == null) {
+                    result.error("bad_args", "Manca l'asset", null)
+                    return@setMethodCallHandler
+                }
+                when (call.method) {
+                    "exists" -> result.success(assetExists(asset))
+                    "copy" -> {
+                        val destination = call.argument<String>("destination")
+                        if (destination == null) {
+                            result.error("bad_args", "Manca la destinazione", null)
+                        } else {
+                            copyAsset(asset, destination, result)
+                        }
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+    }
+
+    /** Chiave dell'asset Flutter [asset] dentro l'APK (`flutter_assets/...`). */
+    private fun assetKey(asset: String): String =
+        FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(asset)
+
+    private fun assetExists(asset: String): Boolean = try {
+        assets.open(assetKey(asset)).close()
+        true
+    } catch (e: IOException) {
+        false
+    }
+
+    /**
+     * Copia l'asset [asset] in [destination] a flusso, con un buffer da 1 MB
+     * e su un thread a parte (D-67: il modello Whisper è di 264 MB). Scrive in
+     * `<destination>.part` e rinomina solo a copia finita; in caso di errore
+     * il file parziale viene eliminato. Il risultato torna sul main thread.
+     */
+    private fun copyAsset(asset: String, destination: String, result: MethodChannel.Result) {
+        val key = assetKey(asset)
+        val appAssets = applicationContext.assets
+        val main = Handler(Looper.getMainLooper())
+        copyExecutor.execute {
+            val target = File(destination)
+            val partial = File("$destination.part")
+            try {
+                target.parentFile?.mkdirs()
+                appAssets.open(key).use { input ->
+                    partial.outputStream().use { output ->
+                        val buffer = ByteArray(1024 * 1024)
+                        while (true) {
+                            val read = input.read(buffer)
+                            if (read < 0) break
+                            output.write(buffer, 0, read)
+                        }
+                        output.fd.sync()
+                    }
+                }
+                if (target.exists() && !target.delete()) {
+                    throw IOException("Impossibile sostituire $destination")
+                }
+                if (!partial.renameTo(target)) {
+                    throw IOException("Impossibile rinominare ${partial.path}")
+                }
+                main.post { result.success(null) }
+            } catch (e: Exception) {
+                partial.delete()
+                main.post { result.error("copy_failed", e.toString(), null) }
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -56,5 +139,9 @@ class MainActivity : FlutterActivity() {
     private companion object {
         const val SHARE_SHORTCUT_ID = "importa-ricetta"
         const val SHARE_CATEGORY = "it.overside.irenefy.category.IMPORT_RECIPE"
+        const val BUNDLED_ASSETS_CHANNEL = "it.overside.irenefy/bundled_assets"
+
+        /** Una copia alla volta, fuori dal main thread. */
+        val copyExecutor = Executors.newSingleThreadExecutor()
     }
 }

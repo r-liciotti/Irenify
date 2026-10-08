@@ -96,7 +96,7 @@ Si accede dalle Impostazioni.
 nutrizionali compresi) e foto identiche byte per byte. Dopo la prova, su richiesta dell'utente, tolte da "Elimina dati"
 le caselle per chiave e modello (D-64). 1019 test.
 
-## Fase 4 — Altri telefoni, APK firmato, prestazioni (≈ 1 gg)
+## Fase 4 — Altri telefoni, APK firmato, prestazioni (≈ 1 gg) — ✅ sviluppata e provata il 2026-10-08 (D-65, D-66, D-67)
 
 - **Whisper su altri telefoni:** libreria nativa scelta a runtime (con e senza i8mm/dotprod), al posto delle istruzioni
   fisse del Pixel 9 Pro in `android/build.gradle.kts`. Va verificato che il Pixel usi ancora la versione veloce.

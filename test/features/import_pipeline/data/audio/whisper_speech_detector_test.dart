@@ -10,39 +10,54 @@ void main() {
   final vad = File('/supporto/whisper/ggml-silero-v5.1.2.bin');
 
   WhisperSpeechDetector detector(DetectSpeechCall call) =>
-      WhisperSpeechDetector(vadModel: () async => vad, call: call);
+      WhisperSpeechDetector(
+        vadModel: () async => vad,
+        call: call,
+        library: () async => 'libwhisper_dotprod.so',
+      );
 
-  test('passa WAV e modello Silero e converte i tratti parlati', () async {
-    String? passedAudio;
-    String? passedVad;
+  test(
+    'passa la variante della CPU (D-65), WAV e modello Silero e converte i tratti parlati',
+    () async {
+      String? passedLibrary;
+      String? passedAudio;
+      String? passedVad;
 
-    final segments = await detector(({
-      required audioPath,
-      required vadModelPath,
-    }) async {
-      passedAudio = audioPath;
-      passedVad = vadModelPath;
-      return const [
-        WhisperSpeechSegment(start: 0.5, end: 2),
-        WhisperSpeechSegment(start: 4.25, end: 7.75),
-      ];
-    }).detect(wav);
+      final segments = await detector(({
+        required library,
+        required audioPath,
+        required vadModelPath,
+      }) async {
+        passedLibrary = library;
+        passedAudio = audioPath;
+        passedVad = vadModelPath;
+        return const [
+          WhisperSpeechSegment(start: 0.5, end: 2),
+          WhisperSpeechSegment(start: 4.25, end: 7.75),
+        ];
+      }).detect(wav);
 
-    expect(passedAudio, wav.path);
-    expect(passedVad, vad.path);
-    expect(segments, const [SpeechSegment(0.5, 2), SpeechSegment(4.25, 7.75)]);
-  });
+      expect(passedLibrary, 'libwhisper_dotprod.so');
+      expect(passedAudio, wav.path);
+      expect(passedVad, vad.path);
+      expect(segments, const [
+        SpeechSegment(0.5, 2),
+        SpeechSegment(4.25, 7.75),
+      ]);
+    },
+  );
 
   test('nessun tratto parlato: elenco vuoto, non null', () async {
     final segments = await detector(
-      ({required audioPath, required vadModelPath}) async => const [],
+      ({required library, required audioPath, required vadModelPath}) async =>
+          const [],
     ).detect(wav);
     expect(segments, isEmpty);
   });
 
   test('piattaforma senza rilevatore (UnsupportedError): null', () async {
     final segments = await detector(
-      ({required audioPath, required vadModelPath}) async =>
+      ({required library, required audioPath, required vadModelPath}) async =>
           throw UnsupportedError('detectSpeech is only available on Android'),
     ).detect(wav);
     expect(segments, isNull);
@@ -51,7 +66,7 @@ void main() {
   test('gli altri errori arrivano al chiamante', () async {
     await expectLater(
       detector(
-        ({required audioPath, required vadModelPath}) async =>
+        ({required library, required audioPath, required vadModelPath}) async =>
             throw Exception('failed to load VAD model'),
       ).detect(wav),
       throwsException,

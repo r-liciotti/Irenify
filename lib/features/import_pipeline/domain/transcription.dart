@@ -88,8 +88,8 @@ abstract interface class SpeechDetector {
 
 /// Il processore può eseguire la build di whisper.cpp dell'app?
 abstract interface class CpuCompatibility {
-  /// `false` se mancano le istruzioni con cui è compilato whisper.cpp
-  /// (`-march=armv8.2-a+fp16+dotprod+i8mm`, D-07): avviarlo darebbe SIGILL.
+  /// `false` se l'app non ha una build di whisper.cpp eseguibile su questo
+  /// processore (fuori da Android arm64, D-65): la trascrizione si salta.
   Future<bool> supportsWhisper();
 }
 

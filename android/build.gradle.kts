@@ -33,25 +33,9 @@ subprojects {
         }
     }
 }
-// whisper_ggml compila whisper.cpp per ARMv8.0 base, senza fp16/dotprod/i8mm, per non andare
-// in crash (SIGILL) sui telefoni più vecchi. Il Pixel 9 Pro (Tensor G4) ha tutte e tre le estensioni,
-// che sono quelle usate da ggml per accelerare i prodotti tra matrici, soprattutto con i modelli
-// quantizzati. Le abilitiamo solo su arm64-v8a (gli altri ABI del plugin vengono esclusi: niente
-// libwhisper per emulatori x86 e telefoni a 32 bit). Da rivedere prima di distribuire l'app.
-subprojects {
-    if (name == "whisper_ggml") {
-        plugins.withId("com.android.library") {
-            extensions.configure<com.android.build.api.variant.LibraryAndroidComponentsExtension> {
-                finalizeDsl { android ->
-                    val armFlags = "-march=armv8.2-a+fp16+dotprod+i8mm"
-                    android.defaultConfig.ndk.abiFilters.retainAll(setOf("arm64-v8a"))
-                    android.defaultConfig.externalNativeBuild.cmake.cFlags.add(armFlags)
-                    android.defaultConfig.externalNativeBuild.cmake.cppFlags.add(armFlags)
-                }
-            }
-        }
-    }
-}
+// whisper_ggml (packages/whisper_ggml) compila da sé, solo per arm64-v8a, tre varianti di
+// libwhisper (base, dotprod, i8mm) e l'app sceglie all'avvio quella adatta alla CPU (D-65):
+// qui non serve più nessuna impostazione per il plugin.
 subprojects {
     project.evaluationDependsOn(":app")
 }

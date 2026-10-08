@@ -29,7 +29,18 @@ class Whisper {
   /// [model] is required
   /// [modelDir] is path where downloaded model will be stored.
   /// Default to library directory
-  const Whisper({required this.model, this.modelDir});
+  ///
+  /// Irenefy (D-65): [androidLibrary] is the native library opened on
+  /// Android (`libwhisper.so`, `libwhisper_dotprod.so` or
+  /// `libwhisper_i8mm.so`); the caller picks the one the CPU can run.
+  const Whisper({
+    required this.model,
+    this.modelDir,
+    this.androidLibrary = defaultAndroidLibrary,
+  });
+
+  /// Irenefy (D-65): baseline armv8-a build, runs on every arm64 CPU.
+  static const String defaultAndroidLibrary = 'libwhisper.so';
 
   /// model used for transcription
   final WhisperModel model;
@@ -37,9 +48,14 @@ class Whisper {
   /// override of model storage path
   final String? modelDir;
 
-  DynamicLibrary _openLib() {
+  /// Irenefy (D-65): native library opened on Android.
+  final String androidLibrary;
+
+  /// Static on purpose: it runs inside [Isolate.run], so it must receive the
+  /// library name as a plain String captured by the closure.
+  static DynamicLibrary _openLib(String androidLibrary) {
     if (Platform.isAndroid) {
-      return DynamicLibrary.open('libwhisper.so');
+      return DynamicLibrary.open(androidLibrary);
     } else if (Platform.isWindows) {
       return DynamicLibrary.open('whisper_ggml.dll');
     } else if (Platform.isLinux) {
@@ -52,12 +68,13 @@ class Whisper {
   Future<Map<String, dynamic>> _request({
     required WhisperRequestDto whisperRequest,
   }) async {
+    final String library = androidLibrary;
     return Isolate.run(() async {
       final Pointer<Utf8> data =
           whisperRequest.toRequestString().toNativeUtf8();
-      final Pointer<Utf8> res = _openLib()
-          .lookupFunction<WReqNative, WReqNative>('request')
-          .call(data);
+      final Pointer<Utf8> res = _openLib(
+        library,
+      ).lookupFunction<WReqNative, WReqNative>('request').call(data);
 
       final Map<String, dynamic> result =
           json.decode(res.toDartString()) as Map<String, dynamic>;

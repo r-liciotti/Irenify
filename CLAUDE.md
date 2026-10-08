@@ -101,6 +101,7 @@ dart format lib test
 dart run build_runner build         # dopo modifiche a drift/freezed/json_serializable (~50 s; `-d` non esiste più)
 dart run drift_dev make-migrations  # dopo ogni cambio di schema: salva lo schema e genera i test (D-19)
 flutter build apk --debug           # verifica build Android (~3 min)
+tool/build_release.sh               # APK di rilascio firmato, arm64, con chiave Gemini e modello Whisper (D-65..D-67)
 flutter run -d <device>             # telefono Android / iPhone reale
 ```
 
@@ -112,7 +113,9 @@ flutter run -d <device>             # telefono Android / iPhone reale
 - Acquisizione contenuti a 3 livelli: (1) didascalia, (2) download video best-effort isolato in `MediaResolver`,
   (3) fallback: l'utente condivide il file video. Una ricetta non deve mai dipendere dal livello 2.
 - Interfacce sostituibili: `LlmProvider` (Gemini, Mistral; `ProxyLlmProvider` futuro), `Transcriber`.
-- La chiave API è dell'utente, in `flutter_secure_storage`; mai nel binario o nel repo.
+- La chiave API è dell'utente, in `flutter_secure_storage`; mai nel repo. Eccezione D-66: l'APK di rilascio per i
+  telefoni dell'utente include la sua chiave (da Portachiavi via `tool/build_release.sh`), usata se non ne è stata
+  inserita un'altra: quell'APK non si condivide né si pubblica.
 
 ## Fatti verificati sulle fonti (settembre 2026)
 
@@ -149,11 +152,11 @@ flutter run -d <device>             # telefono Android / iPhone reale
 - `drift` fissato a **2.34.0** (D-20): la 2.35 richiede `meta ^1.18` (Flutter 3.41 fissa la 1.17); le 2.34.1–2.34.4
   rompono `drift_dev make-migrations` 2.34.0 (errori di compilazione su `drift3_preview`). Aggiornare drift e
   drift_dev solo insieme, verificando `make-migrations`.
-- **ATTENZIONE, build Android legata al Pixel 9 Pro**: `android/build.gradle.kts` compila whisper.cpp con
-  `-march=armv8.2-a+fp16+dotprod+i8mm` e solo per arm64-v8a. Su CPU senza i8mm (indicativamente SoC
-  precedenti al 2022, es. Tensor G1/G2) l'app va in crash (SIGILL) appena parte Whisper. Prima di installarla
-  su altri telefoni serve la scelta delle istruzioni a runtime (vedi worklog, "Configurazione Whisper per
-  altri telefoni").
+- **Whisper su Android (D-65):** whisper.cpp è compilato in tre varianti arm64 (`libwhisper.so` base,
+  `libwhisper_dotprod.so`, `libwhisper_i8mm.so`) in `packages/whisper_ggml/android/src/whisper/CMakeLists.txt`;
+  `cpu_compatibility.dart` sceglie all'avvio la più veloce supportata da **tutti** i core (`/proc/cpuinfo`) e
+  `Whisper(androidLibrary:)` la apre. App solo arm64 (`packaging.jniLibs.excludes` in `android/app/build.gradle.kts`).
+  `SkipReason.cpuUnsupported` resta solo fuori da Android arm64.
 - `ndkVersion = "29.0.13113456"` in `android/app/build.gradle.kts` (richiesto dai plugin nativi).
 - Swift Package Manager abilitato per progetto in `pubspec.yaml` (`flutter: config:`), non globalmente.
 - `whisper_ggml` 2.6.0: riconverte sempre l'input in `<input>.wav` (lo cancella `WhisperTranscriber`); trascrizione

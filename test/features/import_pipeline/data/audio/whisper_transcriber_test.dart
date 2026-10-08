@@ -13,13 +13,16 @@ class FakeWhisper {
   final String text;
   final Object? error;
 
+  String? library;
   String? modelPath;
   TranscribeRequest? request;
 
   Future<String> call({
+    required String library,
     required String modelPath,
     required TranscribeRequest request,
   }) async {
+    this.library = library;
     this.modelPath = modelPath;
     this.request = request;
     File('${request.audio}.wav').writeAsStringSync('RIFF');
@@ -62,6 +65,20 @@ void main() {
     expect(whisper.request?.initialPrompt, isNull);
     expect(whisper.request?.splitOnWord, isFalse);
     expect(whisper.request?.isTranslate, isFalse);
+  });
+
+  test('apre la libreria base se non riceve la variante, altrimenti quella '
+      'della CPU (D-65)', () async {
+    final whisper = FakeWhisper();
+
+    await WhisperTranscriber(call: whisper.call).transcribe(wav, model);
+    expect(whisper.library, 'libwhisper.so');
+
+    await WhisperTranscriber(
+      call: whisper.call,
+      library: () async => 'libwhisper_i8mm.so',
+    ).transcribe(wav, model);
+    expect(whisper.library, 'libwhisper_i8mm.so');
   });
 
   test('senza modello Silero niente VAD; con il modello lo passa a '

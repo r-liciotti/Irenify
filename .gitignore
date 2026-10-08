@@ -64,3 +64,8 @@ tool/nutrition/.cache/
 packages/whisper_ggml/android/.cxx/
 packages/whisper_ggml/android/build/
 packages/whisper_ggml/.dart_tool/
+
+# Modello Whisper incluso nell'APK di rilascio (D-67): 264 MB, oltre il limite di GitHub
+assets/whisper_model/*.bin
+assets/whisper_model/*.part
+tool/whisper_model/.cache/

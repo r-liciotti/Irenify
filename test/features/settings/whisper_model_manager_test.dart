@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:irenefy/core/errors/failure.dart';
 import 'package:irenefy/features/settings/data/whisper_model_manager.dart';
 
+import 'fake_bundled_assets.dart';
+
 /// Server finto che vede anche le intestazioni (serve per la `Range`).
 class RangeServer implements HttpClientAdapter {
   RangeServer(this.handle);
@@ -251,5 +253,105 @@ void main() {
 
     expect(model().existsSync(), isFalse);
     expect(partial().existsSync(), isFalse);
+  });
+
+  group('installBundled (D-67)', () {
+    final server = RangeServer((_) => throw StateError('nessuna rete'));
+
+    File asset(List<int> bytes) =>
+        File('${dir.path}/asset.bin')..writeAsBytesSync(bytes);
+
+    WhisperModelManager withAssets(FakeBundledAssets assets, {String? sha}) =>
+        WhisperModelManager(
+          server.dio,
+          () async => dir,
+          expectedBytes: payload.length,
+          expectedSha256: sha ?? payloadSha,
+          bundledAssets: assets,
+        );
+
+    test('asset assente: null e nulla scritto', () async {
+      final assets = FakeBundledAssets(null);
+      var copying = false;
+
+      final file = await withAssets(
+        assets,
+      ).installBundled(onCopying: () => copying = true);
+
+      expect(file, isNull);
+      expect(copying, isFalse);
+      expect(assets.copies, isEmpty);
+      expect(dir.listSync(), isEmpty);
+    });
+
+    test('asset presente: copiato dal .part, verificato e pronto', () async {
+      final assets = FakeBundledAssets(asset(payload));
+      var copying = false;
+      final m = withAssets(assets);
+
+      final file = await m.installBundled(onCopying: () => copying = true);
+
+      expect(file?.path, model().path);
+      expect(model().readAsBytesSync(), payload);
+      expect(partial().existsSync(), isFalse);
+      expect(copying, isTrue);
+      expect(
+        assets.copies.single.$1,
+        'assets/whisper_model/ggml-small-q8_0.bin',
+      );
+      expect(assets.copies.single.$2, partial().path);
+      expect((await m.readyModel())?.path, model().path);
+      expect(server.requests, isEmpty);
+    });
+
+    test('sha256 sbagliato: .part eliminato ed errore', () async {
+      final assets = FakeBundledAssets(asset(payload));
+
+      await expectLater(
+        withAssets(assets, sha: 'a' * 64).installBundled(),
+        throwsA(isA<UnexpectedFailure>()),
+      );
+
+      expect(model().existsSync(), isFalse);
+      expect(partial().existsSync(), isFalse);
+    });
+
+    test('dimensione sbagliata: .part eliminato ed errore', () async {
+      final assets = FakeBundledAssets(asset(payload.sublist(1)));
+
+      await expectLater(
+        withAssets(assets).installBundled(),
+        throwsA(isA<UnexpectedFailure>()),
+      );
+
+      expect(model().existsSync(), isFalse);
+      expect(partial().existsSync(), isFalse);
+    });
+
+    test('copia non riuscita: .part eliminato ed errore', () async {
+      final assets = FakeBundledAssets(asset(payload), failCopy: true);
+
+      await expectLater(
+        withAssets(assets).installBundled(),
+        throwsA(isA<FileSystemException>()),
+      );
+
+      expect(model().existsSync(), isFalse);
+      expect(partial().existsSync(), isFalse);
+    });
+
+    test('modello già pronto: nessuna copia', () async {
+      model().writeAsBytesSync(payload);
+      final assets = FakeBundledAssets(asset(payload));
+      var copying = false;
+
+      final file = await withAssets(
+        assets,
+      ).installBundled(onCopying: () => copying = true);
+
+      expect(file?.path, model().path);
+      expect(copying, isFalse);
+      expect(assets.copies, isEmpty);
+    });
   });
 }

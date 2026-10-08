@@ -41,7 +41,8 @@ final class SpeechModelDownloading extends SpeechModelState {
   final double progress;
 }
 
-/// Download finito, calcolo dello sha256.
+/// Download finito, calcolo dello sha256; anche durante la copia del modello
+/// incluso nell'APK (D-67), che comprende la stessa verifica.
 final class SpeechModelVerifying extends SpeechModelState {
   const SpeechModelVerifying();
 }
@@ -58,15 +59,16 @@ final class SpeechModelFailed extends SpeechModelState {
   final Failure failure;
 }
 
-/// Gestisce download, annullamento ed eliminazione del modello.
+/// Gestisce download, copia dall'APK (D-67), annullamento ed eliminazione
+/// del modello.
 ///
 /// Non è `autoDispose`: il download continua anche uscendo dalle
 /// impostazioni.
 class SpeechModelController extends Notifier<SpeechModelState> {
   CancelToken? _cancelToken;
 
-  /// Si completa quando il download in corso è finito (anche annullato o
-  /// fallito); `null` se non ce n'è uno.
+  /// Si completa quando il download o la copia in corso sono finiti (anche
+  /// annullati o falliti); `null` se non ce n'è uno.
   Completer<void>? _running;
 
   WhisperModelManager get _manager => ref.read(whisperModelManagerProvider);
@@ -80,7 +82,7 @@ class SpeechModelController extends Notifier<SpeechModelState> {
   Future<void> _check() async {
     try {
       final model = await _manager.readyModel();
-      if (!ref.mounted || _cancelToken != null) return;
+      if (!ref.mounted || _running != null) return;
       state = model == null
           ? const SpeechModelMissing()
           : SpeechModelReady(_manager.expectedBytes);
@@ -91,7 +93,7 @@ class SpeechModelController extends Notifier<SpeechModelState> {
 
   /// Avvia (o riprende) il download; non fa nulla se è già in corso.
   Future<void> download() async {
-    if (_cancelToken != null) return;
+    if (_running != null) return;
     final cancelToken = _cancelToken = CancelToken();
     final running = _running = Completer<void>();
     final log = ref.read(appLogProvider)..info('Modello Whisper: download');
@@ -143,16 +145,56 @@ class SpeechModelController extends Notifier<SpeechModelState> {
     }
   }
 
+  /// Copia il modello incluso nell'APK, se c'è e se manca sul telefono
+  /// (D-67): la chiama `main.dart` a ogni avvio, in background. Durante la
+  /// copia lo stato è [SpeechModelVerifying]; a copia finita i job fermi per
+  /// il modello mancante ripartono, come dopo un download (D-40). Un job
+  /// arrivato durante la copia si ferma in attesa del modello e riparte
+  /// qui. Gli errori finiscono nel registro e lasciano il download come
+  /// ripiego; mai un'eccezione verso il chiamante.
+  Future<void> installBundled() async {
+    if (_running != null) return;
+    final running = _running = Completer<void>();
+    final log = ref.read(appLogProvider);
+    var copied = false;
+    var ok = false;
+    try {
+      final model = await _manager.installBundled(
+        onCopying: () {
+          copied = true;
+          log.info('Modello Whisper: copia dall\'APK');
+          if (ref.mounted) state = const SpeechModelVerifying();
+        },
+      );
+      ok = model != null;
+      if (copied) log.info('Modello Whisper copiato dall\'APK');
+    } on Object catch (e, st) {
+      log.error('Modello Whisper: copia dall\'APK non riuscita', e, st);
+    } finally {
+      if (identical(_running, running)) _running = null;
+      running.complete();
+    }
+    if (!ref.mounted) return;
+    if (ok) {
+      state = SpeechModelReady(_manager.expectedBytes);
+      if (copied) await _resumeWaitingJobs();
+    } else {
+      // Nessun asset o copia fallita: lo stato lo dice il file su disco
+      // (il controllo iniziale può essere stato saltato durante la copia).
+      await _check();
+    }
+  }
+
   /// Interrompe il download; il file parziale resta per riprendere.
   void cancel() => _cancelToken?.cancel();
 
-  /// Attende la fine del download in corso, se c'è: dopo [cancel] serve
-  /// prima di [delete], che con un download ancora aperto non fa nulla
-  /// (anche la verifica dello sha256 non si interrompe).
+  /// Attende la fine del download (o della copia) in corso, se c'è: dopo
+  /// [cancel] serve prima di [delete], che con un download ancora aperto non
+  /// fa nulla (anche la verifica dello sha256 non si interrompe).
   Future<void> whenIdle() => _running?.future ?? Future.value();
 
   Future<void> delete() async {
-    if (_cancelToken != null) return;
+    if (_running != null) return;
     try {
       await _manager.delete();
       ref.read(appLogProvider).info('Modello Whisper eliminato');

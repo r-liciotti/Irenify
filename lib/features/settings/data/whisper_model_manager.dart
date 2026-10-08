@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../core/errors/failure.dart';
 import '../../../core/network/http_client.dart';
 import '../../import_pipeline/domain/transcription.dart';
+import 'bundled_assets.dart';
 
 /// Il modello Whisper sul telefono: controllo, download con ripresa e
 /// verifica, eliminazione.
@@ -22,7 +23,9 @@ class WhisperModelManager implements SpeechModelStore {
     Uri? url,
     this.expectedBytes = modelBytes,
     this.expectedSha256 = modelSha256,
-  }) : url = url ?? Uri.parse(modelUrl);
+    BundledAssets bundledAssets = const NoBundledAssets(),
+  }) : url = url ?? Uri.parse(modelUrl),
+       _bundled = bundledAssets;
 
   /// Modello scelto in F0: `small` quantizzato q8_0 (D-10).
   static const fileName = 'ggml-small-q8_0.bin';
@@ -37,11 +40,16 @@ class WhisperModelManager implements SpeechModelStore {
   static const modelSha256 =
       '49c8fb02b65e6049d5fa6c04f81f53b867b5ec9540406812c643f177317f779f';
 
+  /// Il modello incluso nell'APK di rilascio (D-67): ce lo mette
+  /// `tool/build_release.sh`; nelle build di debug non c'è.
+  static const bundledAsset = 'assets/whisper_model/$fileName';
+
   final Dio _dio;
   final Future<Directory> Function() _directory;
   final Uri url;
   final int expectedBytes;
   final String expectedSha256;
+  final BundledAssets _bundled;
 
   Future<File> _file(String name) async {
     final dir = await _directory();
@@ -103,6 +111,12 @@ class WhisperModelManager implements SpeechModelStore {
     }
 
     onVerifying?.call();
+    return _verifyAndInstall(partial);
+  }
+
+  /// Controlla lo sha256 di [partial] (dimensione già verificata) e lo
+  /// rinomina nel modello; se non torna lo elimina e lancia.
+  Future<File> _verifyAndInstall(File partial) async {
     final hash = await _sha256InIsolate(partial.path);
     if (hash != expectedSha256) {
       await partial.delete();
@@ -113,6 +127,45 @@ class WhisperModelManager implements SpeechModelStore {
       );
     }
     return partial.rename((await _modelFile()).path);
+  }
+
+  /// Installa il modello incluso nell'APK (D-67), se c'è: lo copia a flusso
+  /// nel `.part`, ne verifica dimensione e sha256 e solo allora lo rinomina
+  /// nel modello. Restituisce il modello (anche se era già pronto: in quel
+  /// caso nessuna copia) oppure `null` se l'APK non lo contiene.
+  /// [onCopying] avvisa che la copia sta per iniziare.
+  ///
+  /// Una copia non riuscita o un file diverso da quello atteso eliminano il
+  /// `.part` e lanciano: resta il download dalle impostazioni.
+  ///
+  /// Se l'utente elimina il modello dalle impostazioni, al riavvio dell'app
+  /// viene ricopiato dall'APK: va bene così, lo spazio dell'asset è comunque
+  /// occupato e senza modello i video perderebbero la trascrizione.
+  Future<File?> installBundled({void Function()? onCopying}) async {
+    final ready = await readyModel();
+    if (ready != null) return ready;
+    if (!await _bundled.exists(bundledAsset)) return null;
+
+    onCopying?.call();
+    final partial = await _partialFile();
+    try {
+      // Il nativo scrive in `<destinazione>.part` e rinomina: qui la
+      // destinazione è il nostro `.part`, così il modello compare solo dopo
+      // la verifica dello sha256.
+      await _bundled.copy(bundledAsset, partial.path);
+      final length = await partial.length();
+      if (length != expectedBytes) {
+        throw UnexpectedFailure(
+          cause:
+              'Modello Whisper incluso di $length byte invece di '
+              '$expectedBytes',
+        );
+      }
+    } on Object {
+      if (await partial.exists()) await partial.delete();
+      rethrow;
+    }
+    return _verifyAndInstall(partial);
   }
 
   /// Scarica da [offset] in avanti, accodando a [partial]. Se il server
@@ -221,5 +274,6 @@ final whisperModelManagerProvider = Provider<WhisperModelManager>(
   (ref) => WhisperModelManager(
     ref.watch(httpClientProvider),
     ref.watch(speechModelDirectoryProvider),
+    bundledAssets: ref.watch(bundledAssetsProvider),
   ),
 );

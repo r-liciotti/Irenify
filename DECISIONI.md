@@ -11,6 +11,43 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-67 — Modello Whisper incluso nell'APK di rilascio (2026-10-08) — Attiva
+- **Decisione:** `ggml-small-q8_0.bin` (264 MB) entra nell'APK di rilascio come asset non compresso
+  (`assets/whisper_model/`) e al primo avvio l'app lo copia a flusso nella posizione del modello, con verifica sha256;
+  il download dalle Impostazioni resta come ripiego. Il file è escluso da git (oltre il limite di 100 MB di GitHub):
+  `tool/build_release.sh` lo scarica e lo verifica in `tool/whisper_model/.cache/`, lo copia negli asset solo per la
+  build e lo toglie alla fine, così debug e test restano leggeri.
+- **Costo:** APK da circa 49 a circa 315 MB; sul telefono circa 580 MB in tutto (APK + copia del modello).
+- **Alternative scartate:** lettura diretta dall'APK con un caricatore nativo (risparmia la copia, circa mezza
+  giornata in più); lasciare solo il download.
+- **Deciso da:** utente ("vorrei che il modello per la trascrizione sia incluso nell'apk"; scelta "Copia al primo
+  avvio").
+
+## D-66 — Chiave Gemini dell'utente inclusa nell'APK di rilascio (2026-10-08) — Attiva, da togliere prima degli store
+- **Decisione:** la chiave dell'utente sta nel Portachiavi del Mac (servizio `it.overside.irenefy.gemini`, presa dal
+  `.env` senza mostrarla) e `tool/build_release.sh` la passa all'APK con `--dart-define-from-file`
+  (`IRENEFY_GEMINI_KEY`, file temporaneo `chmod 600` cancellato a fine build). `SecureLlmSettings.readApiKey()` usa
+  la chiave inserita nelle Impostazioni se c'è, altrimenti quella inclusa. Mai nel repository; vuota in debug e nei
+  test.
+- **Rischio accettato dall'utente:** chi ha l'APK può estrarre la chiave; l'APK è solo per i telefoni dell'utente e
+  non va condiviso né pubblicato. Modifica la regola "mai nel binario" di D-39/CLAUDE.md per questo solo caso.
+- **Deciso da:** utente ("vorrei che la mia chiave sia fissa dentro, senza che la inserisco"; scelta "Sì, solo per i
+  miei telefoni").
+
+## D-65 — Whisper per altri telefoni e APK firmato (2026-10-08) — Attiva
+- **Decisione:**
+  - **Tre varianti** di `libwhisper` per arm64, scelte all'avvio da `/proc/cpuinfo` prima di caricarle: base
+    (armv8.0), `armv8.2-a+fp16+dotprod` (circa 2019–2021), `armv8.2-a+fp16+dotprod+i8mm` (dal 2022, Pixel 9 Pro). Tolta
+    l'impostazione fissa per il Pixel da `android/build.gradle.kts`.
+  - **APK solo arm64-v8a** (da 132 a circa 45 MB); esclusi i telefoni a 32 bit e x86.
+  - **Firma di rilascio:** chiave creata in locale, password nel Portachiavi macOS, mai nel repository né in chiaro su
+    disco; copia della chiave conservata dall'utente.
+  - **Passaggio sul Pixel:** backup → disinstallazione della build di debug → APK firmato → importazione del backup,
+    chiave Gemini reinserita e modello Whisper riscaricato.
+  - **Prova anche su un telefono Android più vecchio** dell'utente.
+- **Deciso da:** utente (risposte al resoconto della fase 4 della F6: "1. ok, 2. ok, 3. ok, 4. sì, ho un Android più
+  vecchio e meno potente").
+
 ## D-64 — "Elimina dati" senza chiave Gemini e modello (2026-10-08) — Attiva
 - **Decisione:** "Elimina dati" cancella solo ricette, tag e importazioni con le loro cartelle. Tolte le due caselle
   "Elimina anche la chiave Gemini" e "Elimina anche il modello di trascrizione"; la conferma dice che chiave e

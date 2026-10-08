@@ -27,28 +27,49 @@ file(GLOB GGML_SRC
     ${W}/ggml/src/ggml-cpu/amx/*.cpp
 )
 
-add_library(whisper STATIC ${GGML_SRC} ${W}/src/whisper.cpp)
-target_include_directories(whisper PUBLIC
-    ${W}/include
-    ${W}/ggml/include
-    ${W}/ggml/src
-    ${W}/ggml/src/ggml-cpu
-    ${W}/src
-)
-target_compile_definitions(whisper PUBLIC GGML_USE_CPU)
-# Upstream generates these from git; we vendor a fixed release.
-target_compile_definitions(whisper PRIVATE
-    GGML_VERSION="1.9.1"
-    GGML_COMMIT="whisper.cpp-v1.9.1"
-    WHISPER_VERSION="1.9.1"
-)
-# No -march override: the previous armv8.2-a+fp16 flags SIGILLed on
-# armv8.0 devices (issue #15). Baseline armv8-a runs everywhere.
-target_compile_options(whisper PRIVATE -O3 -ffunction-sections -fdata-sections)
+# Irenefy (D-65): three shared libraries from the same sources, each with
+# its own static ggml/whisper compiled with its own -march, so the app can
+# pick at runtime (from /proc/cpuinfo) the fastest one the CPU can run:
+#   libwhisper.so          armv8-a baseline (NEON only), runs everywhere
+#   libwhisper_dotprod.so  armv8.2-a+fp16+dotprod  (about 2019-2021 SoCs)
+#   libwhisper_i8mm.so     armv8.2-a+fp16+dotprod+i8mm (2022+, Pixel 9 Pro)
+# ggml picks its kernels at compile time from the compiler macros
+# (__ARM_FEATURE_DOTPROD, __ARM_FEATURE_FP16_VECTOR_ARITHMETIC,
+# __ARM_FEATURE_MATMUL_INT8) that -march sets; the GGML_USE_* runtime
+# scoring in arch/arm/cpu-feats.cpp is only used by GGML_BACKEND_DL builds.
+# The extra variants exist only for arm64-v8a (the only ABI we build).
+function(irenefy_whisper_variant suffix march)
+    set(core whisper_core${suffix})
+    add_library(${core} STATIC ${GGML_SRC} ${W}/src/whisper.cpp)
+    target_include_directories(${core} PUBLIC
+        ${W}/include
+        ${W}/ggml/include
+        ${W}/ggml/src
+        ${W}/ggml/src/ggml-cpu
+        ${W}/src
+    )
+    target_compile_definitions(${core} PUBLIC GGML_USE_CPU)
+    # Upstream generates these from git; we vendor a fixed release.
+    target_compile_definitions(${core} PRIVATE
+        GGML_VERSION="1.9.1"
+        GGML_COMMIT="whisper.cpp-v1.9.1"
+        WHISPER_VERSION="1.9.1"
+    )
+    target_compile_options(${core} PRIVATE -O3 -ffunction-sections -fdata-sections ${march})
 
-add_library(whisper_flutter SHARED main.cpp)
-set_target_properties(whisper_flutter PROPERTIES OUTPUT_NAME "whisper")
-target_compile_definitions(whisper_flutter PUBLIC DART_SHARED_LIB)
-target_compile_options(whisper_flutter PRIVATE -O3 -ffunction-sections -fdata-sections)
-target_link_options(whisper_flutter PRIVATE -Wl,--gc-sections)
-target_link_libraries(whisper_flutter PRIVATE whisper ${CMAKE_THREAD_LIBS_INIT})
+    set(lib whisper_flutter${suffix})
+    add_library(${lib} SHARED main.cpp)
+    set_target_properties(${lib} PROPERTIES OUTPUT_NAME "whisper${suffix}")
+    target_compile_definitions(${lib} PUBLIC DART_SHARED_LIB)
+    target_compile_options(${lib} PRIVATE -O3 -ffunction-sections -fdata-sections ${march})
+    target_link_options(${lib} PRIVATE -Wl,--gc-sections)
+    target_link_libraries(${lib} PRIVATE ${core} ${CMAKE_THREAD_LIBS_INIT})
+endfunction()
+
+# No -march override for the baseline: armv8.2-a+fp16 flags SIGILLed on
+# armv8.0 devices (upstream issue #15). Baseline armv8-a runs everywhere.
+irenefy_whisper_variant("" "")
+if(ANDROID_ABI STREQUAL "arm64-v8a")
+    irenefy_whisper_variant("_dotprod" "-march=armv8.2-a+fp16+dotprod")
+    irenefy_whisper_variant("_i8mm" "-march=armv8.2-a+fp16+dotprod+i8mm")
+endif()
