@@ -135,6 +135,33 @@ void main() {
     );
 
     _sheetTest(
+      'prima di scrivere: ingredienti principali, "latte" con il suo alimento',
+      open: _openAdd,
+      (tester, db) async {
+        expect(find.text('sale'), findsOneWidget);
+        expect(find.text('farina 00'), findsOneWidget);
+        await tester.scrollUntilVisible(
+          find.text('latte'),
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await _tap(tester, find.text('latte'));
+        expect(find.text('Nuovo articolo'), findsOneWidget);
+        await _tap(tester, find.text('Salva'));
+
+        final items = await _items(tester, db);
+        expect(items.single.name, 'latte');
+        expect(items.single.foodId, isNotNull);
+
+        // Scrivendo, la lista lascia il posto alla ricerca.
+        await _openAgain(tester);
+        await _search(tester, 'pomod');
+        expect(find.text('sale'), findsNothing);
+        expect(find.text('Pomodoro'), findsOneWidget);
+      },
+    );
+
+    _sheetTest(
       'testo libero con Invio: "carta forno" senza foodId',
       open: _openAdd,
       (tester, db) async {

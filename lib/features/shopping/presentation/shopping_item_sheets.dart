@@ -6,7 +6,10 @@ import '../../../l10n/app_localizations.dart';
 import '../../nutrition/data/food_db.dart';
 import '../../nutrition/domain/food_name.dart';
 import '../../nutrition/domain/nutrition.dart';
+import '../../recipes/domain/ingredient_kind.dart';
+import '../../recipes/domain/recipe.dart';
 import '../../recipes/domain/recipe_enums.dart';
+import '../../recipes/presentation/ingredient_emoji.dart';
 import '../../recipes/presentation/quantity_format.dart';
 import '../data/shopping_repository.dart';
 import '../domain/shopping_list.dart';
@@ -99,6 +102,13 @@ class _SearchSheetState extends ConsumerState<_SearchSheet> {
     if (mounted) _pick(NewShoppingItem(name: name, foodId: foodId));
   }
 
+  /// Un ingrediente principale: il nome resta quello della lista, l'alimento
+  /// viene dal suo alias.
+  Future<void> _pickStaple(String name) async {
+    final foodId = await _aliasFoodId(ref, name);
+    if (mounted) _pick(NewShoppingItem(name: name, foodId: foodId));
+  }
+
   void _pick(NewShoppingItem item) =>
       Navigator.of(context).pop(item.copyWith(quantity: 1));
 
@@ -145,6 +155,25 @@ class _SearchSheetState extends ConsumerState<_SearchSheet> {
                         title: Text(l10n.shoppingAddFreeText(text)),
                         onTap: _pickFreeText,
                       ),
+                    if (text.isEmpty)
+                      for (final name in shoppingStaples)
+                        ListTile(
+                          // Solo decorativa: lo screen reader legge il nome.
+                          leading: ExcludeSemantics(
+                            child: Text(
+                              ingredientEmoji(
+                                ingredientKindOf(
+                                  Ingredient(id: '', name: name),
+                                ),
+                              ),
+                              textScaler: TextScaler.noScaling,
+                              style: const TextStyle(fontSize: 22, height: 1),
+                            ),
+                          ),
+                          title: Text(name),
+                          trailing: const Icon(Icons.add),
+                          onTap: () => _pickStaple(name),
+                        ),
                     for (final food in foods ?? const <FoodInfo>[])
                       ListTile(
                         title: Text(food.nameIt ?? food.nameEn),

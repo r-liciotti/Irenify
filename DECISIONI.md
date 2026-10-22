@@ -11,6 +11,16 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-72 — Spesa: ingredienti principali in "Aggiungi" (2026-10-22) — Attiva
+- **Decisione:** aprendo "Aggiungi" nella scheda Spesa, prima di scrivere compare una lista fissa di 56 ingredienti
+  principali (sale, olio extravergine, farina 00, uova, pepe nero, burro…), come il catalogo "Scegli ingrediente" di
+  Avocadish; scrivendo, la lista lascia il posto alla ricerca nel catalogo e al testo libero. Ogni voce è un alias
+  italiano del database degli alimenti (controllato da un test), così si somma con lo stesso alimento delle ricette.
+- **Alternative scartate (per ora):** ingredienti più usati nelle ricette dell'utente (con 15 ricette la classifica
+  sarebbe poco utile); tutti i 443 alimenti con nome italiano in ordine alfabetico (troppo lunga).
+- **Deciso da:** utente ("come in Avocadish metti una lista di ingredienti principali e se non c'è poi anche
+  cercare"); scelta della lista fissa dell'agente.
+
 ## D-71 — F8: lista della spesa unica, senza reparti (2026-10-22) — Attiva
 - **Decisione:** scheda **Spesa** sul modello di Avocadish (piano in `F8_PIANO.md`), con queste scelte:
   - **una sola lista**, in ordine di prima aggiunta, **senza reparti**;

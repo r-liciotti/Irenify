@@ -44,6 +44,24 @@ abstract class NewShoppingItem with _$NewShoppingItem {
   }) = _NewShoppingItem;
 }
 
+/// Ingredienti principali mostrati in "Aggiungi" prima di scrivere (come il
+/// catalogo di Avocadish, D-72), dai più comuni. Ognuno è un alias italiano
+/// del database degli alimenti (test in `shopping_staples_test.dart`), così
+/// si somma con lo stesso alimento delle ricette.
+const shoppingStaples = <String>[
+  'sale', "olio extravergine d'oliva", 'farina 00', 'uova', 'pepe nero', //
+  'burro', 'zucchero', 'latte', 'lievito per dolci', 'lievito di birra', //
+  'parmigiano', 'aglio', 'cipolla', 'pomodori', 'pomodorini', //
+  'passata di pomodoro', 'basilico', 'prezzemolo', 'patate', 'carote', //
+  'sedano', 'zucchine', 'melanzane', 'peperoni', 'spinaci', 'funghi', //
+  'insalata', 'limone', 'mozzarella', 'ricotta', 'mascarpone', //
+  'panna fresca', 'yogurt', 'pecorino', 'pasta', 'riso', 'pane', //
+  'pangrattato', 'petto di pollo', 'carne macinata', 'pancetta', //
+  'prosciutto cotto', 'tonno', 'salmone', 'ceci', 'lenticchie', 'fagioli', //
+  'piselli', 'mele', 'banane', 'cioccolato fondente', 'cacao amaro', //
+  'miele', 'brodo vegetale', 'vino bianco', 'aceto balsamico',
+];
+
 /// Un ingrediente della ricetta proposto per la lista: [selected] è la
 /// spunta iniziale nella schermata "Aggiungi alla spesa".
 typedef ShoppingProposal = ({NewShoppingItem item, bool selected});
