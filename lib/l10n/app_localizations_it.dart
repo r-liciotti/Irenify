@@ -72,6 +72,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get recipesFilterTikTok => 'TikTok';
 
   @override
+  String get recipesFilterWeb => 'Siti web';
+
+  @override
   String get recipesNoResultsTitle => 'Nessuna ricetta trovata';
 
   @override
@@ -125,6 +128,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get importStepMetadata => 'didascalia';
+
+  @override
+  String get importStepWebPage => 'lettura della pagina';
 
   @override
   String get importStepMedia => 'download del video';
@@ -259,6 +265,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get importJobPlatformLink => 'Link';
 
   @override
+  String get importJobPlatformWeb => 'Sito web';
+
+  @override
   String importJobStartedAt(String date, String time) {
     return 'Iniziata il $date alle $time';
   }
@@ -330,6 +339,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get importSkipNoSpeech => 'solo musica, nessuna voce';
+
+  @override
+  String get importSkipWebPage => 'pagina di un sito, nessun video';
 
   @override
   String get importWaitingConnection =>
@@ -622,7 +634,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get recipeOpenOnTikTok => 'Apri il post su TikTok';
 
   @override
+  String get recipeOpenWebPage => 'Apri la pagina della ricetta';
+
+  @override
   String get recipeCaption => 'Didascalia';
+
+  @override
+  String get recipeWebPageText => 'Testo della pagina';
 
   @override
   String get recipeTranscript => 'Trascrizione';
@@ -842,14 +860,14 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get welcomeIntro =>
-      'Trasforma i reel di Instagram e TikTok in ricette da cucinare.';
+      'Trasforma i reel di Instagram e TikTok e le pagine dei siti di ricette in ricette da cucinare.';
 
   @override
   String get welcomeShareTitle => 'Come si importa una ricetta';
 
   @override
   String get welcomeShareBody =>
-      'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Da Mirtilla. Al resto pensa l\'app.';
+      'Apri un reel su Instagram o TikTok, o la pagina di una ricetta nel browser, tocca Condividi e scegli Da Mirtilla. Al resto pensa l\'app.';
 
   @override
   String get welcomeKeyTitle => 'Collega Gemini';
@@ -1059,11 +1077,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get failureUnsupportedLink =>
-      'Link non supportato: condividi un post di Instagram o TikTok.';
+      'Link non supportato: condividi un post di Instagram o TikTok o la pagina di una ricetta.';
 
   @override
   String get failureInvalidLink =>
-      'Il link non porta a un post: forse è scaduto o è stato rimosso.';
+      'Il link non porta a un post o a una pagina: forse è scaduto o è stato rimosso.';
 
   @override
   String get failureAlreadyImporting =>
@@ -1075,7 +1093,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get failureSourceUnavailable =>
-      'Instagram o TikTok non hanno risposto come previsto: riprova più tardi.';
+      'Il sito non ha risposto come previsto o chiede una verifica: riprova più tardi.';
 
   @override
   String get failureTranscriptionFailed =>

@@ -180,6 +180,7 @@ class ImportJobTile extends ConsumerWidget {
 IconData importPlatformIcon(SourcePlatform? platform) => switch (platform) {
   SourcePlatform.instagram => Icons.camera_alt_outlined,
   SourcePlatform.tiktok => Icons.music_note_outlined,
+  SourcePlatform.web => Icons.language,
   SourcePlatform.file => Icons.video_file_outlined,
   SourcePlatform.manual || null => Icons.link,
 };
@@ -284,7 +285,11 @@ class ImportStatusLine extends StatelessWidget {
         Icons.error_outline,
         colors.error,
         l10n.importFailedAt(
-          stepLabel(l10n, job.failedStep ?? ImportFlow.steps.first),
+          stepLabel(
+            l10n,
+            job.failedStep ?? ImportFlow.steps.first,
+            platform: job.platform,
+          ),
           FailureCode.fromName(job.errorCode).message(l10n),
         ),
       ),
@@ -292,7 +297,11 @@ class ImportStatusLine extends StatelessWidget {
         Icons.hourglass_top,
         colors.onSurfaceVariant,
         l10n.importInProgress(
-          stepLabel(l10n, ImportFlow.nextStep(job.status)!),
+          stepLabel(
+            l10n,
+            ImportFlow.nextStep(job.status)!,
+            platform: job.platform,
+          ),
         ),
       ),
     };
@@ -337,9 +346,16 @@ class _Progress extends StatelessWidget {
   }
 }
 
-/// Nome della tappa per i messaggi ("In corso: didascalia").
-String stepLabel(AppLocalizations l10n, ImportStatus step) => switch (step) {
+/// Nome della tappa per i messaggi ("In corso: didascalia"); per un sito la
+/// didascalia è la lettura della pagina (D-70).
+String stepLabel(
+  AppLocalizations l10n,
+  ImportStatus step, {
+  SourcePlatform? platform,
+}) => switch (step) {
   ImportStatus.normalized => l10n.importStepNormalized,
+  ImportStatus.metadata when platform == SourcePlatform.web =>
+    l10n.importStepWebPage,
   ImportStatus.metadata => l10n.importStepMetadata,
   ImportStatus.media => l10n.importStepMedia,
   ImportStatus.audio => l10n.importStepAudio,

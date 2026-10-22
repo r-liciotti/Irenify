@@ -1,11 +1,13 @@
-/// Riconosce e normalizza i link condivisi da Instagram e TikTok.
+/// Riconosce e normalizza i link condivisi da Instagram e TikTok e quelli
+/// delle pagine di ricette di qualsiasi altro sito (D-70).
 ///
 /// Le app social condividono testo libero ("Guarda questo reel! https://…"),
 /// quindi l'URL va prima estratto e poi ricondotto a una forma canonica,
 /// senza parametri di tracciamento come `igsh` o `utm_*`.
 library;
 
-enum SocialPlatform { instagram, tiktok }
+/// Fonte del link; `web` = pagina di un sito qualsiasi.
+enum SocialPlatform { instagram, tiktok, web }
 
 /// Link riconosciuto. [postId] è `null` per i link brevi TikTok
 /// (`vm.tiktok.com/…`) e per quelli di condivisione Instagram
@@ -52,17 +54,80 @@ final _tiktokEmbedPath = RegExp(r'^/(?:embed/v2|v)/(\d+)');
 
 const _tiktokShortHosts = {'vm.tiktok.com', 'vt.tiktok.com'};
 
-/// Estrae il primo link Instagram/TikTok riconoscibile da [sharedText].
-/// Restituisce `null` se il testo non contiene link supportati.
+/// Estrae il primo link Instagram/TikTok riconoscibile da [sharedText]; se
+/// non ce n'è, il primo link a una pagina web (D-70). Restituisce `null` se
+/// il testo non contiene link supportati.
 SocialLink? parseSharedText(String sharedText) {
-  for (final match in _urlInText.allMatches(sharedText)) {
-    final raw = match.group(0)!.replaceFirst(_trailingPunctuation, '');
-    final uri = Uri.tryParse(raw);
-    if (uri == null) continue;
+  final uris = [
+    for (final match in _urlInText.allMatches(sharedText))
+      ?Uri.tryParse(match.group(0)!.replaceFirst(_trailingPunctuation, '')),
+  ];
+  for (final uri in uris) {
     final link = parseSocialUri(uri);
     if (link != null) return link;
   }
+  for (final uri in uris) {
+    final link = parseWebUri(uri);
+    if (link != null) return link;
+  }
   return null;
+}
+
+/// Siti che non mostrano ricette leggibili senza login o JavaScript (profili
+/// social, video): un loro link resta "non supportato".
+const _nonRecipeHosts = {
+  'instagram.com',
+  'instagr.am',
+  'tiktok.com',
+  'vm.tiktok.com',
+  'vt.tiktok.com',
+  'youtube.com',
+  'youtu.be',
+  'facebook.com',
+  'fb.watch',
+  'x.com',
+  'twitter.com',
+  'threads.net',
+};
+
+/// Parametri di tracciamento tolti dai link web: non cambiano la pagina.
+bool _isTrackingParam(String name) =>
+    name.startsWith('utm_') ||
+    const {
+      'fbclid',
+      'gclid',
+      'igsh',
+      'igshid',
+      'mc_cid',
+      'mc_eid',
+    }.contains(name);
+
+/// Link di una pagina web (D-70): senza frammento né parametri di
+/// tracciamento. [SocialLink.postId] è `{host}{percorso}` (senza `www.` né
+/// `/` finale), così la chiave dei doppioni è `web:{host}{percorso}` (D-17).
+SocialLink? parseWebUri(Uri uri) {
+  if (uri.scheme != 'http' && uri.scheme != 'https') return null;
+  final host = uri.host.toLowerCase();
+  final bareHost = host.replaceFirst(RegExp(r'^(www|m)\.'), '');
+  if (!host.contains('.') || _nonRecipeHosts.contains(bareHost)) return null;
+
+  final query = {
+    for (final MapEntry(:key, :value) in uri.queryParametersAll.entries)
+      if (!_isTrackingParam(key)) key: value,
+  };
+  final url = Uri(
+    scheme: uri.scheme,
+    host: host,
+    port: uri.hasPort ? uri.port : null,
+    path: uri.path,
+    queryParameters: query.isEmpty ? null : query,
+  );
+  final path = url.path.replaceFirst(RegExp(r'/+$'), '');
+  return SocialLink(
+    platform: SocialPlatform.web,
+    url: url,
+    postId: [bareHost, path, if (url.hasQuery) '?${url.query}'].join(),
+  );
 }
 
 /// Riconosce un singolo [uri] e lo porta in forma canonica.

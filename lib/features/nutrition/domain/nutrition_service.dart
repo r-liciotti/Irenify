@@ -24,9 +24,9 @@ final _alternative = RegExp(r' o |,');
 /// solo questa parte del peso indicato, il resto rimane in padella.
 const _fryingOilAbsorbedShare = 0.15;
 
-/// Indicazioni di frittura nel nome, nella nota o nel nome inglese
-/// ("olio per friggere", "per la frittura", "oil for deep frying",
-/// "deep-fry"). I confini di parola escludono "soffriggere" (soffritto).
+/// Indicazioni di frittura nel nome, nella nota, nel nome inglese o nel nome
+/// del gruppo ("olio per friggere", "per la frittura", "oil for deep frying",
+/// "deep-fry", gruppo "per friggere le patate"). I confini di parola escludono "soffriggere" (soffritto).
 final _fryingMarker = RegExp(
   r'\b(friggere|frittura|frying|deep[- ]fry|to fry)\b',
 );
@@ -48,7 +48,7 @@ class NutritionService {
     final items = <IngredientNutrition>[];
     for (final group in recipe.ingredientGroups) {
       for (final ingredient in group.ingredients) {
-        items.add(await _ingredient(ingredient));
+        items.add(await _ingredient(ingredient, group.name));
       }
     }
 
@@ -73,7 +73,10 @@ class NutritionService {
     );
   }
 
-  Future<IngredientNutrition> _ingredient(Ingredient ingredient) async {
+  Future<IngredientNutrition> _ingredient(
+    Ingredient ingredient,
+    String? groupName,
+  ) async {
     final (food, method) = await _match(ingredient);
     final isToTaste =
         ingredient.quantity == null ||
@@ -81,7 +84,7 @@ class NutritionService {
     var (grams, gramsMethod) = isToTaste
         ? (null, GramsMethod.none)
         : _grams(ingredient, food);
-    final isFryingOil = _isFryingOil(ingredient, food);
+    final isFryingOil = _isFryingOil(ingredient, food, groupName);
     if (isFryingOil && grams != null) grams *= _fryingOilAbsorbedShare;
     return IngredientNutrition(
       ingredientId: ingredient.id,
@@ -99,13 +102,19 @@ class NutritionService {
   }
 
   /// Olio o grasso per friggere (D-57): un'indicazione di frittura nel nome,
-  /// nella nota o nel nome inglese, e un olio o grasso nel nome inglese, in
-  /// quello dell'alimento abbinato o nel nome italiano.
-  bool _isFryingOil(Ingredient ingredient, FoodInfo? food) {
+  /// nella nota, nel nome inglese o nel nome del gruppo, e un olio o grasso
+  /// nel nome inglese, in quello dell'alimento abbinato o nel nome italiano.
+  bool _isFryingOil(Ingredient ingredient, FoodInfo? food, String? groupName) {
     final italian = normalizeFoodName(ingredient.name);
     final english = normalizeFoodName(ingredient.canonicalNameEn ?? '');
     final note = normalizeFoodName(ingredient.note ?? '');
-    final forFrying = [italian, note, english].any(_fryingMarker.hasMatch);
+    final group = normalizeFoodName(groupName ?? '');
+    final forFrying = [
+      italian,
+      note,
+      english,
+      group,
+    ].any(_fryingMarker.hasMatch);
     if (!forFrying) return false;
     final foodName = normalizeFoodName(food?.nameEn ?? '');
     return _fatEn.hasMatch(english) ||

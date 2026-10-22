@@ -93,6 +93,13 @@ sul simulatore leggibili con `xcrun simctl get_app_container <sim> it.overside.i
 Android↔iOS identico; le voci del backup non aspettano le finestre di sistema (su iOS il loro servizio può andare in crash
 senza rispondere: `FilePickerBusyFailure`). File in "Sul mio iPhone" del simulatore: cartella `File Provider Storage` del
 gruppo `group.com.apple.FileProvider.LocalStorage` (`simctl get_app_container <sim> com.apple.DocumentsApp groups`). Prove dal vivo D-44 ancora aperte.
+**F7 (ricette dai siti web) in corso** (`F7_PIANO.md`, D-70; F5 fase 5 in sospeso). Fase 1 (2026-10-22): link web in
+`url_normalizer.dart` (`SocialPlatform.web`, chiave `web:{host}{percorso}`), lettore `data/platforms/web_page_client.dart`
+(JSON-LD `Recipe` + testo visibile con il pacchetto `html`, tetto 30 mila caratteri), estratti in `test/fixtures/web/`.
+Fase 2 (2026-10-22, provata sul simulatore): `SourcePlatform.web`, `SkipReason.webPage` (la tappa video non rilegge la
+pagina), sezione `PAGINA WEB:` e regole per le pagine nel prompt (`gemini_prompt.dart`). Fase 3 (2026-10-22): filtro
+"Siti web", `stepLabel(..., platform:)` ("lettura della pagina"), testi del dettaglio e degli errori adatti ai siti.
+Fase 4 (2026-10-22): prova dal vivo; olio per friggere riconosciuto anche dal nome del gruppo (D-57).
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

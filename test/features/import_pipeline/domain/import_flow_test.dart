@@ -145,4 +145,13 @@ void main() {
       );
     });
   });
+
+  // Il codice generato (json_serializable) va rigenerato a ogni nuovo motivo:
+  // senza, salvare il job lancia e la tappa risulta "non riuscita".
+  test('ogni motivo di salto si salva e si rilegge', () {
+    for (final reason in SkipReason.values) {
+      final step = SkippedStep(reason: reason);
+      expect(SkippedStep.fromJson(step.toJson()), step, reason: reason.name);
+    }
+  });
 }

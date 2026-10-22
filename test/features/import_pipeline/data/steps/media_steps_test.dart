@@ -295,6 +295,21 @@ void main() {
       );
     });
 
+    test(
+      'pagina di un sito (D-70): saltata senza rileggere la pagina',
+      () async {
+        final job = _job().copyWith(
+          platform: SourcePlatform.web,
+          sourceUrl: 'https://www.sito.it/ricetta',
+        );
+
+        final result = await media.run(job, files);
+
+        expect((result as StepNotApplicable).reason, SkipReason.webPage);
+        expect(client.fetched, isEmpty);
+      },
+    );
+
     test('video non restituito dalla pagina: errore riprovabile', () {
       client.onFetch = (_) => const PostPage(
         caption: 'Torta',

@@ -57,6 +57,7 @@ String progressPlatformName(AppLocalizations l10n, ImportJob job) =>
     switch (job.platform) {
       SourcePlatform.instagram => l10n.importJobPlatformInstagram,
       SourcePlatform.tiktok => l10n.importJobPlatformTiktok,
+      SourcePlatform.web => l10n.importJobPlatformWeb,
       SourcePlatform.file => l10n.importSharedVideo,
       SourcePlatform.manual || null =>
         job.sharedFilePath != null
@@ -237,7 +238,7 @@ class CompactStepList extends StatelessWidget {
                     color: colors.onSurfaceVariant,
                   ),
                 };
-                final label = stepLabel(l10n, step);
+                final label = stepLabel(l10n, step, platform: job.platform);
                 return Row(
                   children: [
                     Icon(icon, size: 20, color: iconColor),

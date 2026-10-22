@@ -630,6 +630,52 @@ void main() {
       expect(result.total.kcal, closeTo(25 * 9 + 880 * 0.75, 1e-9));
     });
 
+    test(
+      'indicazione nel nome del gruppo: solo l\'olio (patatas bravas)',
+      () async {
+        final potato = _food(14, 'Potatoes, raw', kcal: 77);
+        final lookup = _FakeFoodLookup(
+          en: {'peanut oil': peanutOil, 'potato': potato},
+        );
+        final recipe = Recipe(
+          id: 'r',
+          title: 'Patatas bravas',
+          baseServings: 4,
+          source: const RecipeSourceInfo(platform: SourcePlatform.web),
+          ingredientGroups: [
+            IngredientGroup(
+              id: 'g',
+              name: 'per friggere le patate',
+              ingredients: [
+                _ing(
+                  'olio di semi di arachide',
+                  en: 'peanut oil',
+                  q: 1000,
+                  unit: IngredientUnit.gram,
+                ),
+                _ing(
+                  'patate',
+                  en: 'potato',
+                  q: 1000,
+                  unit: IngredientUnit.gram,
+                ),
+              ],
+            ),
+          ],
+          createdAt: DateTime(2026),
+          updatedAt: DateTime(2026),
+        );
+
+        final result = await NutritionService(lookup).compute(recipe);
+
+        final [oil, potatoes] = result.items;
+        expect(oil.isFryingOil, isTrue);
+        expect(oil.grams, closeTo(150, 1e-9));
+        expect(potatoes.isFryingOil, isFalse);
+        expect(potatoes.grams, 1000);
+      },
+    );
+
     test('olio per friggere q.b.: nessun peso', () async {
       final item = await _one(
         _FakeFoodLookup(en: {'peanut oil': peanutOil}),

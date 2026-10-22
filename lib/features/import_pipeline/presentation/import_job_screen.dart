@@ -185,6 +185,7 @@ class _Header extends StatelessWidget {
       switch (job.platform) {
         SourcePlatform.instagram => l10n.importJobPlatformInstagram,
         SourcePlatform.tiktok => l10n.importJobPlatformTiktok,
+        SourcePlatform.web => l10n.importJobPlatformWeb,
         SourcePlatform.file => l10n.importSharedVideo,
         SourcePlatform.manual || null =>
           job.sharedFilePath != null

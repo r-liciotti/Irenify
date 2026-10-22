@@ -99,6 +99,9 @@ enum SkipReason {
   /// Nessuna voce nell'audio (solo musica): il rilevatore Silero non trova
   /// abbastanza parlato (D-61).
   noSpeech,
+
+  /// Pagina di un sito web: niente video né audio da leggere (D-70).
+  webPage,
 }
 
 /// Che cosa aspetta un job fermo che ripartirà da solo (D-62). Salvato per

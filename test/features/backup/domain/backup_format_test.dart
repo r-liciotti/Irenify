@@ -87,6 +87,18 @@ void main() {
       );
     });
 
+    test('fonte web (D-70): pagina, chiave e sito tornano uguali', () {
+      final recipe = fullRecipe().copyWith(
+        source: const RecipeSourceInfo(
+          platform: SourcePlatform.web,
+          url: 'https://ricette.giallozafferano.it/Cinnamon-rolls.html',
+          sourceKey: 'web:ricette.giallozafferano.it/Cinnamon-rolls.html',
+          authorName: 'GialloZafferano',
+        ),
+      );
+      expect(roundTrip(recipe), withoutLocalFields(recipe));
+    });
+
     test('non scrive bozza, abbinamenti né valori nutrizionali', () {
       final json = recipeToBackupJson(fullRecipe().copyWith(isDraft: true));
       final text = jsonEncode(json);

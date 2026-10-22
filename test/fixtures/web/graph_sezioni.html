@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- Pagina di prova scritta a mano: JSON-LD in @graph (stile Yoast) con passaggi in HowToSection, preceduto da uno script JSON-LD rovinato. -->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Lasagne alla bolognese | Cucina di prova</title>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"rovinato",}</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Organization","@id":"https://www.cucinadiprova.it/#org","name":"Cucina di prova"},
+ {"@type":"WebPage","@id":"https://www.cucinadiprova.it/lasagne/","name":"Lasagne alla bolognese"},
+ {"@type":["Recipe","NewsArticle"],"name":"Lasagne alla bolognese &amp; besciamella","description":"<p>Le lasagne della domenica, con l&#039;ragù cotto a lungo.</p>","publisher":{"@id":"https://www.cucinadiprova.it/#org","name":"Cucina di prova"},
+  "image":{"@type":"ImageObject","url":"/wp-content/uploads/lasagne.jpg","width":1200},
+  "recipeYield":["6","6 porzioni"],"prepTime":"PT1H30M","cookTime":"P0DT0H40M","totalTime":"P1D",
+  "recipeIngredient":["500 g di ragù","12 sfoglie di lasagna","<strong>1 l</strong> di besciamella","100 g di parmigiano"],
+  "recipeInstructions":[
+   {"@type":"HowToSection","name":"Per il ragù","itemListElement":[{"@type":"HowToStep","text":"Rosolate il soffritto."},{"@type":"HowToStep","text":"Unite la carne e il pomodoro e cuocete 3 ore."}]},
+   {"@type":"HowToSection","name":"Per il montaggio","itemListElement":[{"@type":"HowToStep","name":"Alternate sfoglie, ragù e besciamella."},{"@type":"HowToStep","text":"Cuocete in forno a 180 °C per 40 minuti."}]}
+  ],
+  "keywords":"lasagne, ragù","nutrition":{"@type":"NutritionInformation","calories":"600 kcal"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.8"}},
+ {"@type":"Recipe","name":"Seconda ricetta da ignorare"}
+]}
+</script>
+</head>
+<body>
+<article><h1>Lasagne alla bolognese</h1><p>Le lasagne della domenica.</p></article>
+</body>
+</html>

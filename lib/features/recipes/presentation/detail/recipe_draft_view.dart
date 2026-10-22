@@ -14,6 +14,7 @@ import '../../../import_pipeline/domain/import_job.dart';
 import '../../../import_pipeline/presentation/import_job_screen.dart'
     show importJobDetailProvider;
 import '../../domain/recipe.dart';
+import '../../domain/recipe_enums.dart';
 import '../recipe_providers.dart';
 
 /// Contenuto del dettaglio per una ricetta in bozza (D-62), al posto di
@@ -122,7 +123,12 @@ class _RecipeDraftViewState extends ConsumerState<RecipeDraftView> {
             label: Text(l10n.recipeDraftProcess),
           ),
           if (caption != null && caption.isNotEmpty)
-            _SourceText(title: l10n.recipeDraftCaption, text: caption),
+            _SourceText(
+              title: widget.recipe.source.platform == SourcePlatform.web
+                  ? l10n.recipeWebPageText
+                  : l10n.recipeDraftCaption,
+              text: caption,
+            ),
           if (transcript != null && transcript.isNotEmpty)
             _SourceText(title: l10n.recipeDraftTranscript, text: transcript),
         ],

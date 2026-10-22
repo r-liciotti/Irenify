@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/recipe.dart';
+import '../../domain/recipe_enums.dart';
 import '../../domain/step_highlight.dart';
 
 /// Scheda Procedimento: passi numerati con gli ingredienti in grassetto
@@ -189,6 +190,7 @@ class RecipeSourceSection extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final source = recipe.source;
+    final isWeb = source.platform == SourcePlatform.web;
     final muted = theme.textTheme.bodyMedium?.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
     );
@@ -208,12 +210,15 @@ class RecipeSourceSection extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: OutlinedButton.icon(
               icon: const Icon(Icons.open_in_new),
-              label: Text(l10n.recipeOpenPost),
+              label: Text(isWeb ? l10n.recipeOpenWebPage : l10n.recipeOpenPost),
               onPressed: () => onOpenPost(url),
             ),
           ),
         if (source.caption case final caption? when caption.trim().isNotEmpty)
-          _LongText(title: l10n.recipeCaption, text: caption),
+          _LongText(
+            title: isWeb ? l10n.recipeWebPageText : l10n.recipeCaption,
+            text: caption,
+          ),
         if (source.transcript case final transcript?
             when transcript.trim().isNotEmpty)
           _LongText(title: l10n.recipeTranscript, text: transcript),

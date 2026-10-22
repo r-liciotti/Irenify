@@ -44,6 +44,7 @@ class NormalizeLinkStep implements ImportStep {
       platform: switch (link.platform) {
         SocialPlatform.instagram => SourcePlatform.instagram,
         SocialPlatform.tiktok => SourcePlatform.tiktok,
+        SocialPlatform.web => SourcePlatform.web,
       },
       sourceUrl: link.url.toString(),
       sourceKey: sourceKey,

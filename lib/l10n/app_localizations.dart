@@ -184,6 +184,12 @@ abstract class AppLocalizations {
   /// **'TikTok'**
   String get recipesFilterTikTok;
 
+  /// No description provided for @recipesFilterWeb.
+  ///
+  /// In it, this message translates to:
+  /// **'Siti web'**
+  String get recipesFilterWeb;
+
   /// No description provided for @recipesNoResultsTitle.
   ///
   /// In it, this message translates to:
@@ -273,6 +279,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'didascalia'**
   String get importStepMetadata;
+
+  /// No description provided for @importStepWebPage.
+  ///
+  /// In it, this message translates to:
+  /// **'lettura della pagina'**
+  String get importStepWebPage;
 
   /// No description provided for @importStepMedia.
   ///
@@ -508,6 +520,12 @@ abstract class AppLocalizations {
   /// **'Link'**
   String get importJobPlatformLink;
 
+  /// No description provided for @importJobPlatformWeb.
+  ///
+  /// In it, this message translates to:
+  /// **'Sito web'**
+  String get importJobPlatformWeb;
+
   /// No description provided for @importJobStartedAt.
   ///
   /// In it, this message translates to:
@@ -627,6 +645,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'solo musica, nessuna voce'**
   String get importSkipNoSpeech;
+
+  /// No description provided for @importSkipWebPage.
+  ///
+  /// In it, this message translates to:
+  /// **'pagina di un sito, nessun video'**
+  String get importSkipWebPage;
 
   /// No description provided for @importWaitingConnection.
   ///
@@ -1084,11 +1108,23 @@ abstract class AppLocalizations {
   /// **'Apri il post su TikTok'**
   String get recipeOpenOnTikTok;
 
+  /// No description provided for @recipeOpenWebPage.
+  ///
+  /// In it, this message translates to:
+  /// **'Apri la pagina della ricetta'**
+  String get recipeOpenWebPage;
+
   /// No description provided for @recipeCaption.
   ///
   /// In it, this message translates to:
   /// **'Didascalia'**
   String get recipeCaption;
+
+  /// No description provided for @recipeWebPageText.
+  ///
+  /// In it, this message translates to:
+  /// **'Testo della pagina'**
+  String get recipeWebPageText;
 
   /// No description provided for @recipeTranscript.
   ///
@@ -1315,7 +1351,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeIntro.
   ///
   /// In it, this message translates to:
-  /// **'Trasforma i reel di Instagram e TikTok in ricette da cucinare.'**
+  /// **'Trasforma i reel di Instagram e TikTok e le pagine dei siti di ricette in ricette da cucinare.'**
   String get welcomeIntro;
 
   /// No description provided for @welcomeShareTitle.
@@ -1327,7 +1363,7 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeShareBody.
   ///
   /// In it, this message translates to:
-  /// **'Apri un reel su Instagram o TikTok, tocca Condividi e scegli Da Mirtilla. Al resto pensa l\'app.'**
+  /// **'Apri un reel su Instagram o TikTok, o la pagina di una ricetta nel browser, tocca Condividi e scegli Da Mirtilla. Al resto pensa l\'app.'**
   String get welcomeShareBody;
 
   /// No description provided for @welcomeKeyTitle.
@@ -1675,13 +1711,13 @@ abstract class AppLocalizations {
   /// No description provided for @failureUnsupportedLink.
   ///
   /// In it, this message translates to:
-  /// **'Link non supportato: condividi un post di Instagram o TikTok.'**
+  /// **'Link non supportato: condividi un post di Instagram o TikTok o la pagina di una ricetta.'**
   String get failureUnsupportedLink;
 
   /// No description provided for @failureInvalidLink.
   ///
   /// In it, this message translates to:
-  /// **'Il link non porta a un post: forse è scaduto o è stato rimosso.'**
+  /// **'Il link non porta a un post o a una pagina: forse è scaduto o è stato rimosso.'**
   String get failureInvalidLink;
 
   /// No description provided for @failureAlreadyImporting.
@@ -1699,7 +1735,7 @@ abstract class AppLocalizations {
   /// No description provided for @failureSourceUnavailable.
   ///
   /// In it, this message translates to:
-  /// **'Instagram o TikTok non hanno risposto come previsto: riprova più tardi.'**
+  /// **'Il sito non ha risposto come previsto o chiede una verifica: riprova più tardi.'**
   String get failureSourceUnavailable;
 
   /// No description provided for @failureTranscriptionFailed.

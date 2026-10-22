@@ -20,7 +20,7 @@ void main() {
       expect(
         find.text(
           'Ferma a «lettura del link»: Link non supportato: condividi un post '
-          'di Instagram o TikTok.',
+          'di Instagram o TikTok o la pagina di una ricetta.',
         ),
         findsOneWidget,
       );

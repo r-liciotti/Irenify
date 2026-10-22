@@ -78,6 +78,27 @@ void main() {
     expect(result.job.sourceKey, isNull);
   });
 
+  test('pagina di un sito (D-70): fonte web e chiave della pagina', () async {
+    final job = await jobs.create(
+      sharedText:
+          'Cinnamon rolls https://ricette.giallozafferano.it/Cinnamon-rolls.html',
+    );
+
+    final result = await step.run(job, files);
+
+    expect(result, isA<StepDone>());
+    expect(result.job.platform, SourcePlatform.web);
+    expect(
+      result.job.sourceUrl,
+      'https://ricette.giallozafferano.it/Cinnamon-rolls.html',
+    );
+    expect(
+      result.job.sourceKey,
+      'web:ricette.giallozafferano.it/Cinnamon-rolls.html',
+    );
+    expect(http.requested, isEmpty);
+  });
+
   test('testo senza link supportato (D-26)', () async {
     final job = await jobs.create(sharedText: 'Ciao, ci vediamo stasera?');
     expect(step.run(job, files), throwsA(isA<UnsupportedLinkFailure>()));

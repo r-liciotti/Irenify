@@ -125,6 +125,7 @@ String skipReasonText(AppLocalizations l10n, SkippedStep skipped) =>
       SkipReason.cpuUnsupported => l10n.importSkipCpuUnsupported,
       SkipReason.platformSubtitles => l10n.importSkipPlatformSubtitles,
       SkipReason.noSpeech => l10n.importSkipNoSpeech,
+      SkipReason.webPage => l10n.importSkipWebPage,
     };
 
 /// Tappe in verticale, con lo stato e la durata di ognuna.
@@ -244,7 +245,9 @@ class _StepRow extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          _capitalized(stepLabel(l10n, step)),
+                          _capitalized(
+                            stepLabel(l10n, step, platform: job.platform),
+                          ),
                           style: theme.textTheme.titleSmall?.copyWith(
                             color: state == StepState.pending
                                 ? colors.onSurfaceVariant

@@ -65,6 +65,10 @@ class MediaStep implements ImportStep {
         job.copyWith(data: job.data.copyWith(videoPath: added)),
       );
     }
+    // Pagina web: il video si ignora (D-70), non serve rileggerla.
+    if (job.platform == SourcePlatform.web) {
+      return StepResult.notApplicable(job, SkipReason.webPage);
+    }
     if (_tooLong(job.data.videoDurationSeconds)) {
       return StepResult.notApplicable(job, SkipReason.videoTooLong);
     }

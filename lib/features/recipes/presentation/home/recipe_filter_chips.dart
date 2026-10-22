@@ -79,6 +79,7 @@ class _RecipeFilterChipsState extends ConsumerState<RecipeFilterChips> {
           ),
           platformChip(SourcePlatform.instagram, l10n.recipesFilterInstagram),
           platformChip(SourcePlatform.tiktok, l10n.recipesFilterTikTok),
+          platformChip(SourcePlatform.web, l10n.recipesFilterWeb),
           for (final tag in tags)
             KeyedSubtree(
               key: _keyFor(tag),

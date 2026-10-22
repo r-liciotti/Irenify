@@ -311,13 +311,14 @@ void main() {
         'Preferite',
         'Instagram',
         'TikTok',
+        'Siti web',
         for (final tag in tags.take(8)) label(tag),
       ]);
 
       // Il meno usato, scelto da fuori (es. dal dettaglio): compare in fondo.
       container(tester).read(recipeFilterProvider.notifier).toggleTag(tags[9]);
       await settle(tester);
-      expect(chipLabels().length, 3 + 9);
+      expect(chipLabels().length, 4 + 9);
       expect(chipLabels().last, label(tags[9]));
       expect(chipSelected(tester, label(tags[9])), isTrue);
       expect(find.text(label(tags[8])), findsNothing);

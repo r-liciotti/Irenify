@@ -114,6 +114,71 @@ void main() {
     expect(parseSharedText(''), isNull);
   });
 
+  group('parseSharedText — siti web (D-70)', () {
+    test('pagina di ricetta condivisa dal browser', () {
+      final link = parseSharedText(
+        'Cinnamon rolls - GialloZafferano '
+        'https://ricette.giallozafferano.it/Cinnamon-rolls.html',
+      );
+      expect(
+        link,
+        SocialLink(
+          platform: SocialPlatform.web,
+          url: Uri.parse(
+            'https://ricette.giallozafferano.it/Cinnamon-rolls.html',
+          ),
+          postId: 'ricette.giallozafferano.it/Cinnamon-rolls.html',
+        ),
+      );
+      expect(link?.needsRedirectResolution, isFalse);
+    });
+
+    test('toglie frammento e tracciamento, tiene gli altri parametri', () {
+      final link = parseSharedText(
+        'https://WWW.Altacucina.co/recipes/cinnamon-rolls-10/'
+        '?utm_source=app&id=7&fbclid=abc#step-1',
+      );
+      expect(
+        link?.url.toString(),
+        'https://www.altacucina.co/recipes/cinnamon-rolls-10/?id=7',
+      );
+      expect(
+        link?.sourceKey,
+        'web:altacucina.co/recipes/cinnamon-rolls-10?id=7',
+      );
+    });
+
+    test('stessa pagina con o senza www e / finale: stessa chiave', () {
+      final a = parseSharedText('https://www.sito.it/ricetta/');
+      final b = parseSharedText('http://sito.it/ricetta?utm_medium=x');
+      expect(a?.sourceKey, 'web:sito.it/ricetta');
+      expect(b?.sourceKey, a?.sourceKey);
+    });
+
+    test('il link social vince anche se viene dopo quello web', () {
+      final link = parseSharedText(
+        'https://www.sito.it/ricetta e https://www.instagram.com/p/C1x2y3z4/',
+      );
+      expect(link?.platform, SocialPlatform.instagram);
+    });
+
+    test('social e video senza ricetta leggibile restano non supportati', () {
+      for (final text in [
+        'https://www.instagram.com/chef.anna/',
+        'https://www.tiktok.com/@chef.anna',
+        'https://youtu.be/abc',
+        'https://m.facebook.com/pagina/posts/1',
+        'https://x.com/chef/status/1',
+      ]) {
+        expect(parseSharedText(text), isNull, reason: text);
+      }
+    });
+
+    test('host senza dominio non è una pagina web', () {
+      expect(parseSharedText('http://localhost:8080/ricetta'), isNull);
+    });
+  });
+
   test('prende il primo link supportato quando ce ne sono più di uno', () {
     final link = parseSharedText(
       'https://example.com/a poi https://www.tiktok.com/@a/video/123',

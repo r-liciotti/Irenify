@@ -32,6 +32,7 @@ import 'link_resolver.dart';
 import 'llm/gemini_provider.dart';
 import 'platforms/instagram_client.dart';
 import 'platforms/tiktok_client.dart';
+import 'platforms/web_page_client.dart';
 import 'screen_awake.dart';
 import 'steps/audio_step.dart';
 import 'steps/extract_step.dart';
@@ -57,6 +58,7 @@ final platformClientsProvider = Provider<Map<SourcePlatform, PlatformClient>>((
   return {
     SourcePlatform.instagram: InstagramClient(dio),
     SourcePlatform.tiktok: TikTokClient(dio),
+    SourcePlatform.web: WebPageClient(dio),
   };
 });
 

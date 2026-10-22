@@ -137,8 +137,8 @@ class RecipeDetailHeader extends StatelessWidget {
 String _capitalized(String tag) =>
     tag.isEmpty ? tag : tag[0].toUpperCase() + tag.substring(1);
 
-/// Icona del social di origine (logo Instagram o TikTok; freccia per le
-/// altre fonti) che apre il post originale. Solo icona, senza testo (D-60):
+/// Icona del social di origine (logo Instagram o TikTok, globo per i siti;
+/// freccia per le altre fonti) che apre il post originale. Solo icona, senza testo (D-60):
 /// la descrizione sta nel tooltip e nel lettore dello schermo.
 class _OpenPostButton extends StatelessWidget {
   const _OpenPostButton({required this.platform, required this.onPressed});
@@ -157,6 +157,10 @@ class _OpenPostButton extends StatelessWidget {
       SourcePlatform.tiktok => (
         const FaIcon(FontAwesomeIcons.tiktok, size: 20),
         l10n.recipeOpenOnTikTok,
+      ),
+      SourcePlatform.web => (
+        const Icon(Icons.language, size: 22),
+        l10n.recipeOpenWebPage,
       ),
       SourcePlatform.file || SourcePlatform.manual => (
         const Icon(Icons.open_in_new, size: 22),

@@ -1,8 +1,8 @@
 // Enum salvati nel database per nome (`textEnum`): i valori NON vanno mai
 // rinominati né eliminati senza una migrazione (decisione D-18).
 
-/// Da dove arriva la ricetta.
-enum SourcePlatform { instagram, tiktok, file, manual }
+/// Da dove arriva la ricetta; `web` = pagina di un sito di ricette (D-70).
+enum SourcePlatform { instagram, tiktok, file, manual, web }
 
 /// Quanto è utile la trascrizione audio.
 /// `none`: non c'è audio (video non scaricato o assente).

@@ -11,6 +11,21 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-70 — F7: ricette da qualsiasi sito web (2026-10-22) — Attiva
+- **Decisione:** un link `http(s)` che non è di Instagram o TikTok è la pagina di una ricetta (piano in
+  `F7_PIANO.md`):
+  - a Gemini vanno i **dati strutturati** schema.org `Recipe` della pagina (se ci sono) **più il testo visibile**
+    ripulito, con un tetto di 30 mila caratteri: il JSON-LD da solo può avere passaggi tagliati (altacucina) e perde
+    i gruppi di ingredienti (GialloZafferano, altacucina);
+  - i valori nutrizionali del sito si ignorano (resta il calcolo D-54) e il video della pagina pure;
+  - si importa solo con "Condividi" dal browser (niente campo "Incolla link" nell'app);
+  - un solo filtro "Siti web" in home; la chiave dei doppioni è `web:{host}{percorso}` (D-17);
+  - il testo HTML si legge con il pacchetto ufficiale `html` (scartata la versione ridotta con espressioni regolari,
+    meno robusta sulle pagine scritte male).
+- **Alternative scartate:** solo dati strutturati (più economico, ma incompleto); valori nutrizionali del sito;
+  un filtro per ogni sito.
+- **Deciso da:** utente ("vai" alle cinque scelte proposte nel piano).
+
 ## D-69 — F5: simulatore prima, app per un'altra persona fidata (2026-10-08) — Attiva
 - **Decisione:**
   - Il Mac è Intel: le fasi 1–4 della F5 si sviluppano e si provano sul **Simulatore iOS**; la fase 5 su un iPhone
@@ -201,7 +216,8 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
     cambia `assets/nutrition/foods.version`; aperto in sola lettura.
 - **Olio per friggere** (deciso dall'utente il 2026-10-06, "Quota assorbita"): un ingrediente con nome o nota "per
   friggere", "frittura", "for frying" (o simili) conta solo il 15% del suo peso, come stima assorbita (500 ml ≈ 70 g).
-  Si applica nella fase 3.
+  Si applica nella fase 3. **Esteso il 2026-10-22** (richiesta dell'utente, F7 fase 4): l'indicazione vale anche nel
+  nome del **gruppo** ("per friggere le patate" di GialloZafferano); conta solo per oli e grassi del gruppo.
 - **Perché:** sulle 21 ricette di prova (6 dell'utente e 15 inventate) la copertura del peso è del 100%. Il taglio
   libero delle parole avrebbe dato abbinamenti sbagliati con affidabilità piena.
 - **Deciso da:** utente (via alla fase 2 e ricerca dei valori manuali); regole di dettaglio proposte da Claude.

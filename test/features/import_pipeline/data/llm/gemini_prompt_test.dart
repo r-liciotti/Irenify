@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:irenefy/features/import_pipeline/data/llm/gemini_prompt.dart';
+import 'package:irenefy/features/import_pipeline/data/platforms/web_page_client.dart';
 import 'package:irenefy/features/import_pipeline/domain/llm_provider.dart';
 import 'package:irenefy/features/import_pipeline/domain/recipe_schema.dart';
 import 'package:irenefy/features/recipes/domain/recipe_enums.dart';
@@ -28,6 +29,14 @@ void main() {
       }
       expect(geminiSystemPrompt, contains(captionLabel));
       expect(geminiSystemPrompt, contains(transcriptLabel));
+    });
+
+    test('spiega le pagine web e le loro due parti (D-70)', () {
+      expect(geminiSystemPrompt, contains(webPageLabel));
+      expect(geminiSystemPrompt, contains(webRecipeDataLabel));
+      expect(geminiSystemPrompt, contains(webPageTextLabel));
+      expect(geminiSystemPrompt, contains('ricetta principale'));
+      expect(geminiSystemPrompt, contains('valori nutrizionali del sito'));
     });
 
     test('chiede tutta la ricetta in italiano, traducendo (D-53)', () {
@@ -91,6 +100,87 @@ void main() {
       expect(text, contains('$captionLabel\nTiramisù\n500 g di mascarpone'));
       expect(text, contains('$transcriptLabel\n(assente)'));
       expect(text, isNot(contains('Trascrizione:')));
+    });
+
+    test('Instagram: messaggio invariato rispetto a prima del web', () {
+      final text = buildUserPrompt(
+        const ExtractionInput(
+          platform: SourcePlatform.instagram,
+          caption: 'Tiramisù',
+          transcript: 'oggi facciamo il tiramisù',
+          authorName: '@cuoca',
+        ),
+        previousError: 'manca il titolo',
+      );
+
+      expect(
+        text,
+        'Piattaforma: Instagram\n'
+        'Autore: @cuoca\n'
+        'Trascrizione: audio del video trascritto automaticamente '
+        '(Whisper), con possibili errori sui nomi.\n'
+        '\n'
+        '$captionLabel\nTiramisù\n'
+        '\n'
+        '$transcriptLabel\noggi facciamo il tiramisù\n'
+        '\n'
+        '$correctionLabel\n'
+        'La tua risposta precedente non era valida: manca il titolo\n'
+        'Rispondi di nuovo con l\'oggetto JSON completo e corretto, '
+        'rispettando lo schema e le regole.',
+      );
+    });
+
+    test('TikTok: messaggio invariato rispetto a prima del web', () {
+      final text = buildUserPrompt(
+        const ExtractionInput(
+          platform: SourcePlatform.tiktok,
+          caption: 'Pancake',
+          transcript: 'metti la farina',
+          transcriptFromSubtitles: true,
+        ),
+      );
+
+      expect(
+        text,
+        'Piattaforma: TikTok\n'
+        'Trascrizione: sottotitoli automatici della piattaforma, senza '
+        'punteggiatura e con possibili errori.\n'
+        '\n'
+        '$captionLabel\nPancake\n'
+        '\n'
+        '$transcriptLabel\nmetti la farina',
+      );
+    });
+
+    test('pagina web: testo sotto PAGINA WEB e riga del sito', () {
+      const page =
+          '$webRecipeDataLabel\nTitolo: Torta di mele\n\n'
+          '$webPageTextLabel\nTorta di mele della nonna';
+      final text = buildUserPrompt(
+        const ExtractionInput(
+          platform: SourcePlatform.web,
+          caption: page,
+          authorName: 'GialloZafferano',
+        ),
+        previousError: 'manca il titolo',
+      );
+
+      expect(
+        text,
+        startsWith(
+          'Piattaforma: pagina di un sito di ricette\n'
+          'Sito: GialloZafferano\n'
+          '\n'
+          '$webPageLabel\n$page\n'
+          '\n'
+          '$correctionLabel\n',
+        ),
+      );
+      expect(text, contains('manca il titolo'));
+      expect(text, isNot(contains('Autore:')));
+      expect(text, isNot(contains(captionLabel)));
+      expect(text, isNot(contains(transcriptLabel)));
     });
 
     test('un errore precedente vuoto non aggiunge la correzione', () {
