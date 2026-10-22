@@ -24,6 +24,8 @@ part 'app_database.g.dart';
     RecipeTags,
     NutritionSnapshots,
     ImportJobs,
+    ShoppingRecipes,
+    ShoppingItems,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -49,7 +51,7 @@ class AppDatabase extends _$AppDatabase {
       db.execute('PRAGMA busy_timeout = 5000');
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -94,6 +96,12 @@ class AppDatabase extends _$AppDatabase {
           .get();
       if (columns.any((c) => c.read<String>('name') == 'is_draft')) return;
       await m.addColumn(schema.recipes, schema.recipes.isDraft);
+    },
+    // v4: lista della spesa (D-71). Ripetibile: drift crea le tabelle con
+    // IF NOT EXISTS.
+    from3To4: (m, schema) async {
+      await m.create(schema.shoppingRecipes);
+      await m.create(schema.shoppingItems);
     },
   );
 }

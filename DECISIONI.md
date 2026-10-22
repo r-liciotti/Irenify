@@ -11,6 +11,25 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-71 — F8: lista della spesa unica, senza reparti (2026-10-22) — Attiva
+- **Decisione:** scheda **Spesa** sul modello di Avocadish (piano in `F8_PIANO.md`), con queste scelte:
+  - **una sola lista**, in ordine di prima aggiunta, **senza reparti**;
+  - ogni aggiunta è una riga a sé nel database (`shopping_items`, con la ricetta di provenienza in
+    `shopping_recipes`); la **somma si fa quando si mostra la lista**: stesso alimento (`food_id`, altrimenti stesso
+    nome) e unità compatibili, anche g con kg e ml con l; unità incompatibili restano righe separate; le parti già
+    spuntate non si sommano con quelle da prendere;
+  - aggiungendo una ricetta sono proposti **non spuntati** solo sale, pepe e spezie o erbe q.b. (corretto il
+    2026-10-22 dopo la prova sul Pixel: prima lo erano tutti i q.b., anche le "sfoglie per lasagna" da comprare); le quantità seguono le
+    regole delle porzioni (D-42/D-48); degli intervalli ("2-3 uova") si compra l'estremo superiore;
+  - gli articoli spuntati restano al loro posto, barrati; "Rimuovi completati" ed "Elimina tutto";
+  - la lista **non** entra nel backup; "Elimina dati" la svuota; una ricetta eliminata dal ricettario lascia i suoi
+    articoli nella lista (come aggiunti a mano);
+  - condivisione della lista e più liste rimandate.
+- **Alternative scartate:** più liste come Avocadish; somma solo a parità di unità; reparti automatici dalla
+  categoria degli alimenti; articoli spuntati spostati in fondo; lista nel backup.
+- **Deciso da:** utente ("non mi serve la parte dei reparti, escludilo dal progetto"; "si confermo, vai" alle altre
+  sei scelte; "partono non spuntati solo sale, pepe e spezie/erbe q.b.; gli altri q.b. partono spuntati").
+
 ## D-70 — F7: ricette da qualsiasi sito web (2026-10-22) — Attiva
 - **Decisione:** un link `http(s)` che non è di Instagram o TikTok è la pagina di una ricetta (piano in
   `F7_PIANO.md`):

@@ -50,6 +50,10 @@ class _FlourLookup implements FoodLookup {
 
   @override
   Future<List<FoodInfo>> search(String text, {int limit = 5}) async => const [];
+
+  @override
+  Future<List<FoodInfo>> searchItalian(String prefix, {int limit = 20}) async =>
+      const [];
 }
 
 /// Repository il cui `insert` fallisce con [error].

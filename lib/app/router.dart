@@ -10,10 +10,15 @@ import '../features/onboarding/presentation/welcome_screen.dart';
 import '../features/recipes/presentation/recipe_detail_screen.dart';
 import '../features/recipes/presentation/recipes_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
+import '../features/shopping/presentation/add_to_shopping_screen.dart';
+import '../features/shopping/presentation/shopping_screen.dart';
 import 'home_shell.dart';
 
 abstract final class Routes {
   static const recipes = '/ricette';
+
+  /// Lista della spesa (D-71), scheda della barra in basso.
+  static const shopping = '/spesa';
   static const settings = '/impostazioni';
 
   /// Elenco delle importazioni, dentro le Impostazioni (D-52).
@@ -24,6 +29,11 @@ abstract final class Routes {
 
   /// Dettaglio di una ricetta, a schermo intero sopra la barra in basso.
   static String recipe(String id) => '$recipes/$id';
+
+  /// "Aggiungi alla spesa" della ricetta [id] (D-71) per [servings] porzioni,
+  /// a schermo intero.
+  static String addToShopping(String id, double servings) =>
+      '${recipe(id)}/spesa?porzioni=$servings';
 
   /// Dettaglio di un'importazione (F2, fase 5), a schermo intero.
   static String importJob(String id) => '$imports/$id';
@@ -68,8 +78,28 @@ final routerProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) => RecipeDetailScreen(
                       recipeId: state.pathParameters['id']!,
                     ),
+                    routes: [
+                      GoRoute(
+                        path: 'spesa',
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) => AddToShoppingScreen(
+                          recipeId: state.pathParameters['id']!,
+                          servings: double.tryParse(
+                            state.uri.queryParameters['porzioni'] ?? '',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.shopping,
+                builder: (context, state) => const ShoppingScreen(),
               ),
             ],
           ),

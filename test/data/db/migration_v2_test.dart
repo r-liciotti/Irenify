@@ -14,7 +14,7 @@ const _when = '2026-09-28T10:30:15.123';
 /// Versione attuale: il codice dell'app (repository compreso) legge solo
 /// questa, quindi i dati v1 si portano fino all'ultima versione passando dal
 /// passo v1 → v2.
-const _latest = 3;
+const _latest = 4;
 
 /// Ricettario v1 realistico: tag copiati dagli hashtag, accenti, ricetta
 /// senza fonte né ingredienti.

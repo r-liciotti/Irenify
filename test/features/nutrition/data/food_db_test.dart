@@ -117,6 +117,27 @@ void main() {
       },
     );
 
+    test('catalogo italiano: inizio dell\'alias o di una sua parola', () async {
+      final pomod = await lookup.searchItalian('pomod');
+      expect(pomod.first.nameIt, 'Pomodoro');
+      expect(pomod.map((f) => f.id).toSet(), hasLength(pomod.length));
+      // "latte" è l'alias più corto: il latte intero viene per primo.
+      expect(
+        (await lookup.searchItalian('latte')).first.nameIt,
+        'Latte intero',
+      );
+      // Parola interna: "di cocco" trova il latte di cocco.
+      expect(
+        (await lookup.searchItalian('cocco')).map((f) => f.nameIt),
+        contains('Latte di cocco'),
+      );
+      expect(await lookup.searchItalian(''), isEmpty);
+      expect(await lookup.searchItalian('pomod', limit: 2), hasLength(2));
+      // I caratteri speciali di LIKE non fanno da jolly.
+      expect(await lookup.searchItalian('%'), isEmpty);
+      expect(await lookup.searchItalian('_'), isEmpty);
+    });
+
     test('query FTS dal testo', () {
       expect(ftsQueryFromFoodText(''), isNull);
       expect(ftsQueryFromFoodText('- "" *'), isNull);

@@ -16,6 +16,8 @@ import 'package:irenefy/features/nutrition/domain/nutrition_snapshot.dart';
 import 'package:irenefy/features/recipes/data/recipe_files.dart';
 import 'package:irenefy/features/recipes/data/recipe_repository.dart';
 import 'package:irenefy/features/settings/data/data_eraser.dart';
+import 'package:irenefy/features/shopping/data/shopping_repository.dart';
+import 'package:irenefy/features/shopping/domain/shopping_list.dart';
 import 'package:irenefy/features/settings/data/llm_settings_store.dart';
 import 'package:irenefy/features/settings/presentation/speech_model_controller.dart';
 
@@ -148,7 +150,8 @@ void main() {
     ],
   );
 
-  /// Una ricetta con miniatura e un job con la sua cartella.
+  /// Una ricetta con miniatura (anche nella lista della spesa), un articolo
+  /// scritto a mano e un job con la sua cartella.
   Future<void> seed() async {
     await RecipeRepository(db).insert(
       sampleRecipe(),
@@ -158,6 +161,9 @@ void main() {
         computedAt: DateTime(2026, 10, 6),
       ),
     );
+    final shopping = ShoppingRepository(db);
+    await shopping.addRecipe('r1', 8, [const NewShoppingItem(name: 'mele')]);
+    await shopping.addItem(const NewShoppingItem(name: 'carta forno'));
     final jobs = ImportJobRepository(db);
     final job = await jobs.create(sharedText: 'https://vm.tiktok.com/a');
     // Concluso: con un job in corso l'eliminazione si rifiuta.
@@ -182,6 +188,8 @@ void main() {
     expect(await db.select(db.recipes).get(), isEmpty);
     expect(await db.select(db.nutritionSnapshots).get(), isEmpty);
     expect(await db.select(db.tags).get(), isEmpty);
+    expect(await db.select(db.shoppingItems).get(), isEmpty);
+    expect(await db.select(db.shoppingRecipes).get(), isEmpty);
     expect(jobsDir().existsSync(), isFalse);
     expect(Directory('${support.path}/recipes').existsSync(), isFalse);
     expect(settings.apiKey, isNotNull);

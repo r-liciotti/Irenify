@@ -54,6 +54,10 @@ class _FakeFoodLookup implements FoodLookup {
 
   @override
   Future<List<FoodInfo>> search(String text, {int limit = 5}) async => const [];
+
+  @override
+  Future<List<FoodInfo>> searchItalian(String prefix, {int limit = 20}) async =>
+      const [];
 }
 
 /// Repository con salvataggi registrati, che fallisce sulle ricette indicate

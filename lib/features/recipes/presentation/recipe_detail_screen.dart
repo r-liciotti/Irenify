@@ -121,6 +121,8 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen>
             recipe: recipe,
             onToggleFavorite: () => _toggleFavorite(recipe),
             onDelete: () => _delete(recipe),
+            onAddToShopping: () =>
+                context.push(Routes.addToShopping(recipe.id, servings)),
           ),
           SliverToBoxAdapter(
             child: RecipeDetailHeader(

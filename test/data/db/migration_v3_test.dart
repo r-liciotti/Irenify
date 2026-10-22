@@ -10,6 +10,9 @@ import '../../drift/irenefy/generated/schema.dart';
 
 const _when = '2026-10-06T10:30:15.123';
 
+/// Versione a cui arrivano le migrazioni (ultima dello schema).
+const _latest = 4;
+
 /// Ricettario v2: una ricetta preferita con fonte, ingredienti, tag, valori
 /// e riga nell'indice di ricerca.
 const _seedV2 = [
@@ -79,44 +82,50 @@ void main() {
     expect(await repo.completeRecipeIds(), ['caffe', 'pane']);
   }
 
-  test('v2 → v3: dati conservati, colonna is_draft a false', () async {
-    final schema = await seededV2();
-    db = AppDatabase(schema.newConnection());
-    await verifier.migrateAndValidate(db, 3);
+  test(
+    'v2 → ultima versione: dati conservati, colonna is_draft a false',
+    () async {
+      final schema = await seededV2();
+      db = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(db, _latest);
 
-    final flags = schema.rawDatabase.select(
-      'SELECT id, is_draft FROM recipes ORDER BY id',
-    );
-    expect(
-      [for (final r in flags) (r['id'], r['is_draft'])],
-      [('caffe', 0), ('pane', 0)],
-    );
-    await expectDataKept(db);
-    expect(_userVersion(schema.rawDatabase), 3);
-  });
+      final flags = schema.rawDatabase.select(
+        'SELECT id, is_draft FROM recipes ORDER BY id',
+      );
+      expect(
+        [for (final r in flags) (r['id'], r['is_draft'])],
+        [('caffe', 0), ('pane', 0)],
+      );
+      await expectDataKept(db);
+      expect(_userVersion(schema.rawDatabase), _latest);
+    },
+  );
 
-  test('v2 → v3 ripetuta (versione rimasta 2): il database si apre e i dati '
-      'restano', () async {
-    final schema = await seededV2();
-    final first = AppDatabase(schema.newConnection());
-    await verifier.migrateAndValidate(first, 3);
-    await first.close();
-    // Come se drift non avesse fatto in tempo a salvare la versione.
-    schema.rawDatabase.execute('PRAGMA user_version = 2');
+  test(
+    'v2 → ultima versione ripetuta (versione rimasta 2): il database si apre e i dati '
+    'restano',
+    () async {
+      final schema = await seededV2();
+      final first = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(first, _latest);
+      await first.close();
+      // Come se drift non avesse fatto in tempo a salvare la versione.
+      schema.rawDatabase.execute('PRAGMA user_version = 2');
 
-    db = AppDatabase(schema.newConnection());
-    await verifier.migrateAndValidate(db, 3);
-    await expectDataKept(db);
-    final columns = schema.rawDatabase
-        .select('PRAGMA table_info(recipes)')
-        .where((c) => c['name'] == 'is_draft');
-    expect(columns, hasLength(1));
-    expect(_userVersion(schema.rawDatabase), 3);
-  });
+      db = AppDatabase(schema.newConnection());
+      await verifier.migrateAndValidate(db, _latest);
+      await expectDataKept(db);
+      final columns = schema.rawDatabase
+          .select('PRAGMA table_info(recipes)')
+          .where((c) => c['name'] == 'is_draft');
+      expect(columns, hasLength(1));
+      expect(_userVersion(schema.rawDatabase), _latest);
+    },
+  );
 
-  test('v1 → v3 in un colpo solo: lo schema valida', () async {
+  test('v1 → ultima versione in un colpo solo: lo schema valida', () async {
     final schema = await verifier.schemaAt(1);
     db = AppDatabase(schema.newConnection());
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, _latest);
   });
 }

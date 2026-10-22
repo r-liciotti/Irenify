@@ -6,6 +6,13 @@
   "navRecipes": "Ricette",
   "navImports": "Importazioni",
   "navSettings": "Impostazioni",
+  "navShopping": "Spesa",
+  "navShoppingBadge": "{count, plural, =1{1 articolo da prendere} other{{count} articoli da prendere}}",
+  "@navShoppingBadge": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "navImportsBadge": "{count, plural, =1{1 importazione da seguire} other{{count} importazioni da seguire}}",
   "@navImportsBadge": {
     "placeholders": {
@@ -361,6 +368,62 @@
   },
   "recipeFavoriteAdd": "Aggiungi ai preferiti",
   "recipeFavoriteRemove": "Togli dai preferiti",
+  "shoppingAddTitle": "Aggiungi alla spesa",
+  "shoppingAddButton": "{count, plural, =0{Nessun ingrediente scelto} =1{Aggiungi 1 ingrediente} other{Aggiungi {count} ingredienti}}",
+  "@shoppingAddButton": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "shoppingAdded": "{count, plural, =1{1 ingrediente aggiunto alla spesa} other{{count} ingredienti aggiunti alla spesa}}",
+  "@shoppingAdded": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "shoppingAlreadyInList": "Questa ricetta è già nella lista: aggiungendola di nuovo i suoi ingredienti vengono sostituiti.",
+  "shoppingSelectAll": "Seleziona tutto",
+  "shoppingDeselectAll": "Deseleziona tutto",
+  "shoppingView": "Vedi",
+  "shoppingEmptyTitle": "La lista è vuota",
+  "shoppingEmptyBody": "Aggiungi gli ingredienti di una ricetta con il carrello nel suo dettaglio, oppure scrivi qui quello che ti serve.",
+  "shoppingAddItem": "Aggiungi",
+  "shoppingRemoveChecked": "{count, plural, =1{Rimuovi 1 completato} other{Rimuovi {count} completati}}",
+  "@shoppingRemoveChecked": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "shoppingClearAll": "Elimina tutto",
+  "shoppingClearAllTitle": "Svuotare la lista?",
+  "shoppingClearAllBody": "Tutti gli articoli e le ricette verranno tolti dalla lista della spesa.",
+  "shoppingRemoveRecipeTooltip": "Togli dalla lista",
+  "shoppingRemoveRecipeTitle": "Togliere la ricetta?",
+  "shoppingRemoveRecipeBody": "{count, plural, =0{«{title}» verrà tolta dalla lista.} =1{1 ingrediente di «{title}» verrà tolto dalla lista.} other{{count} ingredienti di «{title}» verranno tolti dalla lista.}}",
+  "@shoppingRemoveRecipeBody": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "title": { "type": "String" }
+    }
+  },
+  "shoppingRemove": "Togli",
+  "shoppingSearchHint": "Cerca o scrivi un articolo",
+  "shoppingAddFreeText": "Aggiungi «{text}»",
+  "@shoppingAddFreeText": {
+    "placeholders": {
+      "text": { "type": "String" }
+    }
+  },
+  "shoppingNewTitle": "Nuovo articolo",
+  "shoppingEditTitle": "Modifica articolo",
+  "shoppingItemName": "Nome",
+  "shoppingQuantity": "Quantità",
+  "shoppingQuantityLess": "Diminuisci la quantità",
+  "shoppingQuantityMore": "Aumenta la quantità",
+  "shoppingNoQuantity": "Senza quantità",
+  "shoppingUnit": "Unità",
+  "shoppingUnitNone": "Nessuna",
+  "shoppingSave": "Salva",
   "recipeDeleteTitle": "Eliminare la ricetta?",
   "recipeDeleteBody": "«{title}» verrà eliminata definitivamente dal ricettario.",
   "@recipeDeleteBody": {

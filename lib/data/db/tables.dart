@@ -1,4 +1,4 @@
-// Tabelle drift (schema v1). Le classi delle righe si chiamano *Row per non
+// Tabelle drift (schema v4). Le classi delle righe si chiamano *Row per non
 // confondersi con le entità di dominio (Recipe, Ingredient…).
 //
 // Ogni modifica qui = nuova schemaVersion + migrazione + make-migrations (D-19).
@@ -171,4 +171,38 @@ class ImportJobs extends Table {
 
   @override
   Set<Column<Object>> get primaryKey => {id};
+}
+
+/// Ricette aggiunte alla lista della spesa (F8, schema v4, D-71). La riga
+/// sparisce con la ricetta; i suoi articoli restano come scritti a mano.
+@DataClassName('ShoppingRecipeRow')
+class ShoppingRecipes extends Table {
+  TextColumn get recipeId =>
+      text().references(Recipes, #id, onDelete: KeyAction.cascade)();
+  RealColumn get servings => real()();
+  DateTimeColumn get addedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {recipeId};
+}
+
+/// Lista della spesa (F8, schema v4, D-71): una riga per ogni aggiunta,
+/// sommate solo quando la lista si mostra. L'id crescente è l'ordine.
+@DataClassName('ShoppingItemRow')
+class ShoppingItems extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+
+  /// Come `Ingredients.foodId`: file separato, niente chiave esterna.
+  IntColumn get foodId => integer().nullable()();
+
+  /// `null` = q.b.
+  RealColumn get quantity => real().nullable()();
+  TextColumn get unit => textEnum<IngredientUnit>()();
+  BoolColumn get isChecked => boolean().withDefault(const Constant(false))();
+  TextColumn get recipeId => text().nullable().references(
+    ShoppingRecipes,
+    #recipeId,
+    onDelete: KeyAction.setNull,
+  )();
 }

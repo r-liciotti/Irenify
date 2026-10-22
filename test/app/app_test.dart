@@ -97,8 +97,8 @@ void main() {
     _,
   ) async {
     expect(find.text('Nessuna ricetta'), findsOneWidget);
-    // Due schede (D-52): le Importazioni stanno nelle Impostazioni.
-    expect(find.byType(NavigationDestination), findsNWidgets(2));
+    // Tre schede (D-52, D-71): le Importazioni stanno nelle Impostazioni.
+    expect(find.byType(NavigationDestination), findsNWidgets(3));
 
     await tester.tap(find.text('Impostazioni'));
     await tester.pumpAndSettle();

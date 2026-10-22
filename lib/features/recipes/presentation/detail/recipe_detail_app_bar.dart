@@ -19,12 +19,16 @@ class RecipeDetailAppBar extends StatelessWidget {
     required this.recipe,
     required this.onToggleFavorite,
     required this.onDelete,
+    this.onAddToShopping,
     super.key,
   });
 
   final Recipe recipe;
   final VoidCallback onToggleFavorite;
   final VoidCallback onDelete;
+
+  /// "Aggiungi alla spesa" (D-71); `null` = pulsante nascosto (bozze).
+  final VoidCallback? onAddToShopping;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +47,12 @@ class RecipeDetailAppBar extends StatelessWidget {
         pinned: true,
         backgroundColor: colors.sheet,
         actions: [
+          if (onAddToShopping case final onPressed?)
+            IconButton(
+              tooltip: l10n.shoppingAddTitle,
+              icon: const Icon(Icons.add_shopping_cart),
+              onPressed: onPressed,
+            ),
           IconButton(
             tooltip: favoriteTooltip,
             icon: Icon(favoriteIcon),
@@ -73,6 +83,14 @@ class RecipeDetailAppBar extends StatelessWidget {
         ),
       ),
       actions: [
+        if (onAddToShopping case final onPressed?) ...[
+          _PhotoButton(
+            tooltip: l10n.shoppingAddTitle,
+            icon: Icons.add_shopping_cart,
+            onPressed: onPressed,
+          ),
+          const SizedBox(width: 8),
+        ],
         _PhotoButton(
           tooltip: favoriteTooltip,
           icon: favoriteIcon,

@@ -7,11 +7,12 @@ import '../../import_pipeline/data/import_job_repository.dart';
 import '../../recipes/data/recipe_files.dart';
 import '../../recipes/data/recipe_repository.dart';
 import '../../recipes/presentation/recipe_providers.dart';
+import '../../shopping/data/shopping_repository.dart';
 
 final dataEraserProvider = Provider<DataEraser>(DataEraser.new);
 
 /// "Elimina dati" delle Impostazioni (D-50, D-64): ricette, tag e
-/// importazioni con le loro cartelle. Chiave Gemini, modello di trascrizione,
+/// importazioni con le loro cartelle, lista della spesa (D-71). Chiave Gemini, modello di trascrizione,
 /// tema, flag del primo avvio e modello Gemini scelto restano sempre.
 ///
 /// Solo senza importazioni in corso: Whisper non si può interrompere e
@@ -41,6 +42,7 @@ class DataEraser {
       await jobs.deleteAll();
     });
     await _ref.read(recipeRepositoryProvider).deleteAll();
+    await _ref.read(shoppingRepositoryProvider).clear();
     await _ref.read(jobStorageProvider).deleteAll();
     await _ref.read(recipeFilesProvider).deleteAll();
     // Elenchi e badge seguono il database da soli; dettagli e miniature

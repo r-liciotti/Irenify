@@ -33,6 +33,10 @@ class _FakeFoodLookup implements FoodLookup {
     searchCalls.add(text);
     return searchResults[text] ?? const [];
   }
+
+  @override
+  Future<List<FoodInfo>> searchItalian(String prefix, {int limit = 20}) async =>
+      const [];
 }
 
 NutritionFacts _facts(double kcal, {double salt = 0}) => NutritionFacts(

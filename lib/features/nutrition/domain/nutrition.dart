@@ -127,6 +127,11 @@ abstract interface class FoodLookup {
   /// Ricerca di ripiego su `food_search` (tutte le parole di [text]
   /// presenti, dalla più pertinente); vuota se nessuna corrispondenza.
   Future<List<FoodInfo>> search(String text, {int limit = 5});
+
+  /// Alimenti con un alias italiano che inizia, o ha una parola che inizia,
+  /// con [prefix] (già normalizzato), prima quelli che iniziano così e con
+  /// l'alias più corto: il catalogo della lista della spesa (D-71).
+  Future<List<FoodInfo>> searchItalian(String prefix, {int limit = 20});
 }
 
 /// Come è stato trovato l'alimento.

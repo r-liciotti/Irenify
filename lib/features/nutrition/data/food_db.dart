@@ -139,6 +139,27 @@ class SqliteFoodLookup implements FoodLookup {
     return [for (final row in rows) _food(row)];
   }
 
+  @override
+  Future<List<FoodInfo>> searchItalian(String prefix, {int limit = 20}) async {
+    if (prefix.isEmpty || limit <= 0) return const [];
+    final escaped = prefix.replaceAllMapped(
+      RegExp(r'[\\%_]'),
+      (m) => '\\${m[0]}',
+    );
+    final rows = _db.select(
+      'SELECT $_foodColumns FROM food_alias a '
+      'JOIN food ON food.id = a.food_id '
+      "WHERE a.lang = 'it' AND (a.alias LIKE ?1 ESCAPE '\\' "
+      "OR a.alias LIKE ?2 ESCAPE '\\') "
+      'GROUP BY food.id '
+      "ORDER BY min(a.alias NOT LIKE ?1 ESCAPE '\\'), min(length(a.alias)), "
+      'food.id '
+      'LIMIT ?3',
+      ['$escaped%', '% $escaped%', limit],
+    );
+    return [for (final row in rows) _food(row)];
+  }
+
   FoodInfo _food(Row row) {
     final id = row['id'] as int;
     double value(String column) => (row[column] as num?)?.toDouble() ?? 0;

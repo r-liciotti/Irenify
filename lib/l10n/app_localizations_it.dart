@@ -21,6 +21,20 @@ class AppLocalizationsIt extends AppLocalizations {
   String get navSettings => 'Impostazioni';
 
   @override
+  String get navShopping => 'Spesa';
+
+  @override
+  String navShoppingBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count articoli da prendere',
+      one: '1 articolo da prendere',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String navImportsBadge(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -655,6 +669,135 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get recipeFavoriteRemove => 'Togli dai preferiti';
+
+  @override
+  String get shoppingAddTitle => 'Aggiungi alla spesa';
+
+  @override
+  String shoppingAddButton(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Aggiungi $count ingredienti',
+      one: 'Aggiungi 1 ingrediente',
+      zero: 'Nessun ingrediente scelto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shoppingAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ingredienti aggiunti alla spesa',
+      one: '1 ingrediente aggiunto alla spesa',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shoppingAlreadyInList =>
+      'Questa ricetta è già nella lista: aggiungendola di nuovo i suoi ingredienti vengono sostituiti.';
+
+  @override
+  String get shoppingSelectAll => 'Seleziona tutto';
+
+  @override
+  String get shoppingDeselectAll => 'Deseleziona tutto';
+
+  @override
+  String get shoppingView => 'Vedi';
+
+  @override
+  String get shoppingEmptyTitle => 'La lista è vuota';
+
+  @override
+  String get shoppingEmptyBody =>
+      'Aggiungi gli ingredienti di una ricetta con il carrello nel suo dettaglio, oppure scrivi qui quello che ti serve.';
+
+  @override
+  String get shoppingAddItem => 'Aggiungi';
+
+  @override
+  String shoppingRemoveChecked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Rimuovi $count completati',
+      one: 'Rimuovi 1 completato',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shoppingClearAll => 'Elimina tutto';
+
+  @override
+  String get shoppingClearAllTitle => 'Svuotare la lista?';
+
+  @override
+  String get shoppingClearAllBody =>
+      'Tutti gli articoli e le ricette verranno tolti dalla lista della spesa.';
+
+  @override
+  String get shoppingRemoveRecipeTooltip => 'Togli dalla lista';
+
+  @override
+  String get shoppingRemoveRecipeTitle => 'Togliere la ricetta?';
+
+  @override
+  String shoppingRemoveRecipeBody(int count, String title) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ingredienti di «$title» verranno tolti dalla lista.',
+      one: '1 ingrediente di «$title» verrà tolto dalla lista.',
+      zero: '«$title» verrà tolta dalla lista.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shoppingRemove => 'Togli';
+
+  @override
+  String get shoppingSearchHint => 'Cerca o scrivi un articolo';
+
+  @override
+  String shoppingAddFreeText(String text) {
+    return 'Aggiungi «$text»';
+  }
+
+  @override
+  String get shoppingNewTitle => 'Nuovo articolo';
+
+  @override
+  String get shoppingEditTitle => 'Modifica articolo';
+
+  @override
+  String get shoppingItemName => 'Nome';
+
+  @override
+  String get shoppingQuantity => 'Quantità';
+
+  @override
+  String get shoppingQuantityLess => 'Diminuisci la quantità';
+
+  @override
+  String get shoppingQuantityMore => 'Aumenta la quantità';
+
+  @override
+  String get shoppingNoQuantity => 'Senza quantità';
+
+  @override
+  String get shoppingUnit => 'Unità';
+
+  @override
+  String get shoppingUnitNone => 'Nessuna';
+
+  @override
+  String get shoppingSave => 'Salva';
 
   @override
   String get recipeDeleteTitle => 'Eliminare la ricetta?';

@@ -118,6 +118,18 @@ abstract class AppLocalizations {
   /// **'Impostazioni'**
   String get navSettings;
 
+  /// No description provided for @navShopping.
+  ///
+  /// In it, this message translates to:
+  /// **'Spesa'**
+  String get navShopping;
+
+  /// No description provided for @navShoppingBadge.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{1 articolo da prendere} other{{count} articoli da prendere}}'**
+  String navShoppingBadge(int count);
+
   /// No description provided for @navImportsBadge.
   ///
   /// In it, this message translates to:
@@ -1149,6 +1161,186 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Togli dai preferiti'**
   String get recipeFavoriteRemove;
+
+  /// No description provided for @shoppingAddTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi alla spesa'**
+  String get shoppingAddTitle;
+
+  /// No description provided for @shoppingAddButton.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =0{Nessun ingrediente scelto} =1{Aggiungi 1 ingrediente} other{Aggiungi {count} ingredienti}}'**
+  String shoppingAddButton(int count);
+
+  /// No description provided for @shoppingAdded.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{1 ingrediente aggiunto alla spesa} other{{count} ingredienti aggiunti alla spesa}}'**
+  String shoppingAdded(int count);
+
+  /// No description provided for @shoppingAlreadyInList.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa ricetta è già nella lista: aggiungendola di nuovo i suoi ingredienti vengono sostituiti.'**
+  String get shoppingAlreadyInList;
+
+  /// No description provided for @shoppingSelectAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona tutto'**
+  String get shoppingSelectAll;
+
+  /// No description provided for @shoppingDeselectAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Deseleziona tutto'**
+  String get shoppingDeselectAll;
+
+  /// No description provided for @shoppingView.
+  ///
+  /// In it, this message translates to:
+  /// **'Vedi'**
+  String get shoppingView;
+
+  /// No description provided for @shoppingEmptyTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'La lista è vuota'**
+  String get shoppingEmptyTitle;
+
+  /// No description provided for @shoppingEmptyBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi gli ingredienti di una ricetta con il carrello nel suo dettaglio, oppure scrivi qui quello che ti serve.'**
+  String get shoppingEmptyBody;
+
+  /// No description provided for @shoppingAddItem.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get shoppingAddItem;
+
+  /// No description provided for @shoppingRemoveChecked.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =1{Rimuovi 1 completato} other{Rimuovi {count} completati}}'**
+  String shoppingRemoveChecked(int count);
+
+  /// No description provided for @shoppingClearAll.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina tutto'**
+  String get shoppingClearAll;
+
+  /// No description provided for @shoppingClearAllTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Svuotare la lista?'**
+  String get shoppingClearAllTitle;
+
+  /// No description provided for @shoppingClearAllBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti gli articoli e le ricette verranno tolti dalla lista della spesa.'**
+  String get shoppingClearAllBody;
+
+  /// No description provided for @shoppingRemoveRecipeTooltip.
+  ///
+  /// In it, this message translates to:
+  /// **'Togli dalla lista'**
+  String get shoppingRemoveRecipeTooltip;
+
+  /// No description provided for @shoppingRemoveRecipeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Togliere la ricetta?'**
+  String get shoppingRemoveRecipeTitle;
+
+  /// No description provided for @shoppingRemoveRecipeBody.
+  ///
+  /// In it, this message translates to:
+  /// **'{count, plural, =0{«{title}» verrà tolta dalla lista.} =1{1 ingrediente di «{title}» verrà tolto dalla lista.} other{{count} ingredienti di «{title}» verranno tolti dalla lista.}}'**
+  String shoppingRemoveRecipeBody(int count, String title);
+
+  /// No description provided for @shoppingRemove.
+  ///
+  /// In it, this message translates to:
+  /// **'Togli'**
+  String get shoppingRemove;
+
+  /// No description provided for @shoppingSearchHint.
+  ///
+  /// In it, this message translates to:
+  /// **'Cerca o scrivi un articolo'**
+  String get shoppingSearchHint;
+
+  /// No description provided for @shoppingAddFreeText.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi «{text}»'**
+  String shoppingAddFreeText(String text);
+
+  /// No description provided for @shoppingNewTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo articolo'**
+  String get shoppingNewTitle;
+
+  /// No description provided for @shoppingEditTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica articolo'**
+  String get shoppingEditTitle;
+
+  /// No description provided for @shoppingItemName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome'**
+  String get shoppingItemName;
+
+  /// No description provided for @shoppingQuantity.
+  ///
+  /// In it, this message translates to:
+  /// **'Quantità'**
+  String get shoppingQuantity;
+
+  /// No description provided for @shoppingQuantityLess.
+  ///
+  /// In it, this message translates to:
+  /// **'Diminuisci la quantità'**
+  String get shoppingQuantityLess;
+
+  /// No description provided for @shoppingQuantityMore.
+  ///
+  /// In it, this message translates to:
+  /// **'Aumenta la quantità'**
+  String get shoppingQuantityMore;
+
+  /// No description provided for @shoppingNoQuantity.
+  ///
+  /// In it, this message translates to:
+  /// **'Senza quantità'**
+  String get shoppingNoQuantity;
+
+  /// No description provided for @shoppingUnit.
+  ///
+  /// In it, this message translates to:
+  /// **'Unità'**
+  String get shoppingUnit;
+
+  /// No description provided for @shoppingUnitNone.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna'**
+  String get shoppingUnitNone;
+
+  /// No description provided for @shoppingSave.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva'**
+  String get shoppingSave;
 
   /// No description provided for @recipeDeleteTitle.
   ///

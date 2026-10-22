@@ -5495,6 +5495,738 @@ class ImportJobsCompanion extends UpdateCompanion<ImportJobRow> {
   }
 }
 
+class $ShoppingRecipesTable extends ShoppingRecipes
+    with TableInfo<$ShoppingRecipesTable, ShoppingRecipeRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ShoppingRecipesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _recipeIdMeta = const VerificationMeta(
+    'recipeId',
+  );
+  @override
+  late final GeneratedColumn<String> recipeId = GeneratedColumn<String>(
+    'recipe_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES recipes (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _servingsMeta = const VerificationMeta(
+    'servings',
+  );
+  @override
+  late final GeneratedColumn<double> servings = GeneratedColumn<double>(
+    'servings',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _addedAtMeta = const VerificationMeta(
+    'addedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> addedAt = GeneratedColumn<DateTime>(
+    'added_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [recipeId, servings, addedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'shopping_recipes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ShoppingRecipeRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('recipe_id')) {
+      context.handle(
+        _recipeIdMeta,
+        recipeId.isAcceptableOrUnknown(data['recipe_id']!, _recipeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recipeIdMeta);
+    }
+    if (data.containsKey('servings')) {
+      context.handle(
+        _servingsMeta,
+        servings.isAcceptableOrUnknown(data['servings']!, _servingsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_servingsMeta);
+    }
+    if (data.containsKey('added_at')) {
+      context.handle(
+        _addedAtMeta,
+        addedAt.isAcceptableOrUnknown(data['added_at']!, _addedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_addedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {recipeId};
+  @override
+  ShoppingRecipeRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ShoppingRecipeRow(
+      recipeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recipe_id'],
+      )!,
+      servings: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}servings'],
+      )!,
+      addedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}added_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ShoppingRecipesTable createAlias(String alias) {
+    return $ShoppingRecipesTable(attachedDatabase, alias);
+  }
+}
+
+class ShoppingRecipeRow extends DataClass
+    implements Insertable<ShoppingRecipeRow> {
+  final String recipeId;
+  final double servings;
+  final DateTime addedAt;
+  const ShoppingRecipeRow({
+    required this.recipeId,
+    required this.servings,
+    required this.addedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['recipe_id'] = Variable<String>(recipeId);
+    map['servings'] = Variable<double>(servings);
+    map['added_at'] = Variable<DateTime>(addedAt);
+    return map;
+  }
+
+  ShoppingRecipesCompanion toCompanion(bool nullToAbsent) {
+    return ShoppingRecipesCompanion(
+      recipeId: Value(recipeId),
+      servings: Value(servings),
+      addedAt: Value(addedAt),
+    );
+  }
+
+  factory ShoppingRecipeRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ShoppingRecipeRow(
+      recipeId: serializer.fromJson<String>(json['recipeId']),
+      servings: serializer.fromJson<double>(json['servings']),
+      addedAt: serializer.fromJson<DateTime>(json['addedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'recipeId': serializer.toJson<String>(recipeId),
+      'servings': serializer.toJson<double>(servings),
+      'addedAt': serializer.toJson<DateTime>(addedAt),
+    };
+  }
+
+  ShoppingRecipeRow copyWith({
+    String? recipeId,
+    double? servings,
+    DateTime? addedAt,
+  }) => ShoppingRecipeRow(
+    recipeId: recipeId ?? this.recipeId,
+    servings: servings ?? this.servings,
+    addedAt: addedAt ?? this.addedAt,
+  );
+  ShoppingRecipeRow copyWithCompanion(ShoppingRecipesCompanion data) {
+    return ShoppingRecipeRow(
+      recipeId: data.recipeId.present ? data.recipeId.value : this.recipeId,
+      servings: data.servings.present ? data.servings.value : this.servings,
+      addedAt: data.addedAt.present ? data.addedAt.value : this.addedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShoppingRecipeRow(')
+          ..write('recipeId: $recipeId, ')
+          ..write('servings: $servings, ')
+          ..write('addedAt: $addedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(recipeId, servings, addedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ShoppingRecipeRow &&
+          other.recipeId == this.recipeId &&
+          other.servings == this.servings &&
+          other.addedAt == this.addedAt);
+}
+
+class ShoppingRecipesCompanion extends UpdateCompanion<ShoppingRecipeRow> {
+  final Value<String> recipeId;
+  final Value<double> servings;
+  final Value<DateTime> addedAt;
+  final Value<int> rowid;
+  const ShoppingRecipesCompanion({
+    this.recipeId = const Value.absent(),
+    this.servings = const Value.absent(),
+    this.addedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ShoppingRecipesCompanion.insert({
+    required String recipeId,
+    required double servings,
+    required DateTime addedAt,
+    this.rowid = const Value.absent(),
+  }) : recipeId = Value(recipeId),
+       servings = Value(servings),
+       addedAt = Value(addedAt);
+  static Insertable<ShoppingRecipeRow> custom({
+    Expression<String>? recipeId,
+    Expression<double>? servings,
+    Expression<DateTime>? addedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (recipeId != null) 'recipe_id': recipeId,
+      if (servings != null) 'servings': servings,
+      if (addedAt != null) 'added_at': addedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ShoppingRecipesCompanion copyWith({
+    Value<String>? recipeId,
+    Value<double>? servings,
+    Value<DateTime>? addedAt,
+    Value<int>? rowid,
+  }) {
+    return ShoppingRecipesCompanion(
+      recipeId: recipeId ?? this.recipeId,
+      servings: servings ?? this.servings,
+      addedAt: addedAt ?? this.addedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (recipeId.present) {
+      map['recipe_id'] = Variable<String>(recipeId.value);
+    }
+    if (servings.present) {
+      map['servings'] = Variable<double>(servings.value);
+    }
+    if (addedAt.present) {
+      map['added_at'] = Variable<DateTime>(addedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShoppingRecipesCompanion(')
+          ..write('recipeId: $recipeId, ')
+          ..write('servings: $servings, ')
+          ..write('addedAt: $addedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ShoppingItemsTable extends ShoppingItems
+    with TableInfo<$ShoppingItemsTable, ShoppingItemRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ShoppingItemsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _foodIdMeta = const VerificationMeta('foodId');
+  @override
+  late final GeneratedColumn<int> foodId = GeneratedColumn<int>(
+    'food_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
+  );
+  @override
+  late final GeneratedColumn<double> quantity = GeneratedColumn<double>(
+    'quantity',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<IngredientUnit, String> unit =
+      GeneratedColumn<String>(
+        'unit',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<IngredientUnit>($ShoppingItemsTable.$converterunit);
+  static const VerificationMeta _isCheckedMeta = const VerificationMeta(
+    'isChecked',
+  );
+  @override
+  late final GeneratedColumn<bool> isChecked = GeneratedColumn<bool>(
+    'is_checked',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_checked" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _recipeIdMeta = const VerificationMeta(
+    'recipeId',
+  );
+  @override
+  late final GeneratedColumn<String> recipeId = GeneratedColumn<String>(
+    'recipe_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES shopping_recipes (recipe_id) ON DELETE SET NULL',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    foodId,
+    quantity,
+    unit,
+    isChecked,
+    recipeId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'shopping_items';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ShoppingItemRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('food_id')) {
+      context.handle(
+        _foodIdMeta,
+        foodId.isAcceptableOrUnknown(data['food_id']!, _foodIdMeta),
+      );
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    }
+    if (data.containsKey('is_checked')) {
+      context.handle(
+        _isCheckedMeta,
+        isChecked.isAcceptableOrUnknown(data['is_checked']!, _isCheckedMeta),
+      );
+    }
+    if (data.containsKey('recipe_id')) {
+      context.handle(
+        _recipeIdMeta,
+        recipeId.isAcceptableOrUnknown(data['recipe_id']!, _recipeIdMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ShoppingItemRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ShoppingItemRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      foodId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}food_id'],
+      ),
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}quantity'],
+      ),
+      unit: $ShoppingItemsTable.$converterunit.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}unit'],
+        )!,
+      ),
+      isChecked: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_checked'],
+      )!,
+      recipeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recipe_id'],
+      ),
+    );
+  }
+
+  @override
+  $ShoppingItemsTable createAlias(String alias) {
+    return $ShoppingItemsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<IngredientUnit, String, String> $converterunit =
+      const EnumNameConverter<IngredientUnit>(IngredientUnit.values);
+}
+
+class ShoppingItemRow extends DataClass implements Insertable<ShoppingItemRow> {
+  final int id;
+  final String name;
+
+  /// Come `Ingredients.foodId`: file separato, niente chiave esterna.
+  final int? foodId;
+
+  /// `null` = q.b.
+  final double? quantity;
+  final IngredientUnit unit;
+  final bool isChecked;
+  final String? recipeId;
+  const ShoppingItemRow({
+    required this.id,
+    required this.name,
+    this.foodId,
+    this.quantity,
+    required this.unit,
+    required this.isChecked,
+    this.recipeId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || foodId != null) {
+      map['food_id'] = Variable<int>(foodId);
+    }
+    if (!nullToAbsent || quantity != null) {
+      map['quantity'] = Variable<double>(quantity);
+    }
+    {
+      map['unit'] = Variable<String>(
+        $ShoppingItemsTable.$converterunit.toSql(unit),
+      );
+    }
+    map['is_checked'] = Variable<bool>(isChecked);
+    if (!nullToAbsent || recipeId != null) {
+      map['recipe_id'] = Variable<String>(recipeId);
+    }
+    return map;
+  }
+
+  ShoppingItemsCompanion toCompanion(bool nullToAbsent) {
+    return ShoppingItemsCompanion(
+      id: Value(id),
+      name: Value(name),
+      foodId: foodId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(foodId),
+      quantity: quantity == null && nullToAbsent
+          ? const Value.absent()
+          : Value(quantity),
+      unit: Value(unit),
+      isChecked: Value(isChecked),
+      recipeId: recipeId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recipeId),
+    );
+  }
+
+  factory ShoppingItemRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ShoppingItemRow(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      foodId: serializer.fromJson<int?>(json['foodId']),
+      quantity: serializer.fromJson<double?>(json['quantity']),
+      unit: $ShoppingItemsTable.$converterunit.fromJson(
+        serializer.fromJson<String>(json['unit']),
+      ),
+      isChecked: serializer.fromJson<bool>(json['isChecked']),
+      recipeId: serializer.fromJson<String?>(json['recipeId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'foodId': serializer.toJson<int?>(foodId),
+      'quantity': serializer.toJson<double?>(quantity),
+      'unit': serializer.toJson<String>(
+        $ShoppingItemsTable.$converterunit.toJson(unit),
+      ),
+      'isChecked': serializer.toJson<bool>(isChecked),
+      'recipeId': serializer.toJson<String?>(recipeId),
+    };
+  }
+
+  ShoppingItemRow copyWith({
+    int? id,
+    String? name,
+    Value<int?> foodId = const Value.absent(),
+    Value<double?> quantity = const Value.absent(),
+    IngredientUnit? unit,
+    bool? isChecked,
+    Value<String?> recipeId = const Value.absent(),
+  }) => ShoppingItemRow(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    foodId: foodId.present ? foodId.value : this.foodId,
+    quantity: quantity.present ? quantity.value : this.quantity,
+    unit: unit ?? this.unit,
+    isChecked: isChecked ?? this.isChecked,
+    recipeId: recipeId.present ? recipeId.value : this.recipeId,
+  );
+  ShoppingItemRow copyWithCompanion(ShoppingItemsCompanion data) {
+    return ShoppingItemRow(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      foodId: data.foodId.present ? data.foodId.value : this.foodId,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      isChecked: data.isChecked.present ? data.isChecked.value : this.isChecked,
+      recipeId: data.recipeId.present ? data.recipeId.value : this.recipeId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShoppingItemRow(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('foodId: $foodId, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('isChecked: $isChecked, ')
+          ..write('recipeId: $recipeId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, foodId, quantity, unit, isChecked, recipeId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ShoppingItemRow &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.foodId == this.foodId &&
+          other.quantity == this.quantity &&
+          other.unit == this.unit &&
+          other.isChecked == this.isChecked &&
+          other.recipeId == this.recipeId);
+}
+
+class ShoppingItemsCompanion extends UpdateCompanion<ShoppingItemRow> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<int?> foodId;
+  final Value<double?> quantity;
+  final Value<IngredientUnit> unit;
+  final Value<bool> isChecked;
+  final Value<String?> recipeId;
+  const ShoppingItemsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.foodId = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.isChecked = const Value.absent(),
+    this.recipeId = const Value.absent(),
+  });
+  ShoppingItemsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.foodId = const Value.absent(),
+    this.quantity = const Value.absent(),
+    required IngredientUnit unit,
+    this.isChecked = const Value.absent(),
+    this.recipeId = const Value.absent(),
+  }) : name = Value(name),
+       unit = Value(unit);
+  static Insertable<ShoppingItemRow> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<int>? foodId,
+    Expression<double>? quantity,
+    Expression<String>? unit,
+    Expression<bool>? isChecked,
+    Expression<String>? recipeId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (foodId != null) 'food_id': foodId,
+      if (quantity != null) 'quantity': quantity,
+      if (unit != null) 'unit': unit,
+      if (isChecked != null) 'is_checked': isChecked,
+      if (recipeId != null) 'recipe_id': recipeId,
+    });
+  }
+
+  ShoppingItemsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<int?>? foodId,
+    Value<double?>? quantity,
+    Value<IngredientUnit>? unit,
+    Value<bool>? isChecked,
+    Value<String?>? recipeId,
+  }) {
+    return ShoppingItemsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      foodId: foodId ?? this.foodId,
+      quantity: quantity ?? this.quantity,
+      unit: unit ?? this.unit,
+      isChecked: isChecked ?? this.isChecked,
+      recipeId: recipeId ?? this.recipeId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (foodId.present) {
+      map['food_id'] = Variable<int>(foodId.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<double>(quantity.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(
+        $ShoppingItemsTable.$converterunit.toSql(unit.value),
+      );
+    }
+    if (isChecked.present) {
+      map['is_checked'] = Variable<bool>(isChecked.value);
+    }
+    if (recipeId.present) {
+      map['recipe_id'] = Variable<String>(recipeId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShoppingItemsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('foodId: $foodId, ')
+          ..write('quantity: $quantity, ')
+          ..write('unit: $unit, ')
+          ..write('isChecked: $isChecked, ')
+          ..write('recipeId: $recipeId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5515,6 +6247,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $NutritionSnapshotsTable nutritionSnapshots =
       $NutritionSnapshotsTable(this);
   late final $ImportJobsTable importJobs = $ImportJobsTable(this);
+  late final $ShoppingRecipesTable shoppingRecipes = $ShoppingRecipesTable(
+    this,
+  );
+  late final $ShoppingItemsTable shoppingItems = $ShoppingItemsTable(this);
   late final Index importJobsSourceKey = Index(
     'import_jobs_source_key',
     'CREATE INDEX import_jobs_source_key ON import_jobs (source_key)',
@@ -5535,6 +6271,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recipeTags,
     nutritionSnapshots,
     importJobs,
+    shoppingRecipes,
+    shoppingItems,
     importJobsSourceKey,
   ];
   @override
@@ -5601,6 +6339,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('import_jobs', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'recipes',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('shopping_recipes', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'shopping_recipes',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('shopping_items', kind: UpdateKind.update)],
     ),
   ]);
   @override
@@ -5970,6 +6722,26 @@ final class $$RecipesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ShoppingRecipesTable, List<ShoppingRecipeRow>>
+  _shoppingRecipesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.shoppingRecipes,
+    aliasName: 'recipes__id__shopping_recipes__recipe_id',
+  );
+
+  $$ShoppingRecipesTableProcessedTableManager get shoppingRecipesRefs {
+    final manager = $$ShoppingRecipesTableTableManager(
+      $_db,
+      $_db.shoppingRecipes,
+    ).filter((f) => f.recipeId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _shoppingRecipesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$RecipesTableFilterComposer
@@ -6203,6 +6975,31 @@ class $$RecipesTableFilterComposer
           }) => $$ImportJobsTableFilterComposer(
             $db: $db,
             $table: $db.importJobs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> shoppingRecipesRefs(
+    Expression<bool> Function($$ShoppingRecipesTableFilterComposer f) f,
+  ) {
+    final $$ShoppingRecipesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.shoppingRecipes,
+      getReferencedColumn: (t) => t.recipeId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ShoppingRecipesTableFilterComposer(
+            $db: $db,
+            $table: $db.shoppingRecipes,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -6533,6 +7330,31 @@ class $$RecipesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> shoppingRecipesRefs<T extends Object>(
+    Expression<T> Function($$ShoppingRecipesTableAnnotationComposer a) f,
+  ) {
+    final $$ShoppingRecipesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.shoppingRecipes,
+      getReferencedColumn: (t) => t.recipeId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ShoppingRecipesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.shoppingRecipes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$RecipesTableTableManager
@@ -6555,6 +7377,7 @@ class $$RecipesTableTableManager
             bool recipeTagsRefs,
             bool nutritionSnapshotsRefs,
             bool importJobsRefs,
+            bool shoppingRecipesRefs,
           })
         > {
   $$RecipesTableTableManager(_$AppDatabase db, $RecipesTable table)
@@ -6660,6 +7483,7 @@ class $$RecipesTableTableManager
                 recipeTagsRefs = false,
                 nutritionSnapshotsRefs = false,
                 importJobsRefs = false,
+                shoppingRecipesRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -6670,6 +7494,7 @@ class $$RecipesTableTableManager
                     if (recipeTagsRefs) db.recipeTags,
                     if (nutritionSnapshotsRefs) db.nutritionSnapshots,
                     if (importJobsRefs) db.importJobs,
+                    if (shoppingRecipesRefs) db.shoppingRecipes,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -6800,6 +7625,27 @@ class $$RecipesTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (shoppingRecipesRefs)
+                        await $_getPrefetchedData<
+                          RecipeRow,
+                          $RecipesTable,
+                          ShoppingRecipeRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$RecipesTableReferences
+                              ._shoppingRecipesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$RecipesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).shoppingRecipesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.recipeId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -6827,6 +7673,7 @@ typedef $$RecipesTableProcessedTableManager =
         bool recipeTagsRefs,
         bool nutritionSnapshotsRefs,
         bool importJobsRefs,
+        bool shoppingRecipesRefs,
       })
     >;
 typedef $$RecipeSourcesTableCreateCompanionBuilder =
@@ -10011,6 +10858,518 @@ typedef $$ImportJobsTableProcessedTableManager =
       ImportJobRow,
       PrefetchHooks Function({bool recipeId})
     >;
+typedef $$ShoppingRecipesTableCreateCompanionBuilder =
+    ShoppingRecipesCompanion Function({
+      required String recipeId,
+      required double servings,
+      required DateTime addedAt,
+      Value<int> rowid,
+    });
+typedef $$ShoppingRecipesTableUpdateCompanionBuilder =
+    ShoppingRecipesCompanion Function({
+      Value<String> recipeId,
+      Value<double> servings,
+      Value<DateTime> addedAt,
+      Value<int> rowid,
+    });
+
+final class $$ShoppingRecipesTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ShoppingRecipesTable,
+          ShoppingRecipeRow
+        > {
+  $$ShoppingRecipesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $RecipesTable _recipeIdTable(_$AppDatabase db) =>
+      db.recipes.createAlias('shopping_recipes__recipe_id__recipes__id');
+
+  $$RecipesTableProcessedTableManager get recipeId {
+    final $_column = $_itemColumn<String>('recipe_id')!;
+
+    final manager = $$RecipesTableTableManager(
+      $_db,
+      $_db.recipes,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_recipeIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ShoppingRecipesTableFilterComposer
+    extends Composer<_$AppDatabase, $ShoppingRecipesTable> {
+  $$ShoppingRecipesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<double> get servings => $composableBuilder(
+    column: $table.servings,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$RecipesTableFilterComposer get recipeId {
+    final $$RecipesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.recipeId,
+      referencedTable: $db.recipes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RecipesTableFilterComposer(
+            $db: $db,
+            $table: $db.recipes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ShoppingRecipesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ShoppingRecipesTable> {
+  $$ShoppingRecipesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<double> get servings => $composableBuilder(
+    column: $table.servings,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$RecipesTableOrderingComposer get recipeId {
+    final $$RecipesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.recipeId,
+      referencedTable: $db.recipes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RecipesTableOrderingComposer(
+            $db: $db,
+            $table: $db.recipes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ShoppingRecipesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ShoppingRecipesTable> {
+  $$ShoppingRecipesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<double> get servings =>
+      $composableBuilder(column: $table.servings, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get addedAt =>
+      $composableBuilder(column: $table.addedAt, builder: (column) => column);
+
+  $$RecipesTableAnnotationComposer get recipeId {
+    final $$RecipesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.recipeId,
+      referencedTable: $db.recipes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RecipesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.recipes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ShoppingRecipesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ShoppingRecipesTable,
+          ShoppingRecipeRow,
+          $$ShoppingRecipesTableFilterComposer,
+          $$ShoppingRecipesTableOrderingComposer,
+          $$ShoppingRecipesTableAnnotationComposer,
+          $$ShoppingRecipesTableCreateCompanionBuilder,
+          $$ShoppingRecipesTableUpdateCompanionBuilder,
+          (ShoppingRecipeRow, $$ShoppingRecipesTableReferences),
+          ShoppingRecipeRow,
+          PrefetchHooks Function({bool recipeId})
+        > {
+  $$ShoppingRecipesTableTableManager(
+    _$AppDatabase db,
+    $ShoppingRecipesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ShoppingRecipesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ShoppingRecipesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ShoppingRecipesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> recipeId = const Value.absent(),
+                Value<double> servings = const Value.absent(),
+                Value<DateTime> addedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ShoppingRecipesCompanion(
+                recipeId: recipeId,
+                servings: servings,
+                addedAt: addedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String recipeId,
+                required double servings,
+                required DateTime addedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ShoppingRecipesCompanion.insert(
+                recipeId: recipeId,
+                servings: servings,
+                addedAt: addedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ShoppingRecipesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({recipeId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (recipeId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.recipeId,
+                                referencedTable:
+                                    $$ShoppingRecipesTableReferences
+                                        ._recipeIdTable(db),
+                                referencedColumn:
+                                    $$ShoppingRecipesTableReferences
+                                        ._recipeIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ShoppingRecipesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ShoppingRecipesTable,
+      ShoppingRecipeRow,
+      $$ShoppingRecipesTableFilterComposer,
+      $$ShoppingRecipesTableOrderingComposer,
+      $$ShoppingRecipesTableAnnotationComposer,
+      $$ShoppingRecipesTableCreateCompanionBuilder,
+      $$ShoppingRecipesTableUpdateCompanionBuilder,
+      (ShoppingRecipeRow, $$ShoppingRecipesTableReferences),
+      ShoppingRecipeRow,
+      PrefetchHooks Function({bool recipeId})
+    >;
+typedef $$ShoppingItemsTableCreateCompanionBuilder =
+    ShoppingItemsCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<int?> foodId,
+      Value<double?> quantity,
+      required IngredientUnit unit,
+      Value<bool> isChecked,
+      Value<String?> recipeId,
+    });
+typedef $$ShoppingItemsTableUpdateCompanionBuilder =
+    ShoppingItemsCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<int?> foodId,
+      Value<double?> quantity,
+      Value<IngredientUnit> unit,
+      Value<bool> isChecked,
+      Value<String?> recipeId,
+    });
+
+class $$ShoppingItemsTableFilterComposer
+    extends Composer<_$AppDatabase, $ShoppingItemsTable> {
+  $$ShoppingItemsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get foodId => $composableBuilder(
+    column: $table.foodId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<IngredientUnit, IngredientUnit, String>
+  get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<bool> get isChecked => $composableBuilder(
+    column: $table.isChecked,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ShoppingItemsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ShoppingItemsTable> {
+  $$ShoppingItemsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get foodId => $composableBuilder(
+    column: $table.foodId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isChecked => $composableBuilder(
+    column: $table.isChecked,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ShoppingItemsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ShoppingItemsTable> {
+  $$ShoppingItemsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get foodId =>
+      $composableBuilder(column: $table.foodId, builder: (column) => column);
+
+  GeneratedColumn<double> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<IngredientUnit, String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
+
+  GeneratedColumn<bool> get isChecked =>
+      $composableBuilder(column: $table.isChecked, builder: (column) => column);
+}
+
+class $$ShoppingItemsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ShoppingItemsTable,
+          ShoppingItemRow,
+          $$ShoppingItemsTableFilterComposer,
+          $$ShoppingItemsTableOrderingComposer,
+          $$ShoppingItemsTableAnnotationComposer,
+          $$ShoppingItemsTableCreateCompanionBuilder,
+          $$ShoppingItemsTableUpdateCompanionBuilder,
+          (
+            ShoppingItemRow,
+            BaseReferences<_$AppDatabase, $ShoppingItemsTable, ShoppingItemRow>,
+          ),
+          ShoppingItemRow,
+          PrefetchHooks Function()
+        > {
+  $$ShoppingItemsTableTableManager(_$AppDatabase db, $ShoppingItemsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ShoppingItemsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ShoppingItemsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ShoppingItemsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<int?> foodId = const Value.absent(),
+                Value<double?> quantity = const Value.absent(),
+                Value<IngredientUnit> unit = const Value.absent(),
+                Value<bool> isChecked = const Value.absent(),
+                Value<String?> recipeId = const Value.absent(),
+              }) => ShoppingItemsCompanion(
+                id: id,
+                name: name,
+                foodId: foodId,
+                quantity: quantity,
+                unit: unit,
+                isChecked: isChecked,
+                recipeId: recipeId,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<int?> foodId = const Value.absent(),
+                Value<double?> quantity = const Value.absent(),
+                required IngredientUnit unit,
+                Value<bool> isChecked = const Value.absent(),
+                Value<String?> recipeId = const Value.absent(),
+              }) => ShoppingItemsCompanion.insert(
+                id: id,
+                name: name,
+                foodId: foodId,
+                quantity: quantity,
+                unit: unit,
+                isChecked: isChecked,
+                recipeId: recipeId,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ShoppingItemsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ShoppingItemsTable,
+      ShoppingItemRow,
+      $$ShoppingItemsTableFilterComposer,
+      $$ShoppingItemsTableOrderingComposer,
+      $$ShoppingItemsTableAnnotationComposer,
+      $$ShoppingItemsTableCreateCompanionBuilder,
+      $$ShoppingItemsTableUpdateCompanionBuilder,
+      (
+        ShoppingItemRow,
+        BaseReferences<_$AppDatabase, $ShoppingItemsTable, ShoppingItemRow>,
+      ),
+      ShoppingItemRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -10034,4 +11393,8 @@ class $AppDatabaseManager {
       $$NutritionSnapshotsTableTableManager(_db, _db.nutritionSnapshots);
   $$ImportJobsTableTableManager get importJobs =>
       $$ImportJobsTableTableManager(_db, _db.importJobs);
+  $$ShoppingRecipesTableTableManager get shoppingRecipes =>
+      $$ShoppingRecipesTableTableManager(_db, _db.shoppingRecipes);
+  $$ShoppingItemsTableTableManager get shoppingItems =>
+      $$ShoppingItemsTableTableManager(_db, _db.shoppingItems);
 }

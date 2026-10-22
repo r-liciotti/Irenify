@@ -39,6 +39,10 @@ class FakeFoodLookup implements FoodLookup {
   @override
   Future<List<FoodInfo>> search(String text, {int limit = 5}) async => const [];
 
+  @override
+  Future<List<FoodInfo>> searchItalian(String prefix, {int limit = 20}) async =>
+      const [];
+
   static const pasta = FoodInfo(
     id: 101,
     nameEn: 'Pasta, dry',

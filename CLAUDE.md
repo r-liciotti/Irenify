@@ -100,6 +100,17 @@ Fase 2 (2026-10-22, provata sul simulatore): `SourcePlatform.web`, `SkipReason.w
 pagina), sezione `PAGINA WEB:` e regole per le pagine nel prompt (`gemini_prompt.dart`). Fase 3 (2026-10-22): filtro
 "Siti web", `stepLabel(..., platform:)` ("lettura della pagina"), testi del dettaglio e degli errori adatti ai siti.
 Fase 4 (2026-10-22): prova dal vivo; olio per friggere riconosciuto anche dal nome del gruppo (D-57).
+**F8 (lista della spesa) conclusa il 2026-10-22** (`F8_PIANO.md`, D-71: lista unica senza reparti). Fase 1 (2026-10-22): database
+**v4** (`shopping_recipes`, `shopping_items`: una riga per aggiunta), somme al momento di mostrare la lista
+(`features/shopping/domain/shopping_list.dart`: stesso `food_id` o nome, g↔kg e ml↔l, spuntati a parte),
+`ShoppingRepository`; "Elimina dati" svuota anche la lista.
+Fase 2 (2026-10-22, provata sul simulatore): "Aggiungi alla spesa" dal dettaglio (rotta `/ricette/:id/spesa?porzioni=`,
+`shopping/presentation/add_to_shopping_screen.dart`, `shoppingRecipesProvider`).
+Fase 3 (2026-10-22, provata sul simulatore): scheda Spesa `/spesa` (`shopping_screen.dart`, badge da
+`shoppingToBuyCountProvider`), aggiunta e modifica in `shopping_item_sheets.dart`, catalogo italiano
+`FoodLookup.searchItalian` (alias `it` del database degli alimenti; `food_search` ha solo i nomi inglesi).
+Fase 4 (2026-10-22): prova sul Pixel con l'APK di rilascio; uno SnackBar con un'azione resta finché non lo si chiude
+(Flutter recente): per gli avvisi temporanei serve `persist: false`. **F8 conclusa.**
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT
