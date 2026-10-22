@@ -62,8 +62,11 @@ class WhisperModelManager implements SpeechModelStore {
 
   /// Il modello se c'è e ha la dimensione attesa. Niente hash: deve essere
   /// veloce, lo si chiama a ogni trascrizione (l'hash si controlla solo
-  /// alla fine del download). Un solo `stat` sincrono: costa microsecondi e
-  /// funziona anche nel tempo simulato dei widget test.
+  /// alla fine del download o all'installazione dal bundle). Un solo `stat`
+  /// sincrono: costa microsecondi e funziona anche nel tempo simulato dei
+  /// widget test. Il `stat` segue i link: su iOS il modello è un link al
+  /// bundle (D-69) e un link appeso, rimasto da una versione precedente
+  /// dell'app, risulta assente.
   @override
   Future<File?> readyModel() async {
     final file = await _modelFile();
@@ -89,6 +92,12 @@ class WhisperModelManager implements SpeechModelStore {
     if (ready != null) return ready;
 
     final partial = await _partialFile();
+    // Un `.part` che è un link (installazione iOS interrotta, D-69) non va
+    // mai ripreso: si scriverebbe dentro il bundle.
+    if (FileSystemEntity.typeSync(partial.path, followLinks: false) ==
+        FileSystemEntityType.link) {
+      await deleteFileOrLink(partial.path);
+    }
     var offset = await partial.exists() ? await partial.length() : 0;
     if (offset > expectedBytes) {
       await partial.delete();
@@ -119,28 +128,35 @@ class WhisperModelManager implements SpeechModelStore {
   Future<File> _verifyAndInstall(File partial) async {
     final hash = await _sha256InIsolate(partial.path);
     if (hash != expectedSha256) {
-      await partial.delete();
+      await deleteFileOrLink(partial.path);
       throw UnexpectedFailure(
         cause:
             'Modello Whisper con sha256 $hash invece di $expectedSha256: '
             'file eliminato',
       );
     }
+    // Su un link `rename` sposta il link (non il file a cui punta) e
+    // sostituisce anche un link appeso rimasto al posto del modello.
     return partial.rename((await _modelFile()).path);
   }
 
-  /// Installa il modello incluso nell'APK (D-67), se c'è: lo copia a flusso
-  /// nel `.part`, ne verifica dimensione e sha256 e solo allora lo rinomina
-  /// nel modello. Restituisce il modello (anche se era già pronto: in quel
-  /// caso nessuna copia) oppure `null` se l'APK non lo contiene.
+  /// Installa il modello incluso nell'app, se c'è: su Android (D-67) lo
+  /// copia a flusso nel `.part`, su iOS (D-69) il `.part` è un link
+  /// simbolico al file del bundle. Poi ne verifica dimensione e sha256
+  /// (attraverso il link, su iOS) e solo allora lo rinomina nel modello.
+  /// Restituisce il modello (anche se era già pronto: in quel caso nessuna
+  /// copia né hash) oppure `null` se l'app non lo contiene.
   /// [onCopying] avvisa che la copia sta per iniziare.
   ///
   /// Una copia non riuscita o un file diverso da quello atteso eliminano il
   /// `.part` e lanciano: resta il download dalle impostazioni.
   ///
   /// Se l'utente elimina il modello dalle impostazioni, al riavvio dell'app
-  /// viene ricopiato dall'APK: va bene così, lo spazio dell'asset è comunque
-  /// occupato e senza modello i video perderebbero la trascrizione.
+  /// viene reinstallato: va bene così, lo spazio dell'asset è comunque
+  /// occupato e senza modello i video perderebbero la trascrizione. Su iOS
+  /// lo stesso succede dopo un aggiornamento dell'app, quando il link punta
+  /// al bundle della versione precedente: [readyModel] lo dà per assente e
+  /// qui si ricrea (con un nuovo controllo dello sha256).
   Future<File?> installBundled({void Function()? onCopying}) async {
     final ready = await readyModel();
     if (ready != null) return ready;
@@ -148,6 +164,10 @@ class WhisperModelManager implements SpeechModelStore {
 
     onCopying?.call();
     final partial = await _partialFile();
+    // Un `.part` rimasto da prima (anche un link appeso) si toglie: il
+    // nativo Android lo sovrascriverebbe, ma il link iOS non si crea sopra
+    // un file esistente.
+    await deleteFileOrLink(partial.path);
     try {
       // Il nativo scrive in `<destinazione>.part` e rinomina: qui la
       // destinazione è il nostro `.part`, così il modello compare solo dopo
@@ -162,7 +182,7 @@ class WhisperModelManager implements SpeechModelStore {
         );
       }
     } on Object {
-      if (await partial.exists()) await partial.delete();
+      await deleteFileOrLink(partial.path);
       rethrow;
     }
     return _verifyAndInstall(partial);
@@ -244,10 +264,12 @@ class WhisperModelManager implements SpeechModelStore {
     }
   }
 
-  /// Elimina il modello e l'eventuale download a metà.
+  /// Elimina il modello e l'eventuale download a metà. Su iOS (D-69) il
+  /// modello è un link: si toglie il link (anche appeso), mai il file del
+  /// bundle; al riavvio [installBundled] lo ricrea.
   Future<void> delete() async {
     for (final file in [await _modelFile(), await _partialFile()]) {
-      if (await file.exists()) await file.delete();
+      await deleteFileOrLink(file.path);
     }
   }
 

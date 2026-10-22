@@ -27,7 +27,7 @@ typedef DetectSpeechCall =
     });
 
 /// Chiamata reale tramite `whisper_ggml` (lancia [UnsupportedError] fuori da
-/// Android).
+/// Android e iOS; su iOS il codice nativo è allineato dalla F5).
 Future<List<WhisperSpeechSegment>> whisperGgmlDetectSpeech({
   required String library,
   required String audioPath,
@@ -63,7 +63,7 @@ class WhisperSpeechDetector implements SpeechDetector {
         vadModelPath: model.path,
       );
     } on UnsupportedError {
-      // iOS fino alla F5: si trascrive tutto, come prima.
+      // Piattaforma senza il rilevatore nativo: si trascrive tutto.
       return null;
     }
     return [for (final s in segments) SpeechSegment(s.start, s.end)];

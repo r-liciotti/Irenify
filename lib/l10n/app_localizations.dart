@@ -1786,6 +1786,12 @@ abstract class AppLocalizations {
   /// **'Questo backup viene da una versione più nuova dell\'app: aggiorna Da Mirtilla e riprova.'**
   String get failureBackupTooNew;
 
+  /// No description provided for @failureFilePickerBusy.
+  ///
+  /// In it, this message translates to:
+  /// **'La finestra dei file non ha risposto. Chiudi e riapri Da Mirtilla, poi riprova.'**
+  String get failureFilePickerBusy;
+
   /// No description provided for @backupExport.
   ///
   /// In it, this message translates to:

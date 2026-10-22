@@ -1133,6 +1133,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Questo backup viene da una versione più nuova dell\'app: aggiorna Da Mirtilla e riprova.';
 
   @override
+  String get failureFilePickerBusy =>
+      'La finestra dei file non ha risposto. Chiudi e riapri Da Mirtilla, poi riprova.';
+
+  @override
   String get backupExport => 'Esporta ricette';
 
   @override

@@ -152,6 +152,10 @@ struct whisper_params
     // multi-second load (issue #26). Off = load-per-request, as always.
     bool keep_model_loaded = false;
 
+    // Irenefy (F5, D-61): path of the Silero VAD model (ggml-silero-*.bin).
+    // Empty = VAD off (unchanged behaviour).
+    std::string vad_model_path;
+
     std::string language = "id";
     std::string prompt;
     std::string model = "models/ggml-model-whisper-small.bin";
@@ -207,6 +211,141 @@ json release_model()
     return jsonResult;
 }
 
+// Irenefy (F5, D-61): reads a 16 kHz 16-bit mono/stereo WAV into mono float
+// samples (same rules transcribe() applies). Returns an empty string on
+// success, otherwise the error message.
+static std::string read_wav_16k(const std::string &path, std::vector<float> &pcmf32) noexcept
+{
+    drwav wav;
+    if (!drwav_init_file(&wav, path.c_str(), NULL))
+    {
+        return " failed to open WAV file ";
+    }
+    if (wav.channels != 1 && wav.channels != 2)
+    {
+        drwav_uninit(&wav);
+        return "must be mono or stereo";
+    }
+    if (wav.sampleRate != WHISPER_SAMPLE_RATE)
+    {
+        drwav_uninit(&wav);
+        return "WAV file  must be 16 kHz";
+    }
+    if (wav.bitsPerSample != 16)
+    {
+        drwav_uninit(&wav);
+        return "WAV file  must be 16 bit";
+    }
+    const size_t n = (size_t)wav.totalPCMFrameCount;
+    const unsigned int channels = wav.channels;
+    std::vector<int16_t> pcm16;
+    try
+    {
+        pcm16.resize(n * channels);
+        pcmf32.resize(n);
+    }
+    catch (const std::exception &)
+    {
+        drwav_uninit(&wav);
+        return "WAV file too large";
+    }
+    const size_t n_read = (size_t)drwav_read_pcm_frames_s16(&wav, n, pcm16.data());
+    drwav_uninit(&wav);
+    pcmf32.resize(n_read);
+    if (channels == 1)
+    {
+        for (size_t i = 0; i < n_read; i++)
+        {
+            pcmf32[i] = float(pcm16[i]) / 32768.0f;
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < n_read; i++)
+        {
+            pcmf32[i] = float(pcm16[2 * i] + pcm16[2 * i + 1]) / 65536.0f;
+        }
+    }
+    return "";
+}
+
+// Irenefy (F5, D-61): Silero VAD on a 16 kHz WAV, without Whisper.
+// Request:  {"@type":"detectSpeech","audio":path,"vadModelPath":path,"threads":4?}
+// Response: {"@type":"detectSpeech","segments":[{"start":s,"end":e},...]}
+// (seconds) or {"@type":"error","message":...}. Uses its own VAD context,
+// freed before returning: the resident Whisper model cache is never touched.
+json detect_speech(json jsonBody) noexcept
+{
+    json jsonResult;
+    try
+    {
+        const std::string audio = jsonBody.at("audio").get<std::string>();
+        const std::string vad_model = jsonBody.at("vadModelPath").get<std::string>();
+        int n_threads = 4;
+        if (jsonBody.contains("threads") && jsonBody["threads"].is_number_integer())
+        {
+            n_threads = std::max(1, jsonBody["threads"].get<int>());
+        }
+
+        std::vector<float> pcmf32;
+        const std::string wav_error = read_wav_16k(audio, pcmf32);
+        if (!wav_error.empty())
+        {
+            jsonResult["@type"] = "error";
+            jsonResult["message"] = wav_error;
+            return jsonResult;
+        }
+
+        struct whisper_vad_context_params vparams = whisper_vad_default_context_params();
+        vparams.n_threads = n_threads;
+        vparams.use_gpu = false; // CPU-only build
+        struct whisper_vad_context *vctx =
+            whisper_vad_init_from_file_with_params(vad_model.c_str(), vparams);
+        if (vctx == nullptr)
+        {
+            jsonResult["@type"] = "error";
+            jsonResult["message"] = "failed to load VAD model " + vad_model;
+            return jsonResult;
+        }
+
+        std::vector<json> segmentsJson = {};
+        if (!pcmf32.empty())
+        {
+            struct whisper_vad_segments *segments = whisper_vad_segments_from_samples(
+                vctx, whisper_vad_default_params(), pcmf32.data(), (int)pcmf32.size());
+            if (segments == nullptr)
+            {
+                whisper_vad_free(vctx);
+                jsonResult["@type"] = "error";
+                jsonResult["message"] = "failed to detect speech";
+                return jsonResult;
+            }
+            const int n_segments = whisper_vad_segments_n_segments(segments);
+            for (int i = 0; i < n_segments; ++i)
+            {
+                // whisper.cpp returns centiseconds (samples_to_cs): convert.
+                json segment;
+                segment["start"] = whisper_vad_segments_get_segment_t0(segments, i) / 100.0;
+                segment["end"] = whisper_vad_segments_get_segment_t1(segments, i) / 100.0;
+                segmentsJson.push_back(segment);
+            }
+            whisper_vad_free_segments(segments);
+        }
+        whisper_vad_free(vctx);
+
+        jsonResult["@type"] = "detectSpeech";
+        jsonResult["segments"] = segmentsJson;
+        return jsonResult;
+    }
+    catch (const std::exception &e)
+    {
+        json errorResult;
+        errorResult["@type"] = "error";
+        errorResult["message"] = std::string("detectSpeech: ") + e.what();
+        return errorResult;
+    }
+}
+
 json transcribe(json jsonBody)
 {
     whisper_params params;
@@ -243,13 +382,20 @@ json transcribe(json jsonBody)
     {
         params.keep_model_loaded = jsonBody["keep_model_loaded"].get<bool>();
     }
+    // Irenefy (F5, D-61): optional Silero VAD for whisper_full.
+    if (jsonBody.contains("vad_model_path") && jsonBody["vad_model_path"].is_string())
+    {
+        params.vad_model_path = jsonBody["vad_model_path"].get<std::string>();
+    }
     json jsonResult;
     jsonResult["@type"] = "transcribe";
 
-    if (whisper_lang_id(params.language.c_str()) == -1)
+    // Irenefy (F5, D-53): "" or "auto" = whisper.cpp detects the spoken
+    // language (whisper_full does it when wparams.language is "auto").
+    if (params.language != "" && params.language != "auto" && whisper_lang_id(params.language.c_str()) == -1)
     {
         jsonResult["@type"] = "error";
-        jsonResult["message"] = "error: unknown language";
+        jsonResult["message"] = "error: unknown language = " + params.language;
         return jsonResult;
     }
 
@@ -425,6 +571,15 @@ json transcribe(json jsonBody)
         wparams.no_context = params.no_context || reused_ctx;
         wparams.suppress_nst = params.suppress_nst;
 
+        // Irenefy (F5, D-61): whisper.cpp runs Silero VAD on the samples and
+        // decodes only the speech segments (timestamps are mapped back to
+        // the original audio). params.vad_model_path outlives whisper_full().
+        if (!params.vad_model_path.empty()) {
+            wparams.vad = true;
+            wparams.vad_model_path = params.vad_model_path.c_str();
+            wparams.vad_params = whisper_vad_default_params();
+        }
+
         if (params.split_on_word) {
             wparams.max_len = 1;
             wparams.token_timestamps = true;
@@ -505,6 +660,12 @@ extern "C"
         if (jsonBody["@type"] == "getTextFromWavFile")
         {
             return jsonToChar(transcribe(jsonBody));
+        }
+
+        // Irenefy (F5, D-61): Silero VAD only.
+        if (jsonBody["@type"] == "detectSpeech")
+        {
+            return jsonToChar(detect_speech(jsonBody));
         }
 
         if (jsonBody["@type"] == "releaseModel")

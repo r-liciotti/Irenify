@@ -62,14 +62,17 @@ enum WhisperVariant {
 /// Vanno controllati tutti i core: il sistema può spostare i thread di
 /// whisper.cpp su un core qualsiasi, e uno solo senza un'istruzione basta per
 /// il SIGILL. Senza righe `Features` si sceglie la base (arm64 ha sempre
-/// NEON). `null` se l'app non gira su Android arm64 ([abi], di default
-/// `Abi.current()`): l'APK contiene whisper.cpp solo per arm64 (D-65). Su iOS
-/// la libreria è dentro l'app e non si sceglie: si risponde con la base.
+/// NEON). `null` se l'app non gira su Android arm64 o su iOS ([abi], di
+/// default `Abi.current()`): l'APK contiene whisper.cpp solo per arm64 (D-65).
+/// Su iOS la libreria è dentro l'app e non si sceglie: si risponde con la
+/// base, anche per `iosX64` (simulatore sul Mac Intel, D-69), dove il pod
+/// compila whisper.cpp per x86_64.
 WhisperVariant? whisperVariantForCpuInfo(String cpuInfo, {Abi? abi}) {
   switch (abi ?? Abi.current()) {
     case Abi.androidArm64:
       break;
     case Abi.iosArm64:
+    case Abi.iosX64:
       return WhisperVariant.base;
     default:
       return null;
@@ -128,7 +131,8 @@ class ProcCpuInfoCompatibility implements CpuCompatibility {
     return variant;
   }
 
-  /// `false` solo fuori da Android arm64, dove l'APK non ha whisper.cpp.
+  /// `false` solo fuori da Android arm64 e da iOS, dove l'app non ha
+  /// whisper.cpp.
   @override
   Future<bool> supportsWhisper() async => await whisperVariant() != null;
 }

@@ -109,7 +109,7 @@ le caselle per chiave e modello (D-64). 1019 test.
 
 **Uscita:** APK firmato installato sul Pixel al posto della build di debug, tempi misurati.
 
-## Fase 5 — Prova finale su 30 link reali (≈ 0,5 gg)
+## Fase 5 — Prova finale su 30 link reali (≈ 0,5 gg) — ⏭️ non fatta, F6 chiusa dall'utente il 2026-10-08 (D-68)
 
 Con link forniti dall'utente:
 - Instagram e TikTok, link brevi, post di foto;

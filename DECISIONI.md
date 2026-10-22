@@ -11,6 +11,29 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 
 ---
 
+## D-69 — F5: simulatore prima, app per un'altra persona fidata (2026-10-08) — Attiva
+- **Decisione:**
+  - Il Mac è Intel: le fasi 1–4 della F5 si sviluppano e si provano sul **Simulatore iOS**; la fase 5 su un iPhone
+    vero. Piano in `F5_PIANO.md`.
+  - L'app iOS sarà usata da **un'altra persona, fidata**: si include la chiave Gemini dell'utente come su Android
+    (D-66), sapendo che chi ha l'app può estrarla e che i termini gratuiti di Gemini (D-03) pensano all'uso
+    personale.
+  - Modello Whisper incluso anche su iOS (D-67), letto dal bundle senza copia.
+  - Account Apple e forma di distribuzione si decidono nella fase 5.
+- **Deciso da:** utente ("possiamo emulare l'iphone?"; "un'altra persona ma è fidata"; "ok" al modello incluso).
+
+## D-68 — F6 chiusa senza la prova finale su 30 link (2026-10-08) — Attiva
+- **Decisione:** la fase 5 della F6 (prova su 30 link reali) non si fa: la F6 è considerata conclusa. D-44 e D-51
+  si chiudono così, con le prove fatte durante le fasi.
+- **Provato dal vivo nelle fasi:** reel Instagram con didascalia (F1–F2), reel parlato con Whisper e VAD (Pixel e
+  Redmi Note 10 5G), link TikTok normale e breve (F1 fase 4), attesa senza rete e ripresa, backup completo, APK firmato
+  con chiave e modello inclusi su due telefoni.
+- **Mai provato dal vivo (coperto solo dai test):** reel di sola musica (`noSpeech`), video dalla galleria e "Aggiungi
+  il video" su un reel con musica su licenza, post di foto, reel parlato in inglese, ricetta in bozza con Gemini
+  sovraccarico, attesa della quota giornaliera. Se uno di questi percorsi dà problemi nell'uso quotidiano, si corregge
+  quando capita.
+- **Deciso da:** utente ("fase 6 mi rimane difficile, la prendiamo come fatta").
+
 ## D-67 — Modello Whisper incluso nell'APK di rilascio (2026-10-08) — Attiva
 - **Decisione:** `ggml-small-q8_0.bin` (264 MB) entra nell'APK di rilascio come asset non compresso
   (`assets/whisper_model/`) e al primo avvio l'app lo copia a flusso nella posizione del modello, con verifica sha256;
@@ -285,7 +308,7 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
   schermata che resta su "Ricetta pronta"; riquadro di avanzamento nella home.
 - **Deciso da:** utente (2026-10-06).
 
-## D-51 — F2 chiusa senza la prova completa dal vivo (2026-10-06) — Attiva, da riprendere prima della F6
+## D-51 — F2 chiusa senza la prova completa dal vivo (2026-10-06) — Chiusa da D-68
 - **Decisione:** la prova completa della F2 con link reali non si fa ora ("la prova non riesco a farla, andiamo
   avanti"). Restano da provare dal vivo, insieme a quelle di D-44:
   - un reel parlato trascritto con Whisper;
@@ -385,7 +408,7 @@ Una decisione superata non si cancella: si segna **Superata da D-xx** e se ne ag
 - **Alternative scartate:** A "Salvia di notte", B "Orto chiaro" (pagina di prova con le 3 direzioni sulle ricette reali).
 - **Deciso da:** utente ("Zafferano mi piace ma con il font del testo preferisco Manrope").
 
-## D-44 — F1 chiusa con una prova completa ridotta (2026-10-06) — Attiva, da rivalutare all'inizio della F2
+## D-44 — F1 chiusa con una prova completa ridotta (2026-10-06) — Chiusa da D-68
 - **Decisione:** la prova della fase 8 si chiude con 2 reel Instagram nuovi (2/2 ricette corrette) più i 9 job delle
   fasi 5–7 (2 ricette, 2 doppioni, 5 "non è una ricetta" corretti), invece dei 6–8 link previsti.
 - **Rischio accettato:** mai provati dal vivo fino alla ricetta: reel parlato con Whisper, TikTok nuovo da link breve,

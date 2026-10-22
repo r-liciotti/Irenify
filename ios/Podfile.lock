@@ -32,6 +32,6 @@ SPEC CHECKSUMS:
   receive_sharing_intent: 222384f00ffe7e952bbfabaa9e3967cb87e5fe00
   whisper_ggml: e49d353bd4736293ca18f7a1e90accec56d9b57d
 
-PODFILE CHECKSUM: 1857a7cdb7dfafe45f2b0e9a9af44644190f7506
+PODFILE CHECKSUM: 0cac497a5cbc143da7d1a1cfa48e998aa8459caf
 
 COCOAPODS: 1.16.2

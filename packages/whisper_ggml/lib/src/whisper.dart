@@ -143,14 +143,17 @@ class Whisper {
   /// The model parked by `keepModelLoaded` is not touched.
   ///
   /// Throws an [Exception] with the native message on failure and an
-  /// [UnsupportedError] outside Android (iOS native code comes later).
+  /// [UnsupportedError] outside Android and iOS (Irenefy F5: the iOS native
+  /// code has the same `detectSpeech` request).
   Future<List<WhisperSpeechSegment>> detectSpeech({
     required String audioPath,
     required String vadModelPath,
     int threads = 4,
   }) async {
-    if (!Platform.isAndroid) {
-      throw UnsupportedError('detectSpeech is only available on Android');
+    if (!Platform.isAndroid && !Platform.isIOS) {
+      throw UnsupportedError(
+        'detectSpeech is only available on Android and iOS',
+      );
     }
     final Map<String, dynamic> result = await _request(
       whisperRequest: DetectSpeechRequest(

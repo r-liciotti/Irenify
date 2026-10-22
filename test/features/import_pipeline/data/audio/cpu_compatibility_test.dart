@@ -121,6 +121,11 @@ void main() {
         whisperVariantForCpuInfo('', abi: Abi.iosArm64),
         WhisperVariant.base,
       );
+      // Simulatore sul Mac Intel (D-69): stessa libreria del pod, per x86_64.
+      expect(
+        whisperVariantForCpuInfo('', abi: Abi.iosX64),
+        WhisperVariant.base,
+      );
     });
 
     test('nomi delle librerie compilate da CMakeLists.txt', () {

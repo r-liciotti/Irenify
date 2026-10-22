@@ -1,0 +1,4 @@
+// Share Extension (F5): Pods del target e impostazioni di Flutter (versione e
+// numero di build), come ios/Flutter/Release.xcconfig per il Runner.
+#include? "../Pods/Target Support Files/Pods-Share Extension/Pods-Share Extension.profile.xcconfig"
+#include "../Flutter/Generated.xcconfig"

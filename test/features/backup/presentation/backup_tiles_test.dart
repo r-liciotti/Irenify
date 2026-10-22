@@ -42,22 +42,32 @@ class _FakeService implements BackupService {
 /// Selettori finti: [save] decide se l'utente salva, [picked] il file scelto
 /// (`null` = annullato).
 class _FakePicker implements BackupFilePicker {
-  _FakePicker({this.save = true, this.picked});
+  _FakePicker({this.save = true, this.picked, this.hang = false, this.error});
 
   final bool save;
   final Uint8List? picked;
+
+  /// La finestra di sistema non risponde mai (servizio iOS in crash, F5).
+  final bool hang;
+
+  /// Errore lanciato da salvataggio e scelta.
+  final Object? error;
   final saved = <({String fileName, Uint8List bytes, String? title})>[];
   int picks = 0;
 
   @override
   Future<bool> saveZip(String fileName, Uint8List bytes, {String? title}) {
     saved.add((fileName: fileName, bytes: bytes, title: title));
+    if (error case final error?) return Future.error(error);
+    if (hang) return Completer<bool>().future;
     return Future.value(save);
   }
 
   @override
   Future<Uint8List?> pickZip() {
     picks++;
+    if (error case final error?) return Future.error(error);
+    if (hang) return Completer<Uint8List?>().future;
     return Future.value(picked);
   }
 }
@@ -282,7 +292,8 @@ void main() {
     });
   }
 
-  testWidgets('voci disattivate durante l\'operazione', (tester) async {
+  testWidgets('voci disattivate durante l\'operazione, attesa solo su quella '
+      'toccata', (tester) async {
     final gate = Completer<void>();
     final picker = _FakePicker();
     await pump(
@@ -295,7 +306,12 @@ void main() {
 
     expect(tile(tester, 'Esporta ricette').enabled, isFalse);
     expect(tile(tester, 'Importa ricette').enabled, isFalse);
-    expect(find.text('Un momento…'), findsNWidgets(2));
+    expect(find.text('Un momento…'), findsOne);
+    expect(
+      find.text('Rimetti nel ricettario le ricette di un backup'),
+      findsOne,
+      reason: 'l\'altra voce tiene il suo testo',
+    );
     expect(find.byType(CircularProgressIndicator), findsOne);
     await tester.tap(find.text('Importa ricette'));
     await tester.pump();
@@ -307,5 +323,48 @@ void main() {
     expect(tile(tester, 'Importa ricette').enabled, isTrue);
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.text('Backup salvato: 2 ricette'), findsOne);
+  });
+
+  testWidgets('finestra di salvataggio che non risponde: le voci non restano '
+      'bloccate (F5)', (tester) async {
+    final picker = _FakePicker(hang: true);
+    await pump(tester, _FakeService(exportResult: _export()), picker);
+    await tester.tap(find.text('Esporta ricette'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(picker.saved, hasLength(1));
+    expect(tile(tester, 'Esporta ricette').enabled, isTrue);
+    expect(tile(tester, 'Importa ricette').enabled, isTrue);
+    expect(find.text('Un momento…'), findsNothing);
+  });
+
+  testWidgets('scelta del file che non risponde: le voci non restano '
+      'bloccate (F5)', (tester) async {
+    final picker = _FakePicker(hang: true);
+    await pump(tester, _FakeService(), picker);
+    await tester.tap(find.text('Importa ricette'));
+    await tester.pump();
+
+    expect(picker.picks, 1);
+    expect(tile(tester, 'Importa ricette').enabled, isTrue);
+    expect(find.text('Un momento…'), findsNothing);
+  });
+
+  testWidgets('selettore bloccato: messaggio che chiede di riaprire l\'app', (
+    tester,
+  ) async {
+    final picker = _FakePicker(error: const FilePickerBusyFailure());
+    await pump(tester, _FakeService(exportResult: _export()), picker);
+    await tester.tap(find.text('Esporta ricette'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'La finestra dei file non ha risposto. Chiudi e riapri Da Mirtilla, '
+        'poi riprova.',
+      ),
+      findsOne,
+    );
   });
 }

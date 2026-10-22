@@ -35,7 +35,8 @@ enum FailureCode {
   videoTooLong,
   importsInProgress,
   backupInvalid,
-  backupTooNew;
+  backupTooNew,
+  filePickerBusy;
 
   /// Codice salvato → [FailureCode]; un nome sconosciuto diventa [unexpected].
   static FailureCode fromName(String? name) =>
@@ -70,7 +71,9 @@ enum FailureCode {
     importsInProgress ||
     // Il file va cambiato, non riprovato (D-63).
     backupInvalid ||
-    backupTooNew => RecoveryAction.none,
+    backupTooNew ||
+    // Si rimedia solo riaprendo l'app (il plugin resta in attesa).
+    filePickerBusy => RecoveryAction.none,
   };
 }
 
@@ -307,4 +310,15 @@ final class BackupTooNewFailure extends Failure {
 
   @override
   FailureCode get code => FailureCode.backupTooNew;
+}
+
+/// Il selettore dei file di sistema non ha mai risposto a una richiesta
+/// precedente (su iOS il servizio della finestra può andare in crash senza
+/// avvisare il plugin, F5): `file_picker` rifiuta ogni nuova richiesta finché
+/// l'app non viene riaperta.
+final class FilePickerBusyFailure extends Failure {
+  const FilePickerBusyFailure({super.cause, super.stackTrace});
+
+  @override
+  FailureCode get code => FailureCode.filePickerBusy;
 }

@@ -69,6 +69,10 @@ dependencies:
 dependency_overrides:
   whisper_ggml:
     path: packages/whisper_ggml
+  # wakelock_plus 1.7.0 copiato (F5): il suo Package.swift dichiara iOS 11 e la
+  # build iOS si ferma; la 1.8.1 lo corregge ma richiede Flutter 3.44.
+  wakelock_plus:
+    path: packages/wakelock_plus
 
 dev_dependencies:
   flutter_test:

@@ -11,7 +11,7 @@ UI e testi in italiano.
 Piano approvato (architettura, modello dati, fasi F0–F6, rischi):
 `~/.claude/plans/pasted-content-id-66aa-sei-un-purring-sprout.md`.
 
-## Stato (aggiornato al 2026-10-06, F4 conclusa)
+## Stato (aggiornato al 2026-10-08, F6 conclusa)
 
 Fase **F1 conclusa il 2026-10-06** (piano in `F1_PIANO.md`, 8 fasi; prova finale ridotta, D-44: da completare a inizio F2). **Fase 1 (fondamenta) completata il 2026-09-28**: `lib/app/`
 (ProviderScope, go_router con 3 sezioni, tema provvisorio), `lib/core/` (`Failure`, `AppLog`), testi ARB.
@@ -75,7 +75,24 @@ sovraccarico (database **v3**, `recipes.is_draft`, `RecipeRepository.replaceDraf
 job che parte da `transcribed` con `draftRecipeId`; id della ricetta sempre da `recipeIdForJob`), D-62. Fase 3 (2026-10-08,
 provata): backup in `lib/features/backup/` (zip con `ricette.json` versionato + `miniature/`, formato proprio e non copia del
 DB; bozze escluse, ricette già presenti saltate, D-63; nomi delle voci mai usati come percorsi, id controllati con
-`isSafeBackupRecipeId`); "Elimina dati" non tocca più chiave e modello (D-64). Prove dal vivo D-44 ancora aperte.
+`isSafeBackupRecipeId`); "Elimina dati" non tocca più chiave e modello (D-64). Fase 4 (2026-10-08, provata su Pixel e
+Redmi Note 10 5G): tre varianti di Whisper, APK di rilascio firmato con chiave Gemini e modello inclusi (D-65..D-67).
+**F6 conclusa il 2026-10-08** senza la prova finale su 30 link (D-68: elenco dei percorsi mai provati dal vivo). Il Pixel
+ora ha la build di **rilascio**: `adb run-as` non funziona più (verifiche con schermate e registro interno); per
+reinstallare la build di debug serve disinstallare (firma diversa → dati persi: prima il backup). Redmi (MIUI):
+`adb install` e `input tap` bloccati, installare con `adb push` in Download + gestore file; `am start SEND` funziona.
+**F5 (iOS) in corso** (`F5_PIANO.md`, D-69; Mac **Intel** → Simulatore iOS x86_64). Fase 1 (2026-10-08): `wakelock_plus`
+1.7.0 copiato in `packages/wakelock_plus/` (Package.swift a iOS 13, escluso dall'analisi), icona iOS. Fase 2
+(2026-10-08): Share Extension creata da `tool/ios/add_share_extension.rb` (non a mano in Xcode), App Group
+`group.it.overside.irenefy`; su iOS 26 la barra di `SLComposeServiceViewController` va nascosta (crash noto).
+`pod install` vuole `LANG=en_US.UTF-8`. Prove sul simulatore: `xcrun simctl install/launch/openurl`, condivisione da
+Safari fatta dall'utente (i tocchi non si automatizzano); build: `tool/build_ios.sh --simulator` (chiave e modello inclusi,
+preparati da `tool/release_assets.sh`, comune con `tool/build_release.sh`). Fase 3 (2026-10-08): Whisper iOS con `auto` e
+VAD; su iOS il modello incluso è un link simbolico al file nel bundle (`IosBundledAssets`), niente copia; dati dell'app
+sul simulatore leggibili con `xcrun simctl get_app_container <sim> it.overside.irenefy data`. Fase 4 (2026-10-08): backup
+Android↔iOS identico; le voci del backup non aspettano le finestre di sistema (su iOS il loro servizio può andare in crash
+senza rispondere: `FilePickerBusyFailure`). File in "Sul mio iPhone" del simulatore: cartella `File Provider Storage` del
+gruppo `group.com.apple.FileProvider.LocalStorage` (`simctl get_app_container <sim> com.apple.DocumentsApp groups`). Prove dal vivo D-44 ancora aperte.
 Decisioni di progetto: **`DECISIONI.md`** (registro D-xx, da aggiornare a ogni decisione nuova).
 
 - Fatto: scaffold, share intake Android verificato sul Pixel 9 Pro, `url_normalizer` + 9 test, download video IG/TT

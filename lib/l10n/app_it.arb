@@ -580,6 +580,7 @@
   "failureImportsInProgress": "C'è un'importazione in corso: aspetta che finisca, poi elimina i dati.",
   "failureBackupInvalid": "Questo file non è un backup di Da Mirtilla leggibile.",
   "failureBackupTooNew": "Questo backup viene da una versione più nuova dell'app: aggiorna Da Mirtilla e riprova.",
+  "failureFilePickerBusy": "La finestra dei file non ha risposto. Chiudi e riapri Da Mirtilla, poi riprova.",
   "backupExport": "Esporta ricette",
   "backupExportSubtitle": "Salva tutte le ricette e le foto in un file .zip",
   "backupImport": "Importa ricette",

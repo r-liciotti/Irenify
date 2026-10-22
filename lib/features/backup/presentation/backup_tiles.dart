@@ -13,7 +13,8 @@ import '../data/backup_service.dart';
 
 /// Voci "Esporta ricette" e "Importa ricette" delle Impostazioni → Dati
 /// (D-63). Servizio e selettori si leggono solo al tocco: montare le voci
-/// non richiede nulla. Durante un'operazione entrambe restano disattivate.
+/// non richiede nulla. Mentre l'app prepara o importa il backup entrambe
+/// restano disattivate, con attesa e indicatore solo sulla voce toccata (F5).
 class BackupTiles extends ConsumerStatefulWidget {
   const BackupTiles({super.key});
 
@@ -21,28 +22,31 @@ class BackupTiles extends ConsumerStatefulWidget {
   ConsumerState<BackupTiles> createState() => _BackupTilesState();
 }
 
+enum _Operation { export, import }
+
 class _BackupTilesState extends ConsumerState<BackupTiles> {
-  bool _working = false;
+  /// Operazione in corso; `null` se nessuna.
+  _Operation? _workingOn;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final enabled = !_working;
-    final progress = _working
-        ? const SizedBox.square(
-            dimension: 20,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          )
-        : null;
+    final enabled = _workingOn == null;
+    const progress = SizedBox.square(
+      dimension: 20,
+      child: CircularProgressIndicator(strokeWidth: 2),
+    );
+    final exporting = _workingOn == _Operation.export;
+    final importing = _workingOn == _Operation.import;
     return Column(
       children: [
         ListTile(
           leading: const Icon(Icons.upload_file),
           title: Text(l10n.backupExport),
           subtitle: Text(
-            _working ? l10n.backupWorking : l10n.backupExportSubtitle,
+            exporting ? l10n.backupWorking : l10n.backupExportSubtitle,
           ),
-          trailing: progress,
+          trailing: exporting ? progress : null,
           enabled: enabled,
           onTap: enabled ? _export : null,
         ),
@@ -50,8 +54,9 @@ class _BackupTilesState extends ConsumerState<BackupTiles> {
           leading: const Icon(Icons.download_outlined),
           title: Text(l10n.backupImport),
           subtitle: Text(
-            _working ? l10n.backupWorking : l10n.backupImportSubtitle,
+            importing ? l10n.backupWorking : l10n.backupImportSubtitle,
           ),
+          trailing: importing ? progress : null,
           enabled: enabled,
           onTap: enabled ? _import : null,
         ),
@@ -59,25 +64,34 @@ class _BackupTilesState extends ConsumerState<BackupTiles> {
     );
   }
 
-  /// Esegue [operation] con le voci disattivate; un errore diventa una
-  /// snackbar con il testo del `Failure`. Tutto ciò che serve dopo le attese
-  /// si prende prima: la schermata può chiudersi nel frattempo.
-  Future<void> _run(
+  /// Esegue [work] con le voci disattivate e l'attesa sulla voce [kind]. Le
+  /// finestre di sistema (salva, scegli il file) restano **fuori** da [work]:
+  /// su iOS il loro servizio può andare in crash senza mai rispondere (F5), e
+  /// le voci resterebbero bloccate.
+  Future<T> _working<T>(_Operation kind, Future<T> Function() work) async {
+    setState(() => _workingOn = kind);
+    try {
+      return await work();
+    } finally {
+      if (mounted) setState(() => _workingOn = null);
+    }
+  }
+
+  /// Un errore diventa una snackbar con il testo del `Failure`. Tutto ciò che
+  /// serve dopo le attese si prende prima: la schermata può chiudersi.
+  Future<void> _report(
     String logLabel,
     Future<String?> Function(AppLocalizations l10n) operation,
   ) async {
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
     final log = ref.read(appLogProvider);
-    setState(() => _working = true);
     String? message;
     try {
       message = await operation(l10n);
     } on Object catch (e, st) {
       log.error(logLabel, e, st);
       message = Failure.from(e, st).message(l10n);
-    } finally {
-      if (mounted) setState(() => _working = false);
     }
     if (message != null) {
       messenger.showSnackBar(SnackBar(content: Text(message)));
@@ -87,8 +101,8 @@ class _BackupTilesState extends ConsumerState<BackupTiles> {
   Future<void> _export() {
     final service = ref.read(backupServiceProvider);
     final picker = ref.read(backupFilePickerProvider);
-    return _run('Esportazione del backup non riuscita', (l10n) async {
-      final backup = await service.export();
+    return _report('Esportazione del backup non riuscita', (l10n) async {
+      final backup = await _working(_Operation.export, service.export);
       if (backup.recipeCount == 0) return l10n.backupExportEmpty;
       final saved = await picker.saveZip(
         backup.fileName,
@@ -107,10 +121,13 @@ class _BackupTilesState extends ConsumerState<BackupTiles> {
     final service = ref.read(backupServiceProvider);
     final picker = ref.read(backupFilePickerProvider);
     final container = ProviderScope.containerOf(context, listen: false);
-    return _run('Importazione del backup non riuscita', (l10n) async {
+    return _report('Importazione del backup non riuscita', (l10n) async {
       final bytes = await picker.pickZip();
-      if (bytes == null) return null;
-      final summary = await service.importBackup(bytes);
+      if (bytes == null || !mounted) return null;
+      final summary = await _working(
+        _Operation.import,
+        () => service.importBackup(bytes),
+      );
       if (summary.imported > 0) {
         // Gli elenchi seguono il database; dettagli e miniature già letti no.
         container

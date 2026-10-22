@@ -40,6 +40,7 @@ extension FailureCodeText on FailureCode {
     FailureCode.llmUnavailable => l10n.failureLlmUnavailable,
     FailureCode.backupInvalid => l10n.failureBackupInvalid,
     FailureCode.backupTooNew => l10n.failureBackupTooNew,
+    FailureCode.filePickerBusy => l10n.failureFilePickerBusy,
     FailureCode.speechModelMissing => l10n.failureSpeechModelMissing,
     FailureCode.videoTooLong => l10n.failureVideoTooLong,
     FailureCode.importsInProgress => l10n.failureImportsInProgress,
